@@ -12,6 +12,6 @@
 <body>
 	<header class="topbar">
 		<h1 class="fill">
-			<a href="dashboard.jsp"> Application - Computer Database </a>
+			<a href="index"> Application - Computer Database </a>
 		</h1>
 	</header>

@@ -16,10 +16,9 @@ import com.excilys.data.Computer;
 //Singleton
 public class CompanyDAO {
 	private static CompanyDAO INSTANCE = null;
-	private Map<Integer,Company> companies = null; 
-	private static String TABLE_COMPANY = "company";
-	private static String ATTR_NAME = "name";
-	private static String ATTR_ID = "id";
+	public static String TABLE_COMPANY = "company";
+	public static String ATTR_NAME = "name";
+	public static String ATTR_ID = "id";
 	
 	private CompanyDAO(){
 		
@@ -80,9 +79,8 @@ public class CompanyDAO {
 		return c;
 	}
 	
-	public Map<Integer,Company> getAll(){
-		if(companies == null){
-		companies = new HashMap<Integer,Company>();
+	public List<Company> getAll(){
+		List<Company> companies = new ArrayList<Company>();
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		Statement st = null;
 		ResultSet rs  = null;
@@ -90,8 +88,7 @@ public class CompanyDAO {
 			st = cn.createStatement();
 			rs = st.executeQuery("SELECT * FROM " + TABLE_COMPANY + " ;");
 			while(rs.next()){
-				Company company = entryToCompany(rs);
-				companies.put(Integer.valueOf(company.getId()),company);
+				companies.add(entryToCompany(rs));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -120,9 +117,7 @@ public class CompanyDAO {
 			}}
 					
 		}
-		}	
 		return companies;
-		
 	}
 	
 	private Company entryToCompany(ResultSet rs){

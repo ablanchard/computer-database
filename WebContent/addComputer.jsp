@@ -1,9 +1,13 @@
 <jsp:include page="include/header.jsp" />
+
+<%@page import="java.util.List"%>
+<%@page import="com.excilys.data.Company"%>
+<% List<Company> companies = (List<Company>)request.getAttribute("companies"); %>
 <section id="main">
 
 	<h1>Add Computer</h1>
 	
-	<form action="addComputer.jsp" method="POST">
+	<form action="addComputer" method="POST">
 		<fieldset>
 			<div class="clearfix">
 				<label for="name">Computer name:</label>
@@ -23,7 +27,7 @@
 			<div class="clearfix">
 				<label for="discontinued">Discontinued date:</label>
 				<div class="input">
-					<input type="date" name="introducedDate" pattern="YY-MM-dd"/>
+					<input type="date" name="discontinuedDate" pattern="YY-MM-dd"/>
 					<span class="help-inline">YYYY-MM-DD</span>
 				</div>
 			</div>
@@ -32,16 +36,16 @@
 				<div class="input">
 					<select name="company">
 						<option value="0">--</option>
-						<option value="1">Apple</option>
-						<option value="2">Dell</option>
-						<option value="3">Lenovo</option>
+						<% for(Company c : companies){ %>
+						<option value="<%=c.getId() %>"><%=c.getName() %></option>
+						<% } %>
 					</select>
 				</div>
 			</div>
 		</fieldset>
 		<div class="actions">
-			<input type="submit" value="Add" class="btn primary">
-			or <a href="dashboard.jsp" class="btn">Cancel</a>
+			<input type="submit" id="action" value="Add" class="btn primary">
+			or <a href="index" class="btn">Cancel</a>
 		</div>
 	</form>
 </section>

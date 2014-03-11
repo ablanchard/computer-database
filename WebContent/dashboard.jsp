@@ -4,7 +4,7 @@
 <%@page import="com.excilys.data.Company"%>
 <% List<Computer> computers = (List<Computer>)request.getAttribute("computers"); %>
 <section id="main">
-	<h1 id="homeTitle">456 Computers found</h1>
+	<h1 id="homeTitle"><%=computers.size() %> Computers found</h1>
 	<div id="actions">
 		<form action="" method="POST">
 			<input type="search" id="searchbox" name="search"
@@ -13,7 +13,7 @@
 				value="Filter by name"
 				class="btn primary">
 		</form>
-		<a class="btn success" id="add" href="addComputer.jsp">Add Computer</a>
+		<a class="btn success" id="add" href="addComputer">Add Computer</a>
 	</div>
 
 		<table class="computers zebra-striped">
