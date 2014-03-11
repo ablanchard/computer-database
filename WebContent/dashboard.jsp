@@ -1,9 +1,12 @@
 <jsp:include page="include/header.jsp" />
-
+<%@page import="java.util.List"%>
+<%@page import="com.excilys.data.Computer"%>
+<%@page import="com.excilys.data.Company"%>
+<% List<Computer> computers = (List<Computer>)request.getAttribute("computers"); %>
 <section id="main">
 	<h1 id="homeTitle">456 Computers found</h1>
 	<div id="actions">
-		<form action="" method="GET">
+		<form action="" method="POST">
 			<input type="search" id="searchbox" name="search"
 				value="" placeholder="Search name">
 			<input type="submit" id="searchsubmit"
@@ -27,25 +30,19 @@
 				</tr>
 			</thead>
 			<tbody>
-
+				<% for(Computer p : computers){ %>
 				<tr>
-					<td><a href="#" onclick="">ThinkPad T420</a></td>
-					<td>2011-01-01</td>
-					<td>2013-03-04</td>
-					<td>Lenovo</td>
+					<td><a href="#" onclick=""><%= p.getName() %></a></td>
+					<td><%= p.getIntroduction() %></td>
+					<td><%= p.getDiscontinued() %></td>
+					<td><% if(p.getCompany() != null) { %>
+						<%= p.getCompany().getName() %>
+						<% } else { %>
+						No Company
+						<% } %>					
+					</td>
 				</tr>
-				<tr>
-					<td><a href="#">Precision 3500</a></td>
-					<td>2010-05-07</td>
-					<td>2012-06-01</td>
-					<td>Dell</td>
-				</tr>
-				<tr>
-					<td><a href="#">Macbook Air</a></td>
-					<td>2005-05-09</td>
-					<td>2008-06-06</td>
-					<td>Apple</td>
-				</tr>
+				<% } %>
 			</tbody>
 		</table>
 </section>

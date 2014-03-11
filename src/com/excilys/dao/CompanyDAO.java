@@ -4,6 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
@@ -11,6 +16,7 @@ import com.excilys.data.Computer;
 //Singleton
 public class CompanyDAO {
 	private static CompanyDAO INSTANCE = null;
+	private Map<Integer,Company> companies = null; 
 	private static String TABLE_COMPANY = "company";
 	private static String ATTR_NAME = "name";
 	private static String ATTR_ID = "id";
@@ -72,6 +78,51 @@ public class CompanyDAO {
 					
 		}
 		return c;
+	}
+	
+	public Map<Integer,Company> getAll(){
+		if(companies == null){
+		companies = new HashMap<Integer,Company>();
+		Connection cn = DatabaseHandler.getInstance().getConnection();
+		Statement st = null;
+		ResultSet rs  = null;
+		try {
+			st = cn.createStatement();
+			rs = st.executeQuery("SELECT * FROM " + TABLE_COMPANY + " ;");
+			while(rs.next()){
+				Company company = entryToCompany(rs);
+				companies.put(Integer.valueOf(company.getId()),company);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+			if(cn!=null){
+				try {
+					cn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}}
+			if(st!=null){
+				try {
+					st.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}}
+			if(rs!=null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}}
+					
+		}
+		}	
+		return companies;
+		
 	}
 	
 	private Company entryToCompany(ResultSet rs){

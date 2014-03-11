@@ -15,6 +15,13 @@ public class Computer {
 		this.discontinued = discontinued;
 		this.company = company;
 	}
+	
+	public String toString(){
+		String com = (company==null)?"null":company.getName();
+		String intro = (introduction==null)?"null":introduction.toString();
+		String dis = (discontinued==null)?"null":discontinued.toString();
+		return name + " introduced " + intro + " discontinues " + dis + " company : " + com;
+	}
 
 	public int getId() {
 		return id;

@@ -10,7 +10,9 @@ import java.sql.SQLException;
 public class DatabaseHandler {
 	private static DatabaseHandler INSTANCE = null;
 	private static String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/";
+	private static String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
 	private static String DATABASE_NAME = "computer-database-db";
+	private static String DATABASE_PARAMETER = "?zeroDateTimeBehavior=convertToNull";
 	private static String DATABASE_USER = "root";
 	private static String DATABASE_PASS = "root";
 	
@@ -27,14 +29,10 @@ public class DatabaseHandler {
 	
 	public Connection getConnection(){
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			return DriverManager.getConnection(DATABASE_URL + DATABASE_NAME,DATABASE_USER,DATABASE_PASS);
-		} catch (SQLException e) {
+			Class.forName(DATABASE_DRIVER);
+			return DriverManager.getConnection(DATABASE_URL + DATABASE_NAME + DATABASE_PARAMETER,DATABASE_USER,DATABASE_PASS);
+					
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
