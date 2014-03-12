@@ -12,7 +12,7 @@
 			<div class="clearfix">
 				<label for="name">Computer name:</label>
 				<div class="input">
-					<input type="text" name="name" />
+					<input type="text" name="name"  id="name"/>
 					<span class="help-inline">Required</span>
 				</div>
 			</div>
@@ -20,21 +20,21 @@
 			<div class="clearfix">
 				<label for="introduced">Introduced date:</label>
 				<div class="input">
-					<input type="date" name="introducedDate" pattern="YY-MM-dd"/>
+					<input type="date" name="introducedDate"  id="introducedDate" pattern="YY-MM-dd"/>
 					<span class="help-inline">YYYY-MM-DD</span>
 				</div>
 			</div>
 			<div class="clearfix">
 				<label for="discontinued">Discontinued date:</label>
 				<div class="input">
-					<input type="date" name="discontinuedDate" pattern="YY-MM-dd"/>
+					<input type="date" name="discontinuedDate" id="discontinuedDate" pattern="YY-MM-dd"/>
 					<span class="help-inline">YYYY-MM-DD</span>
 				</div>
 			</div>
 			<div class="clearfix">
 				<label for="company">Company Name:</label>
 				<div class="input">
-					<select name="company">
+					<select name="company" id="company">
 						<option value="0">--</option>
 						<% for(Company c : companies){ %>
 						<option value="<%=c.getId() %>"><%=c.getName() %></option>
@@ -44,7 +44,7 @@
 			</div>
 		</fieldset>
 		<div class="actions">
-			<input type="submit" id="action" value="Add" class="btn primary">
+			<button type="submit" value="add" name="action" class="btn primary">Add</button>
 			or <a href="index" class="btn">Cancel</a>
 		</div>
 	</form>

@@ -9,12 +9,21 @@ import java.sql.SQLException;
 //Singleton
 public class DatabaseHandler {
 	private static DatabaseHandler INSTANCE = null;
-	private static String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/";
-	private static String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
-	private static String DATABASE_NAME = "computer-database-db";
-	private static String DATABASE_PARAMETER = "?zeroDateTimeBehavior=convertToNull";
-	private static String DATABASE_USER = "root";
-	private static String DATABASE_PASS = "root";
+	private static final String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/";
+	private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
+	private static final String DATABASE_NAME = "computer-database-db";
+	private static final String DATABASE_PARAMETER = "?zeroDateTimeBehavior=convertToNull";
+	private static final String DATABASE_USER = "root";
+	private static final String DATABASE_PASS = "root";
+	
+	static {
+		try {
+			Class.forName(DATABASE_DRIVER);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	private DatabaseHandler(){
 		
@@ -29,10 +38,10 @@ public class DatabaseHandler {
 	
 	public Connection getConnection(){
 		try {
-			Class.forName(DATABASE_DRIVER);
+			
 			return DriverManager.getConnection(DATABASE_URL + DATABASE_NAME + DATABASE_PARAMETER,DATABASE_USER,DATABASE_PASS);
 					
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;

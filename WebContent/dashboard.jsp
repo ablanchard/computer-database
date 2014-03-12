@@ -1,5 +1,6 @@
 <jsp:include page="include/header.jsp" />
 <%@page import="java.util.List"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="com.excilys.data.Computer"%>
 <%@page import="com.excilys.data.Company"%>
 <% List<Computer> computers = (List<Computer>)request.getAttribute("computers"); %>
@@ -32,9 +33,21 @@
 			<tbody>
 				<% for(Computer p : computers){ %>
 				<tr>
-					<td><a href="#" onclick=""><%= p.getName() %></a></td>
-					<td><%= p.getIntroduction() %></td>
-					<td><%= p.getDiscontinued() %></td>
+					<td><a href="editComputer?id=<%=p.getId() %>" onclick=""><%= p.getName() %></a></td>
+					<td>
+					<% if(p.getIntroduction() != null) { %>
+					<%= new SimpleDateFormat("yyyy-MM-dd").format(p.getIntroduction()) %>
+					<% } else { %>
+					null
+					<% } %>
+					</td>
+					<td>
+					<% if(p.getDiscontinued() != null) { %>
+					<%=new SimpleDateFormat("yyyy-MM-dd").format(p.getDiscontinued()) %>
+					<% } else { %>
+					null
+					<% } %>
+					</td>
 					<td><% if(p.getCompany() != null) { %>
 						<%= p.getCompany().getName() %>
 						<% } else { %>

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,16 +18,17 @@ import com.excilys.data.Computer;
 public class ComputerDAO {
 	
 	private static ComputerDAO INSTANCE = null;
-	private static String TABLE_COMPUTER = "computer";
-	private static String ATTR_NAME = "name";
-	private static String ATTR_INTRODUCTION = "introduced";
-	private static String ATTR_DISCONTINUED = "discontinued";
-	private static String ATTR_ID = "id";
-	private static String ATTR_COMPANY_ID = "company_id";
-	private static String JOINTURE_QUERY = "SELECT * FROM "+TABLE_COMPUTER+" C LEFT OUTER JOIN " + CompanyDAO.TABLE_COMPANY+" COM ON C."+ATTR_COMPANY_ID+" = COM."+CompanyDAO.ATTR_ID;
+	private static DatabaseHandler DB = null;
+	private static final String TABLE_COMPUTER = "computer";
+	private static final String ATTR_NAME = "name";
+	private static final String ATTR_INTRODUCTION = "introduced";
+	private static final String ATTR_DISCONTINUED = "discontinued";
+	private static final String ATTR_ID = "id";
+	private static final String ATTR_COMPANY_ID = "company_id";
+	private static final String JOINTURE_QUERY = "SELECT * FROM "+TABLE_COMPUTER+" C LEFT OUTER JOIN "+ CompanyDAO.TABLE_COMPANY+" COM ON C."+ATTR_COMPANY_ID+" = COM."+CompanyDAO.ATTR_ID;
 	
 	private ComputerDAO(){
-		
+		DB= DatabaseHandler.getInstance();
 	}
 	
 	public static synchronized ComputerDAO getInstance(){
@@ -37,19 +39,25 @@ public class ComputerDAO {
 	}
 	
 	//Insertion
-	public void insert(Computer c){
-		Connection cn = null;
-		int rs ;
+	public void create(Computer c){
+		Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
+		int rs ;
 		String query = "INSERT INTO " + TABLE_COMPUTER + " ("+ATTR_NAME+" , "+ATTR_INTRODUCTION+" , "+ATTR_DISCONTINUED+" , "+ATTR_COMPANY_ID+" ) VALUES ( ? , ? , ? , ? )";
 		try{
-		
-			cn = DatabaseHandler.getInstance().getConnection();
-			
 			ps = cn.prepareStatement(query);
 			ps.setString(1,c.getName());
-			ps.setTimestamp(2, Timestamp.valueOf(c.getIntroduction().toString()));
-			ps.setTimestamp(3, Timestamp.valueOf(c.getDiscontinued().toString()));
+			
+			if(c.getIntroduction() == null)
+				ps.setNull(2, 0);
+			else
+				ps.setTimestamp(2, new Timestamp(c.getIntroduction().getTime()));
+			
+			if(c.getDiscontinued() == null)
+				ps.setNull(3,0);
+			else
+				ps.setTimestamp(3, new Timestamp(c.getDiscontinued().getTime()));
+			
 			if(c.getCompany()==null)
 				ps.setNull(4, 0);
 			else
@@ -65,30 +73,59 @@ public class ComputerDAO {
 			System.out.println("Exception lors de l'insertion : " + e.getMessage());
 			e.printStackTrace();
 		} finally{
-			try {
-				if(ps != null)
-					ps.close();
-				if(cn !=null)
-					cn.close();
-				
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
+			closeObjects(cn,ps,null);
 		}
 	}
 	//Suppresion
 	
 	//Modification
-	
+	public void update(Computer c){
+		Connection cn = DB.getConnection();
+		PreparedStatement ps =null;
+		int rs ;
+		String query = "UPDATE " + TABLE_COMPUTER + " SET "+ATTR_NAME+" = ? , "+ ATTR_INTRODUCTION+" = ? , "+ATTR_DISCONTINUED+" = ? , "+ATTR_COMPANY_ID+" = ? WHERE "+ ATTR_ID +" = ? ";
+		try{
+			ps = cn.prepareStatement(query);
+			ps.setString(1,c.getName());
+			
+			if(c.getIntroduction() == null)
+				ps.setNull(2, 0);
+			else
+				ps.setTimestamp(2, new Timestamp(c.getIntroduction().getTime()));
+			
+			if(c.getDiscontinued() == null)
+				ps.setNull(3,0);
+			else
+				ps.setTimestamp(3, new Timestamp(c.getDiscontinued().getTime()));
+			
+			if(c.getCompany()==null)
+				ps.setNull(4, 0);
+			else
+				ps.setFloat(4, c.getCompany().getId());
+			
+			ps.setInt(5, c.getId());
+			
+			rs = ps.executeUpdate();
+			if(rs != 0)
+				System.out.println("Update succeed");
+		
+		} 
+		catch (SQLException e){
+			System.out.println("Exception lors de l'insertion : " + e.getMessage());
+			e.printStackTrace();
+		} finally{
+			closeObjects(cn,ps,null);
+		}
+	}
 	//Selection
-	public Computer getById(int id){
+	public Computer retriveById(int id){
 		Computer c = null;
-		Connection cn = DatabaseHandler.getInstance().getConnection();
+		Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
+		String query = JOINTURE_QUERY + " WHERE C."+ ATTR_ID +"=? ;";
 		try {
-			ps = cn.prepareStatement(JOINTURE_QUERY + " WHERE C."+ ATTR_ID +"=? ;");
+			ps = cn.prepareStatement(query);
 			ps.setInt(1,id);
 			rs = ps.executeQuery();
 			if(rs.next())
@@ -97,68 +134,27 @@ public class ComputerDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally{
-			if(cn!=null){
-				try {
-					cn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}
-			if(ps!=null){
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}
-			if(rs!=null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}
-					
+			closeObjects(cn,ps,rs);
 		}
 		return c;
 		
 	}
 	
-	public List<Computer> getAll(){
+	public List<Computer> retrieveAll(){
 		List<Computer> c = new ArrayList<Computer>();
-		Connection cn = DatabaseHandler.getInstance().getConnection();
-		Statement st = null;
+		Connection cn = DB.getConnection();
+		PreparedStatement ps = null;
 		ResultSet rs  = null;
 		try {
-			st = cn.createStatement();
-			rs = st.executeQuery(JOINTURE_QUERY);
+			ps = cn.prepareStatement(JOINTURE_QUERY);
+			rs = ps.executeQuery();
 			while(rs.next())
 				c.add(entryToComputer(rs));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally{
-			if(cn!=null){
-				try {
-					cn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}
-			if(st!=null){
-				try {
-					st.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}
-			if(rs!=null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}
+			closeObjects(cn,ps,rs);
 					
 		}
 		return c;
@@ -181,6 +177,30 @@ public class ComputerDAO {
 		}
 		
 		return c;
+	}
+
+	private void closeObjects(Connection cn,PreparedStatement ps, ResultSet rs){
+		if(cn!=null){
+				try {
+					cn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}}
+			if(ps!=null){
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}}
+			if(rs!=null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}}
 	}
 	
 	
