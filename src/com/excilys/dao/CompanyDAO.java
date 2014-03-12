@@ -10,8 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
+import com.excilys.servlet.EditComputerServlet;
 
 //Singleton
 public class CompanyDAO {
@@ -20,6 +24,8 @@ public class CompanyDAO {
 	public static final String TABLE_COMPANY = "company";
 	public static final String ATTR_NAME = "name";
 	public static final String ATTR_ID = "id";
+
+	final Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
 	
 	private CompanyDAO(){
 		DB = DatabaseHandler.getInstance();

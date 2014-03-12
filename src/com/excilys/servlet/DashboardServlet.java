@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.dao.ComputerDAO;
 import com.excilys.data.Computer;
 
@@ -18,7 +21,8 @@ import com.excilys.data.Computer;
  */
 public class DashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
+	final Logger logger = LoggerFactory.getLogger(DashboardServlet.class);
     /**
      * @see HttpServlet#HttpServlet()
      */

@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
 
@@ -26,6 +30,8 @@ public class ComputerDAO {
 	private static final String ATTR_ID = "id";
 	private static final String ATTR_COMPANY_ID = "company_id";
 	private static final String JOINTURE_QUERY = "SELECT * FROM "+TABLE_COMPUTER+" C LEFT OUTER JOIN "+ CompanyDAO.TABLE_COMPANY+" COM ON C."+ATTR_COMPANY_ID+" = COM."+CompanyDAO.ATTR_ID;
+	final Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
+
 	
 	private ComputerDAO(){
 		DB= DatabaseHandler.getInstance();
@@ -66,11 +72,11 @@ public class ComputerDAO {
 			
 			rs = ps.executeUpdate();
 			if(rs != 0)
-				System.out.println("Insertion succeed");
+				logger.info("Insertion succeed");
 		
 		} 
 		catch (SQLException e){
-			System.out.println("Exception lors de l'insertion : " + e.getMessage());
+			logger.error("Exception lors de l'insertion : " + e.getMessage());
 			e.printStackTrace();
 		} finally{
 			closeObjects(cn,ps,null);
@@ -88,11 +94,11 @@ public class ComputerDAO {
 			
 			rs = ps.executeUpdate();
 			if(rs != 0)
-				System.out.println("Deletion succeed");
+				logger.info("Deletion succeed");
 		
 		} 
 		catch (SQLException e){
-			System.out.println("Exception lors de l'insertion : " + e.getMessage());
+			logger.error("Exception lors de l'insertion : " + e.getMessage());
 			e.printStackTrace();
 		} finally{
 			closeObjects(cn,ps,null);
@@ -127,11 +133,11 @@ public class ComputerDAO {
 			
 			rs = ps.executeUpdate();
 			if(rs != 0)
-				System.out.println("Update succeed");
+				logger.info("Update succeed");
 		
 		} 
 		catch (SQLException e){
-			System.out.println("Exception lors de l'insertion : " + e.getMessage());
+			logger.error("Exception lors de l'insertion : " + e.getMessage());
 			e.printStackTrace();
 		} finally{
 			closeObjects(cn,ps,null);

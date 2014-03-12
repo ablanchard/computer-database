@@ -5,6 +5,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.excilys.servlet.EditComputerServlet;
+
 
 //Singleton
 public class DatabaseHandler {
@@ -15,6 +20,8 @@ public class DatabaseHandler {
 	private static final String DATABASE_PARAMETER = "?zeroDateTimeBehavior=convertToNull";
 	private static final String DATABASE_USER = "root";
 	private static final String DATABASE_PASS = "root";
+
+	final Logger logger = LoggerFactory.getLogger(DatabaseHandler.class);
 	
 	static {
 		try {

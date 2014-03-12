@@ -18,12 +18,17 @@ import com.excilys.dao.ComputerDAO;
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Servlet implementation class AddComputerServlet
  */
 public class EditComputerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private String error = "";
+	final Logger logger = LoggerFactory.getLogger(EditComputerServlet.class);
        
     /**
      * @see HttpServlet#HttpServlet()
