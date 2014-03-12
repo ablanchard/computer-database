@@ -28,6 +28,7 @@
 					<th>Discontinued Date</th>
 					<!-- Table header for Company -->
 					<th>Company</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -54,6 +55,7 @@
 						No Company
 						<% } %>					
 					</td>
+					<td><a href="deleteComputer?id=<%=p.getId() %>" class="btn danger">Delete</a></td>
 				</tr>
 				<% } %>
 			</tbody>

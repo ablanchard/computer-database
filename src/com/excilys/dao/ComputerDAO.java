@@ -77,7 +77,27 @@ public class ComputerDAO {
 		}
 	}
 	//Suppresion
-	
+	public void deleteById(int id){
+		Connection cn = DB.getConnection();
+		PreparedStatement ps =null;
+		int rs ;
+		String query = "DELETE FROM " + TABLE_COMPUTER + " WHERE "+ATTR_ID+"= ?";
+		try{
+			ps = cn.prepareStatement(query);
+			ps.setInt(1,id);
+			
+			rs = ps.executeUpdate();
+			if(rs != 0)
+				System.out.println("Deletion succeed");
+		
+		} 
+		catch (SQLException e){
+			System.out.println("Exception lors de l'insertion : " + e.getMessage());
+			e.printStackTrace();
+		} finally{
+			closeObjects(cn,ps,null);
+		}
+	}
 	//Modification
 	public void update(Computer c){
 		Connection cn = DB.getConnection();
