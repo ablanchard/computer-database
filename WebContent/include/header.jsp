@@ -10,9 +10,13 @@
 <link href="css/main.css" rel="stylesheet" media="screen">
 </head>
 <body>
-	<header class="topbar">
-		<h1 class="fill">
-			<a href="index"> Application - Computer Database </a>
-		</h1>
-	</header>
+	<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      
+      <a class="navbar-brand" href="index">Application - Computer Database</a>
+    </div>
+</div>
+</nav>
 	

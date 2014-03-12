@@ -8,20 +8,25 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <% List<Computer> computers = (List<Computer>)request.getAttribute("computers"); %>
-<section id="main">
+<div class="container-fluid" id="main">
+	<div class="row">
 	<h1 id="homeTitle"><%=computers.size() %> Computers found</h1>
-	<div id="actions">
-		<form action="" method="POST">
-			<input type="search" id="searchbox" name="search"
-				value="" placeholder="Search name">
-			<input type="submit" id="searchsubmit"
-				value="Filter by name"
-				class="btn primary">
-		</form>
-		<a class="btn success" id="add" href="addComputer">Add Computer</a>
 	</div>
-
-		<table class="computers zebra-striped">
+	<div class="row" id="actions">
+		<div class="col-md-12">
+		<form role="form" class="form-inline" action="" method="POST">
+			<div class="form-group">
+				<label class="sr-only" for="searchbox">Search</label>
+				<input type="search" id="searchbox" name="search" value="" placeholder="Search name" />
+			</div>	
+			<button type="submit" id="searchsubmit"	class="btn btn-default">Filter by name</button>
+		</form>
+		<a href="addComputer"><button class="btn btn-success" id="add" >Add Computer</button></a>
+	</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+		<table class="computers table table-striped table-hover table-bordered">
 			<thead>
 				<tr>
 					<!-- Variable declarations for passing labels as parameters -->
@@ -49,11 +54,13 @@
 					<fmt:formatDate value="${computer.discontinued }" pattern="yyyy-MM-dd"/>
 					</td>
 					<td><c:out value="${computer.company.name}" default="No company"/></td>
-					<td><a href="deleteComputer?id=${computer.id}" class="btn danger">Delete</a></td>
+					<td><a href="deleteComputer?id=${computer.id}" ><button class="btn btn-danger">Delete</button></a></td>
 				</tr>
 				</c:forEach>				
 			</tbody>
 		</table>
-</section>
+	</div>
+	</div>
+</div>
 
 <jsp:include page="include/footer.jsp" />
