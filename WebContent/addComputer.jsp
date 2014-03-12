@@ -2,6 +2,7 @@
 
 <%@page import="java.util.List"%>
 <%@page import="com.excilys.data.Company"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% List<Company> companies = (List<Company>)request.getAttribute("companies"); %>
 <section id="main">
 
@@ -35,10 +36,9 @@
 				<label for="company">Company Name:</label>
 				<div class="input">
 					<select name="company" id="company">
-						<option value="0">--</option>
-						<% for(Company c : companies){ %>
-						<option value="<%=c.getId() %>"><%=c.getName() %></option>
-						<% } %>
+						<c:forEach var="company" items="${requestScope['companies']}" >
+							<option value="${company.id }">${company.name }</option>
+						</c:forEach>
 					</select>
 				</div>
 			</div>

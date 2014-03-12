@@ -39,7 +39,10 @@ public class EditComputerServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int computerId = Integer.valueOf(request.getParameter("id"));
 		List<Company> companies = CompanyDAO.getInstance().retrieveAll();
+		companies.add(0, Company.build().setName("No company").setId(0));
 		Computer computer = ComputerDAO.getInstance().retriveById(computerId);
+		if(computer.getCompany() == null)
+			computer.setCompany(Company.build().setId(0));
 		request.setAttribute("companies", companies);
 		request.setAttribute("computer", computer);
 		ServletContext ctx = getServletContext();

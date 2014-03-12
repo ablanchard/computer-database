@@ -7,21 +7,31 @@ public class Company {
 	public Company(String name){
 		this.name = name;
 	}
+	
+	private Company(){
+		
+	}
 
 	public int getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public Company setId(int id) {
 		this.id = id;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Company setName(String name) {
 		this.name = name;
+		return this;
+	}
+	
+	public static Company build(){
+		return new Company();
 	}
 	
 

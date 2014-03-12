@@ -3,6 +3,10 @@
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="com.excilys.data.Computer"%>
 <%@page import="com.excilys.data.Company"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <% List<Computer> computers = (List<Computer>)request.getAttribute("computers"); %>
 <section id="main">
 	<h1 id="homeTitle"><%=computers.size() %> Computers found</h1>
@@ -32,32 +36,22 @@
 				</tr>
 			</thead>
 			<tbody>
-				<% for(Computer p : computers){ %>
+			<c:forEach var="computer" items="${requestScope['computers']}" >
+			<c:set var="introduction" value="${computer.introduction }" />
 				<tr>
-					<td><a href="editComputer?id=<%=p.getId() %>" onclick=""><%= p.getName() %></a></td>
+					<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name }</a></td>
 					<td>
-					<% if(p.getIntroduction() != null) { %>
-					<%= new SimpleDateFormat("yyyy-MM-dd").format(p.getIntroduction()) %>
-					<% } else { %>
-					null
-					<% } %>
+					
+					<fmt:formatDate type="date" value="${computer.introduction }" pattern="yyyy-MM-dd"/>
+					 
 					</td>
 					<td>
-					<% if(p.getDiscontinued() != null) { %>
-					<%=new SimpleDateFormat("yyyy-MM-dd").format(p.getDiscontinued()) %>
-					<% } else { %>
-					null
-					<% } %>
+					<fmt:formatDate value="${computer.discontinued }" pattern="yyyy-MM-dd"/>
 					</td>
-					<td><% if(p.getCompany() != null) { %>
-						<%= p.getCompany().getName() %>
-						<% } else { %>
-						No Company
-						<% } %>					
-					</td>
-					<td><a href="deleteComputer?id=<%=p.getId() %>" class="btn danger">Delete</a></td>
+					<td><c:out value="${computer.company.name}" default="No company"/></td>
+					<td><a href="deleteComputer?id=${computer.id}" class="btn danger">Delete</a></td>
 				</tr>
-				<% } %>
+				</c:forEach>				
 			</tbody>
 		</table>
 </section>
