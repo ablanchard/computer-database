@@ -10,10 +10,12 @@
 <% List<Computer> computers = (List<Computer>)request.getAttribute("computers"); %>
 <div class="container-fluid" id="main">
 	<div class="row">
+	<div class="col-md-12">
 	<h1 id="homeTitle"><%=computers.size() %> Computers found</h1>
 	</div>
+	</div>
 	<div class="row" id="actions">
-		<div class="col-md-12">
+		<div class="col-md-10">
 		<form role="form" class="form-inline" action="" method="POST">
 			<div class="form-group">
 				<label class="sr-only" for="searchbox">Search</label>
@@ -21,8 +23,10 @@
 			</div>	
 			<button type="submit" id="searchsubmit"	class="btn btn-default">Filter by name</button>
 		</form>
-		<a href="addComputer"><button class="btn btn-success" id="add" >Add Computer</button></a>
-	</div>
+		</div>
+		<div class="col-md-2">
+		<a href="addComputer" class="btn btn-success" id="add" >Add Computer</a>
+		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-12">

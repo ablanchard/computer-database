@@ -43,6 +43,7 @@ public class AddComputerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Company> companies = CompanyDAO.getInstance().retrieveAll();
+		companies.add(0, Company.build().setName("No company").setId(0));
 		request.setAttribute("companies", companies);
 		ServletContext ctx = getServletContext();
 		RequestDispatcher rd = ctx.getRequestDispatcher("/addComputer.jsp");
