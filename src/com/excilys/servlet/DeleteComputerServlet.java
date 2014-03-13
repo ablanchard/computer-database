@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,9 @@ public class DeleteComputerServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int computerId = Integer.valueOf(request.getParameter("id"));
 		ComputerDAO.getInstance().deleteById(computerId);
-		response.sendRedirect("/computer-database/index");
+		HttpSession session = request.getSession();
+		int page = Integer.valueOf((String)session.getAttribute("page"));
+		response.sendRedirect("/computer-database/index?page="+page);
 	}
 
 

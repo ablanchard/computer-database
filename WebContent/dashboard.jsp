@@ -8,7 +8,7 @@
 
 
 <c:set var="nbElementsParPage" value="${requestScope['nbElementsParPage'] }"></c:set>
-<c:set var="page" value="${param['page'] }"></c:set>
+<c:set scope="session" var="page" value="${param['page'] }"></c:set>
 <c:set var="pageMax" value="${requestScope['pageMax'] }"></c:set>
 <c:if test="${empty param['page']}">
 	<c:set var="page" value="1"></c:set>
@@ -27,7 +27,7 @@
 	</div>
 	<div class="row" id="actions">
 		<div class="col-md-10">
-		<form role="form" class="form-inline" action="" method="POST">
+		<form role="form" class="form-inline" action="index" method="POST">
 			<div class="form-group">
 				<label class="sr-only" for="searchbox">Search</label>
 				<input type="search" id="searchbox" name="search" value="" placeholder="Search name" />
