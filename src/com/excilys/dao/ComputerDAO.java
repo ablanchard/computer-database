@@ -186,6 +186,31 @@ public class ComputerDAO {
 		return c;
 	}
 	
+	
+	public List<Computer> searchByName(String search){
+		List<Computer> c = new ArrayList<Computer>();
+		Connection cn = DB.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs  = null;
+		String query = JOINTURE_QUERY + " WHERE C." + ATTR_NAME + " LIKE ? OR COM." + CompanyDAO.ATTR_NAME + " LIKE ? ";
+		try {
+			ps = cn.prepareStatement(query);
+			ps.setString(1,"%"+search+"%");
+			ps.setString(2,"%"+search+"%");
+			rs = ps.executeQuery();
+			while(rs.next())
+				c.add(entryToComputer(rs));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+			closeObjects(cn,ps,rs);
+					
+		}
+		return c;
+	}
+	
+	
 	private Computer entryToComputer(ResultSet rs){
 		Computer c = null;
 		//Map<Integer,Company> companies = CompanyDAO.getInstance().getAll();

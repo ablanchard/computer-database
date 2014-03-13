@@ -55,7 +55,24 @@ public class DashboardServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		String search = request.getParameter("search");
+		if(search == "")
+			doGet(request,response);
+		else{
+			List<Computer> computers = ComputerDAO.getInstance().searchByName(search);
+			int nbComputers = computers.size();
+			int pageMax = (int)Math.floor(nbComputers/nbElementsParPage);
+			if (nbComputers%nbElementsParPage != 0)
+				pageMax++;
+			request.setAttribute("computers", computers);
+			request.setAttribute("nbComputers", nbComputers);
+			request.setAttribute("nbElementsParPage", nbElementsParPage);
+			request.setAttribute("pageMax",pageMax);
+			ServletContext ctx = getServletContext();
+			RequestDispatcher rd = ctx.getRequestDispatcher("/dashboard.jsp");
+			rd.forward(request, response);
+		}
+		
 	}
 
 }
