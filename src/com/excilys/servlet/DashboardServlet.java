@@ -21,6 +21,7 @@ import com.excilys.data.Computer;
  */
 public class DashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private int nbElementsParPage = 15;
 
 	final Logger logger = LoggerFactory.getLogger(DashboardServlet.class);
     /**
@@ -36,10 +37,18 @@ public class DashboardServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Computer> computers = ComputerDAO.getInstance().retrieveAll();
+		int nbComputers = computers.size();
+		int pageMax = (int)Math.floor(nbComputers/nbElementsParPage);
+		if (nbComputers%nbElementsParPage != 0)
+			pageMax++;
 		request.setAttribute("computers", computers);
+		request.setAttribute("nbComputers", nbComputers);
+		request.setAttribute("nbElementsParPage", nbElementsParPage);
+		request.setAttribute("pageMax",pageMax);
 		ServletContext ctx = getServletContext();
 		RequestDispatcher rd = ctx.getRequestDispatcher("/dashboard.jsp");
 		rd.forward(request, response);
+		
 	}
 
 	/**

@@ -4,14 +4,25 @@
 <%@page import="com.excilys.data.Computer"%>
 <%@page import="com.excilys.data.Company"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<% List<Computer> computers = (List<Computer>)request.getAttribute("computers"); %>
+
+<c:set var="nbElementsParPage" value="${requestScope['nbElementsParPage'] }"></c:set>
+<c:set var="page" value="${param['page'] }"></c:set>
+<c:set var="pageMax" value="${requestScope['pageMax'] }"></c:set>
+<c:if test="${empty param['page']}">
+	<c:set var="page" value="1"></c:set>
+</c:if>
+<c:if test="${page < 1}">
+	<c:set var="page" value="1"></c:set>
+</c:if>
+<c:if test="${page > pageMax}">
+	<c:set var="page" value="${pageMax }"></c:set>
+</c:if>
 <div class="container-fluid" id="main">
 	<div class="row">
 	<div class="col-md-12">
-	<h1 id="homeTitle"><%=computers.size() %> Computers found</h1>
+	<h1 id="homeTitle"><c:out value="${requestScope['nbComputers']}"/> Computers found</h1>
 	</div>
 	</div>
 	<div class="row" id="actions">
@@ -26,6 +37,28 @@
 		</div>
 		<div class="col-md-2">
 		<a href="addComputer" class="btn btn-success" id="add" >Add Computer</a>
+		</div>
+	</div>
+	<div class="row">
+		
+		<div class="col-md-12">
+			<ul class="pagination">
+				
+				<c:url value="/index" var="variableURL">
+						<c:param name="page" value="${page -1 }"/>
+				</c:url>
+			  <li <c:if test="${page -1 == 0 }">class="disabled"</c:if>><a href="${variableURL }">&laquo;</a></li>
+			  <c:forEach var="lienPage" begin="1" end="${ pageMax}">
+			  	<c:url value="/index" var="variableURL">
+						<c:param name="page" value="${lienPage }"/>
+				</c:url>
+			  	<li <c:if test="${lienPage == page }">class="active"</c:if> ><a href="${variableURL}" >${ lienPage}</a></li>
+			  </c:forEach>
+			  <c:url value="/index" var="variableURL">
+						<c:param name="page" value="${page + 1 }"/>
+				</c:url>
+			  <li <c:if test="${page >= pageMax }">class="disabled"</c:if>><a href="${variableURL }">&raquo;</a></li>
+			</ul>
 		</div>
 	</div>
 	<div class="row">
@@ -45,7 +78,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			<c:forEach var="computer" items="${requestScope['computers']}" >
+			<c:forEach var="computer" items="${requestScope['computers']}" begin="${nbElementsParPage * (page -1) }" end="${nbElementsParPage*page -1 }" >
 			<c:set var="introduction" value="${computer.introduction }" />
 				<tr>
 					<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name }</a></td>
