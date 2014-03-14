@@ -38,7 +38,7 @@ public class ComputerDAO {
 		DB= DatabaseHandler.getInstance();
 	}
 	
-	public static synchronized ComputerDAO getInstance(){
+	public static ComputerDAO getInstance(){
 		if(INSTANCE == null){
 			INSTANCE = new ComputerDAO();
 		}
@@ -72,6 +72,7 @@ public class ComputerDAO {
 			
 			
 			rs = ps.executeUpdate();
+			logger.info(ps.toString());
 			if(rs != 0)
 				logger.info("Insertion succeed");
 		
@@ -94,6 +95,8 @@ public class ComputerDAO {
 			ps.setInt(1,id);
 			
 			rs = ps.executeUpdate();
+
+			logger.info(ps.toString());
 			if(rs != 0)
 				logger.info("Deletion succeed");
 		
@@ -133,6 +136,8 @@ public class ComputerDAO {
 			ps.setInt(5, c.getId());
 			
 			rs = ps.executeUpdate();
+
+			logger.info(ps.toString());
 			if(rs != 0)
 				logger.info("Update succeed");
 		
@@ -144,6 +149,7 @@ public class ComputerDAO {
 			closeObjects(cn,ps,null);
 		}
 	}
+	
 	//Selection
 	public Computer retriveById(int id){
 		Computer c = null;
@@ -155,6 +161,8 @@ public class ComputerDAO {
 			ps = cn.prepareStatement(query);
 			ps.setInt(1,id);
 			rs = ps.executeQuery();
+
+			logger.info(ps.toString());
 			if(rs.next())
 				c = entryToComputer(rs);
 		} catch (SQLException e) {
@@ -167,59 +175,21 @@ public class ComputerDAO {
 		
 	}
 	
-	public List<Computer> retrieveAll(){
-		List<Computer> c = new ArrayList<Computer>();
-		Connection cn = DB.getConnection();
-		PreparedStatement ps = null;
-		ResultSet rs  = null;
-		try {
-			ps = cn.prepareStatement(JOINTURE_QUERY);
-			rs = ps.executeQuery();
-			while(rs.next())
-				c.add(entryToComputer(rs));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			closeObjects(cn,ps,rs);
-					
-		}
-		return c;
-	}
-	
+		
 	public List<Computer> retrieveAll(String order,String sens){
-		if(order == null){
-			return retrieveAll();
-		}
 		List<Computer> c = new ArrayList<Computer>();
 		Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
 		
 		try {
-			String orderCol ;
-			switch(order){
-				case "intro":
-					orderCol = "C."+ATTR_INTRODUCTION;
-					break;
-				case "disc":
-					orderCol = "C."+ATTR_DISCONTINUED;
-					break;
-				case "company":
-					orderCol = "COM."+CompanyDAO.ATTR_NAME;
-					break;
-				default://case "name"
-					orderCol = "C."+ATTR_NAME;
-					break;
-			}
-						
-			if(sens !=null){
-				if(sens.equals("desc"))
-					orderCol += " DESC";
-			}
-			ps = cn.prepareStatement(JOINTURE_QUERY + " ORDER BY " + orderCol);
+			if(order == null)
+				ps = cn.prepareStatement(JOINTURE_QUERY);
+			else
+				ps = cn.prepareStatement(JOINTURE_QUERY + " ORDER BY " + getOrderByQuery(order, sens));
+			rs = ps.executeQuery();
+
 			logger.info(ps.toString());
-			rs = ps.executeQuery();
 			while(rs.next())
 				c.add(entryToComputer(rs));
 		} catch (SQLException e) {
@@ -232,67 +202,26 @@ public class ComputerDAO {
 		return c;
 	}
 	
-	public List<Computer> searchByName(String search){
-		List<Computer> c = new ArrayList<Computer>();
-		Connection cn = DB.getConnection();
-		PreparedStatement ps = null;
-		ResultSet rs  = null;
 		
-		try {
-			ps = cn.prepareStatement(SEARCH_QUERY);
-			ps.setString(1,"%"+search+"%");
-			ps.setString(2,"%"+search+"%");
-			rs = ps.executeQuery();
-			while(rs.next())
-				c.add(entryToComputer(rs));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			closeObjects(cn,ps,rs);
-					
-		}
-		return c;
-	}
-	
 	public List<Computer> searchByName(String search,String order,String sens){
-		if(order == null){
-			return searchByName(search);
-		}
 		List<Computer> c = new ArrayList<Computer>();
 		Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
 		
 		try {
-			String orderCol ;
-			switch(order){
-				case "intro":
-					orderCol = "C."+ATTR_INTRODUCTION;
-					break;
-				case "disc":
-					orderCol = "C."+ATTR_DISCONTINUED;
-					break;
-				case "company":
-					orderCol = "COM."+CompanyDAO.ATTR_NAME;
-					break;
-				default://case "name"
-					orderCol = "C."+ATTR_NAME;
-					break;
-			}
-						
-			if(sens !=null){
-				if(sens.equals("desc"))
-					orderCol += " DESC";
-			}
-			ps = cn.prepareStatement(SEARCH_QUERY + " ORDER BY " + orderCol);
+			if(order == null)
+				ps = cn.prepareStatement(SEARCH_QUERY);
+			else
+				ps = cn.prepareStatement(SEARCH_QUERY + " ORDER BY " + getOrderByQuery(order, sens));
 			
 			ps.setString(1,"%"+search+"%");
 			ps.setString(2,"%"+search+"%");
 			
-			logger.info(ps.toString());
 						
 			rs = ps.executeQuery();
+
+			logger.info(ps.toString());
 			while(rs.next())
 				c.add(entryToComputer(rs));
 		} catch (SQLException e) {
@@ -323,6 +252,30 @@ public class ComputerDAO {
 		}
 		
 		return c;
+	}
+	
+	private String getOrderByQuery(String order,String sens){
+		String orderCol ;
+		switch(order){
+			case "intro":
+				orderCol = "C."+ATTR_INTRODUCTION;
+				break;
+			case "disc":
+				orderCol = "C."+ATTR_DISCONTINUED;
+				break;
+			case "company":
+				orderCol = "COM."+CompanyDAO.ATTR_NAME;
+				break;
+			default://case "name"
+				orderCol = "C."+ATTR_NAME;
+				break;
+		}
+					
+		if(sens !=null){
+			if(sens.equals("desc"))
+				orderCol += " DESC";
+		}
+		return orderCol;
 	}
 
 	private void closeObjects(Connection cn,PreparedStatement ps, ResultSet rs){

@@ -36,7 +36,7 @@
 	</div>
 	</div>
 	<div class="row" id="actions">
-		<div class="col-md-10">
+		<div class="col-md-12">
 		<form role="form" class="form-inline" action="index" method="PUT">
 			<div class="form-group">
 				<label class="sr-only" for="searchbox">Search</label>
@@ -44,8 +44,6 @@
 			</div>	
 			<button type="submit" id="searchsubmit"	class="btn btn-default">Filter by name</button>
 		</form>
-		</div>
-		<div class="col-md-2">
 		<a href="addComputer" class="btn btn-success" id="add" >Add Computer</a>
 		</div>
 	</div>
@@ -101,7 +99,12 @@
 							</c:when>
 						</c:choose>
 					</c:url>
-					<th><a href="${variableURL }">Computer Name</a></th>
+					<th>Computer Name
+						<a href="${variableURL }">
+						<button type="button" class="btn btn-default btn-md">
+ 							 <span class="glyphicon glyphicon-sort"></span> Order
+						</button></a>
+					</th>
 					
 					<c:url value="/index" var="variableURL">
 						<c:param name="page" value="${page}"/>
@@ -116,7 +119,11 @@
 							</c:when>
 						</c:choose>
 					</c:url>
-					<th><a href="${variableURL}">Introduced Date</a></th>
+					<th>Introduced Date
+						<a href="${variableURL }">
+						<button type="button" class="btn btn-default btn-md">
+ 							 <span class="glyphicon glyphicon-sort"></span> Order
+						</button></a></th>
 					<!-- Table header for Discontinued Date -->
 					
 					<c:url value="/index" var="variableURL">
@@ -132,7 +139,11 @@
 							</c:when>
 						</c:choose>
 					</c:url>
-					<th><a href="${variableURL}">Discontinued Date</a></th>
+					<th>Discontinued Date
+						<a href="${variableURL }">
+						<button type="button" class="btn btn-default btn-md">
+ 							 <span class="glyphicon glyphicon-sort"></span> Order
+						</button></a></th>
 					<!-- Table header for Company -->
 					
 					<c:url value="/index" var="variableURL">
@@ -148,7 +159,11 @@
 							</c:when>
 						</c:choose>
 					</c:url>
-					<th><a href="${variableURL}">Company</a></th>
+					<th>Company
+						<a href="${variableURL }">
+						<button type="button" class="btn btn-default btn-md">
+ 							 <span class="glyphicon glyphicon-sort"></span> Order
+						</button></a></th>
 					<th>Actions</th>
 				</tr>
 			</thead>
@@ -166,7 +181,9 @@
 					<fmt:formatDate value="${computer.discontinued }" pattern="yyyy-MM-dd"/>
 					</td>
 					<td><c:out value="${computer.company.name}" default="No company"/></td>
-					<td><a href="deleteComputer?id=${computer.id}" ><button class="btn btn-danger">Delete</button></a></td>
+					<td>
+					<a href="editComputer?id=${computer.id}" onclick=""><button class="btn btn-primary">Edit</button></a>
+					<a href="deleteComputer?id=${computer.id}" ><button class="btn btn-danger">Delete</button></a></td>
 				</tr>
 				</c:forEach>				
 			</tbody>

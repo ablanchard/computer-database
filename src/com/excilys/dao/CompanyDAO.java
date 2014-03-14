@@ -31,7 +31,7 @@ public class CompanyDAO {
 		DB = DatabaseHandler.getInstance();
 	}
 	
-	public static synchronized CompanyDAO getInstance(){
+	public static CompanyDAO getInstance(){
 		if(INSTANCE == null){
 			INSTANCE = new CompanyDAO();
 			
@@ -56,6 +56,8 @@ public class CompanyDAO {
 			ps = cn.prepareStatement(query);
 			ps.setInt(1,id);
 			rs = ps.executeQuery();
+
+			logger.info(ps.toString());
 			if(rs.next())
 				c = entryToCompany(rs);
 		} catch (SQLException e) {
@@ -76,6 +78,8 @@ public class CompanyDAO {
 		try {
 			ps = cn.prepareStatement(query);
 			rs = ps.executeQuery();
+
+			logger.info(ps.toString());
 			while(rs.next()){
 				companies.add(entryToCompany(rs));
 			}
