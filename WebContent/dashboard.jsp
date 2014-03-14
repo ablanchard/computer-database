@@ -6,7 +6,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-
 <c:set var="nbElementsParPage" value="${requestScope['nbElementsParPage'] }"></c:set>
 <c:set scope="session" var="page" value="${param['page'] }"></c:set>
 <c:set var="pageMax" value="${requestScope['pageMax'] }"></c:set>
@@ -19,6 +18,17 @@
 <c:if test="${page > pageMax}">
 	<c:set var="page" value="${pageMax }"></c:set>
 </c:if>
+
+<c:set var="newSens" value="asc"></c:set>
+<c:if test="${param['sens'] == newSens}">
+	<c:set var="newSens" value="desc"></c:set>
+</c:if>
+
+<c:set var="orderName" value="name"></c:set>
+<c:set var="orderIntro" value="intro"></c:set>
+<c:set var="orderDisc" value="disc"></c:set>
+<c:set var="orderCompany" value="company"></c:set>
+
 <div class="container-fluid" id="main">
 	<div class="row">
 	<div class="col-md-12">
@@ -27,7 +37,7 @@
 	</div>
 	<div class="row" id="actions">
 		<div class="col-md-10">
-		<form role="form" class="form-inline" action="index" method="POST">
+		<form role="form" class="form-inline" action="index" method="PUT">
 			<div class="form-group">
 				<label class="sr-only" for="searchbox">Search</label>
 				<input type="search" id="searchbox" name="search" value="" placeholder="Search name" />
@@ -39,6 +49,7 @@
 		<a href="addComputer" class="btn btn-success" id="add" >Add Computer</a>
 		</div>
 	</div>
+	<c:if test="${requestScope['nbComputers'] != 0 }">
 	<div class="row">
 		
 		<div class="col-md-12">
@@ -46,16 +57,25 @@
 				
 				<c:url value="/index" var="variableURL">
 						<c:param name="page" value="${page -1 }"/>
+						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:if test="${not empty requestScope['order'] }"><c:param name="order" value="${requestScope['order'] }"/></c:if>
+						<c:if test="${not empty requestScope['sens'] }"><c:param name="sens" value="${requestScope['sens'] }"/></c:if>
 				</c:url>
 			  <li <c:if test="${page -1 == 0 }">class="disabled"</c:if>><a href="${variableURL }">&laquo;</a></li>
 			  <c:forEach var="lienPage" begin="1" end="${ pageMax}">
 			  	<c:url value="/index" var="variableURL">
 						<c:param name="page" value="${lienPage }"/>
+						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:if test="${not empty requestScope['order'] }"><c:param name="order" value="${requestScope['order'] }"/></c:if>
+						<c:if test="${not empty requestScope['sens'] }"><c:param name="sens" value="${requestScope['sens'] }"/></c:if>
 				</c:url>
 			  	<li <c:if test="${lienPage == page }">class="active"</c:if> ><a href="${variableURL}" >${ lienPage}</a></li>
 			  </c:forEach>
 			  <c:url value="/index" var="variableURL">
 						<c:param name="page" value="${page + 1 }"/>
+						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:if test="${not empty requestScope['order'] }"><c:param name="order" value="${requestScope['order'] }"/></c:if>
+						<c:if test="${not empty requestScope['sens'] }"><c:param name="sens" value="${requestScope['sens'] }"/></c:if>
 				</c:url>
 			  <li <c:if test="${page >= pageMax }">class="disabled"</c:if>><a href="${variableURL }">&raquo;</a></li>
 			</ul>
@@ -68,12 +88,67 @@
 				<tr>
 					<!-- Variable declarations for passing labels as parameters -->
 					<!-- Table header for Computer Name -->
-					<th>Computer Name</th>
-					<th>Introduced Date</th>
+					<c:url value="/index" var="variableURL">
+						<c:param name="page" value="${page}"/>
+						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:param name="order" value="${orderName }"/>
+						<c:choose>
+							<c:when test="${requestScope['order'] == orderName}">
+								<c:param name="sens" value="${newSens}"/>
+							</c:when>
+							<c:when test="${requestScope['order'] != orderName}">
+								<c:param name="sens" value="asc"/>
+							</c:when>
+						</c:choose>
+					</c:url>
+					<th><a href="${variableURL }">Computer Name</a></th>
+					
+					<c:url value="/index" var="variableURL">
+						<c:param name="page" value="${page}"/>
+						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:param name="order" value="${orderIntro }"/>
+						<c:choose>
+							<c:when test="${requestScope['order'] == orderIntro}">
+								<c:param name="sens" value="${newSens}"/>
+							</c:when>
+							<c:when test="${requestScope['order'] != orderIntro}">
+								<c:param name="sens" value="asc"/>
+							</c:when>
+						</c:choose>
+					</c:url>
+					<th><a href="${variableURL}">Introduced Date</a></th>
 					<!-- Table header for Discontinued Date -->
-					<th>Discontinued Date</th>
+					
+					<c:url value="/index" var="variableURL">
+						<c:param name="page" value="${page}"/>
+						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:param name="order" value="${orderDisc }"/>
+						<c:choose>
+							<c:when test="${requestScope['order'] == orderDisc}">
+								<c:param name="sens" value="${newSens}"/>
+							</c:when>
+							<c:when test="${requestScope['order'] != orderDisc}">
+								<c:param name="sens" value="asc"/>
+							</c:when>
+						</c:choose>
+					</c:url>
+					<th><a href="${variableURL}">Discontinued Date</a></th>
 					<!-- Table header for Company -->
-					<th>Company</th>
+					
+					<c:url value="/index" var="variableURL">
+						<c:param name="page" value="${page}"/>
+						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:param name="order" value="${orderCompany }"/>
+						<c:choose>
+							<c:when test="${requestScope['order'] == orderCompany}">
+								<c:param name="sens" value="${newSens}"/>
+							</c:when>
+							<c:when test="${requestScope['order'] != orderCompany}">
+								<c:param name="sens" value="asc"/>
+							</c:when>
+						</c:choose>
+					</c:url>
+					<th><a href="${variableURL}">Company</a></th>
 					<th>Actions</th>
 				</tr>
 			</thead>
@@ -98,6 +173,7 @@
 		</table>
 	</div>
 	</div>
+	</c:if>
 </div>
 
 <jsp:include page="include/footer.jsp" />

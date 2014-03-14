@@ -30,6 +30,7 @@ public class ComputerDAO {
 	private static final String ATTR_ID = "id";
 	private static final String ATTR_COMPANY_ID = "company_id";
 	private static final String JOINTURE_QUERY = "SELECT * FROM "+TABLE_COMPUTER+" C LEFT OUTER JOIN "+ CompanyDAO.TABLE_COMPANY+" COM ON C."+ATTR_COMPANY_ID+" = COM."+CompanyDAO.ATTR_ID;
+	private static final String SEARCH_QUERY = JOINTURE_QUERY + " WHERE C." + ATTR_NAME + " LIKE ? OR COM." + CompanyDAO.ATTR_NAME + " LIKE ? ";
 	final Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
 
 	
@@ -186,17 +187,111 @@ public class ComputerDAO {
 		return c;
 	}
 	
+	public List<Computer> retrieveAll(String order,String sens){
+		if(order == null){
+			return retrieveAll();
+		}
+		List<Computer> c = new ArrayList<Computer>();
+		Connection cn = DB.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs  = null;
+		
+		try {
+			String orderCol ;
+			switch(order){
+				case "intro":
+					orderCol = "C."+ATTR_INTRODUCTION;
+					break;
+				case "disc":
+					orderCol = "C."+ATTR_DISCONTINUED;
+					break;
+				case "company":
+					orderCol = "COM."+CompanyDAO.ATTR_NAME;
+					break;
+				default://case "name"
+					orderCol = "C."+ATTR_NAME;
+					break;
+			}
+						
+			if(sens !=null){
+				if(sens.equals("desc"))
+					orderCol += " DESC";
+			}
+			ps = cn.prepareStatement(JOINTURE_QUERY + " ORDER BY " + orderCol);
+			logger.info(ps.toString());
+			rs = ps.executeQuery();
+			while(rs.next())
+				c.add(entryToComputer(rs));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+			closeObjects(cn,ps,rs);
+					
+		}
+		return c;
+	}
 	
 	public List<Computer> searchByName(String search){
 		List<Computer> c = new ArrayList<Computer>();
 		Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
-		String query = JOINTURE_QUERY + " WHERE C." + ATTR_NAME + " LIKE ? OR COM." + CompanyDAO.ATTR_NAME + " LIKE ? ";
+		
 		try {
-			ps = cn.prepareStatement(query);
+			ps = cn.prepareStatement(SEARCH_QUERY);
 			ps.setString(1,"%"+search+"%");
 			ps.setString(2,"%"+search+"%");
+			rs = ps.executeQuery();
+			while(rs.next())
+				c.add(entryToComputer(rs));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+			closeObjects(cn,ps,rs);
+					
+		}
+		return c;
+	}
+	
+	public List<Computer> searchByName(String search,String order,String sens){
+		if(order == null){
+			return searchByName(search);
+		}
+		List<Computer> c = new ArrayList<Computer>();
+		Connection cn = DB.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs  = null;
+		
+		try {
+			String orderCol ;
+			switch(order){
+				case "intro":
+					orderCol = "C."+ATTR_INTRODUCTION;
+					break;
+				case "disc":
+					orderCol = "C."+ATTR_DISCONTINUED;
+					break;
+				case "company":
+					orderCol = "COM."+CompanyDAO.ATTR_NAME;
+					break;
+				default://case "name"
+					orderCol = "C."+ATTR_NAME;
+					break;
+			}
+						
+			if(sens !=null){
+				if(sens.equals("desc"))
+					orderCol += " DESC";
+			}
+			ps = cn.prepareStatement(SEARCH_QUERY + " ORDER BY " + orderCol);
+			
+			ps.setString(1,"%"+search+"%");
+			ps.setString(2,"%"+search+"%");
+			
+			logger.info(ps.toString());
+						
 			rs = ps.executeQuery();
 			while(rs.next())
 				c.add(entryToComputer(rs));
