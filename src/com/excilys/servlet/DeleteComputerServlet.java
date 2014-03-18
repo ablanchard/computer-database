@@ -1,6 +1,7 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -16,8 +17,12 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.dao.CompanyDAO;
 import com.excilys.dao.ComputerDAO;
+import com.excilys.dao.OrderComputerCol;
+import com.excilys.dao.OrderDirection;
+import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
+import com.excilys.service.ServiceBean;
 
 /**
  * Servlet implementation class DeleteComputerServlet
@@ -39,10 +44,39 @@ public class DeleteComputerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int computerId = Integer.valueOf(request.getParameter("id"));
-		ComputerDAO.getInstance().deleteById(computerId);
+		ServiceBean.getInstance().deleteComputer(computerId);
+		
 		HttpSession session = request.getSession();
-		int page = Integer.valueOf((String)session.getAttribute("page"));
-		response.sendRedirect("/computer-database/index?page="+page);
+		SearchWrapper sw = (SearchWrapper) session.getAttribute("sw");
+		
+		String url = "";
+		
+		if(sw.getQuery() != null){
+			url += "search=" + sw.getQuery();
+		}
+		
+		if(sw.getOrderCol() != null){
+			if(!url.equals(""))
+				url += "&";
+			url += "order=" + sw.getOrderCol();
+		}
+		
+		if(sw.getOrderDirection() !=null){
+			if(!url.equals(""))
+				url += "&";
+			url += "direction=" + sw.getOrderDirection();
+		}
+		
+		if(sw.getPage() != 0){
+
+			if(!url.equals(""))
+				url += "&";
+			url += "page=" + sw.getPage();
+		}
+		if(!url.equals(""))
+			url = "?" + url;
+		
+		response.sendRedirect("/computer-database/index" + url);
 	}
 
 

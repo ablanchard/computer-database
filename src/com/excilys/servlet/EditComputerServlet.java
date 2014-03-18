@@ -17,7 +17,7 @@ import com.excilys.dao.CompanyDAO;
 import com.excilys.dao.ComputerDAO;
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
-
+import com.excilys.service.ServiceBean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +43,9 @@ public class EditComputerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int computerId = Integer.valueOf(request.getParameter("id"));
-		List<Company> companies = CompanyDAO.getInstance().retrieveAll();
+		List<Company> companies = ServiceBean.getInstance().retrieveCompanies();
 		companies.add(0, Company.build().setName("No company").setId(0));
-		Computer computer = ComputerDAO.getInstance().retriveById(computerId);
+		Computer computer = ServiceBean.getInstance().retrieveComputerById(computerId);
 		if(computer.getCompany() == null)
 			computer.setCompany(Company.build().setId(0));
 		request.setAttribute("companies", companies);
@@ -64,7 +64,7 @@ public class EditComputerServlet extends HttpServlet {
 		
 		if(computer != null){
 			computer.setId(computerId);
-			ComputerDAO.getInstance().update(computer);
+			ServiceBean.getInstance().updateComputer(computer);
 			response.sendRedirect("/computer-database/index");
 		}
 		else{
@@ -116,7 +116,7 @@ public class EditComputerServlet extends HttpServlet {
 		
 		
 		int companyId = Integer.valueOf(pCompanyId);
-		Company company = CompanyDAO.getInstance().retrieveById(companyId);
+		Company company = ServiceBean.getInstance().retriveCompanyById(companyId);
 		
 		return Computer.builder().setName(pName).setIntroduction(introducedDate).setDiscontinued(discontinuedDate).setCompany(company);
 		

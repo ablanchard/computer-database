@@ -14,40 +14,47 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
+import com.excilys.data.Log;
 
 //Singleton
-public class ComputerDAO {
+public class ComputerDAO  {
 	
 	private static ComputerDAO INSTANCE = null;
 	private static DatabaseHandler DB = null;
-	private static final String TABLE_COMPUTER = "computer";
+	public static final String TABLE_COMPUTER = "computer";
 	private static final String ATTR_NAME = "name";
 	private static final String ATTR_INTRODUCTION = "introduced";
 	private static final String ATTR_DISCONTINUED = "discontinued";
 	private static final String ATTR_ID = "id";
 	private static final String ATTR_COMPANY_ID = "company_id";
-	private static final String JOINTURE_QUERY = "SELECT * FROM "+TABLE_COMPUTER+" C LEFT OUTER JOIN "+ CompanyDAO.TABLE_COMPANY+" COM ON C."+ATTR_COMPANY_ID+" = COM."+CompanyDAO.ATTR_ID;
-	private static final String SEARCH_QUERY = JOINTURE_QUERY + " WHERE C." + ATTR_NAME + " LIKE ? OR COM." + CompanyDAO.ATTR_NAME + " LIKE ? ";
+	private static final String TABLE_JOINTURE = TABLE_COMPUTER+" C LEFT OUTER JOIN "+ CompanyDAO.TABLE_COMPANY+" COM ON C."+ATTR_COMPANY_ID+" = COM."+CompanyDAO.ATTR_ID;
+	private static final String SELECT_QUERY = "SELECT * FROM "+TABLE_JOINTURE;
+	private static final String COUNT_QUERY = "SELECT COUNT(*) FROM " + TABLE_JOINTURE;
+	private static final String SEARCH_CLAUSE = " WHERE C." + ATTR_NAME + " LIKE ? OR COM." + CompanyDAO.ATTR_NAME + " LIKE ? ";
+	//private static final String LIMIT_CLAUSE = " LIMIT ? OFFSET ? ";
+	
 	final Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
-
+	private static Connection cn ;
+	private static Log log;
 	
 	private ComputerDAO(){
 		DB= DatabaseHandler.getInstance();
 	}
 	
-	public static ComputerDAO getInstance(){
+	public static ComputerDAO getInstance(Connection con,Log lg){
 		if(INSTANCE == null){
 			INSTANCE = new ComputerDAO();
 		}
+		cn = con;
+		log = lg ;
 		return INSTANCE;
 	}
 	
 	//Insertion
-	public void create(Computer c){
-		Connection cn = DB.getConnection();
+	public void create(Computer c) throws DaoException {
+		// Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
 		int rs ;
 		String query = "INSERT INTO " + TABLE_COMPUTER + " ("+ATTR_NAME+" , "+ATTR_INTRODUCTION+" , "+ATTR_DISCONTINUED+" , "+ATTR_COMPANY_ID+" ) VALUES ( ? , ? , ? , ? )";
@@ -73,20 +80,25 @@ public class ComputerDAO {
 			
 			rs = ps.executeUpdate();
 			logger.info(ps.toString());
+			log.setCommand(ps.toString());
+			
 			if(rs != 0)
 				logger.info("Insertion succeed");
+			else
+				throw new DaoException();
 		
 		} 
 		catch (SQLException e){
 			logger.error("Exception lors de l'insertion : " + e.getMessage());
 			e.printStackTrace();
+			throw new DaoException() ;
 		} finally{
 			closeObjects(cn,ps,null);
 		}
 	}
 	//Suppresion
-	public void deleteById(int id){
-		Connection cn = DB.getConnection();
+	public void deleteById(int id)  throws DaoException  {
+		// Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
 		int rs ;
 		String query = "DELETE FROM " + TABLE_COMPUTER + " WHERE "+ATTR_ID+"= ?";
@@ -97,20 +109,24 @@ public class ComputerDAO {
 			rs = ps.executeUpdate();
 
 			logger.info(ps.toString());
+			log.setCommand(ps.toString());
 			if(rs != 0)
 				logger.info("Deletion succeed");
+			else
+				throw new DaoException();
 		
 		} 
 		catch (SQLException e){
 			logger.error("Exception lors de l'insertion : " + e.getMessage());
 			e.printStackTrace();
+			throw new DaoException();
 		} finally{
 			closeObjects(cn,ps,null);
 		}
 	}
 	//Modification
-	public void update(Computer c){
-		Connection cn = DB.getConnection();
+	public void update(Computer c)  throws DaoException  {
+		// Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
 		int rs ;
 		String query = "UPDATE " + TABLE_COMPUTER + " SET "+ATTR_NAME+" = ? , "+ ATTR_INTRODUCTION+" = ? , "+ATTR_DISCONTINUED+" = ? , "+ATTR_COMPANY_ID+" = ? WHERE "+ ATTR_ID +" = ? ";
@@ -138,36 +154,42 @@ public class ComputerDAO {
 			rs = ps.executeUpdate();
 
 			logger.info(ps.toString());
+			log.setCommand(ps.toString());
 			if(rs != 0)
 				logger.info("Update succeed");
+			else
+				throw new DaoException();
 		
 		} 
 		catch (SQLException e){
 			logger.error("Exception lors de l'insertion : " + e.getMessage());
 			e.printStackTrace();
+			throw new DaoException();
 		} finally{
 			closeObjects(cn,ps,null);
 		}
 	}
 	
 	//Selection
-	public Computer retriveById(int id){
+	public Computer retriveById(int id)  throws DaoException  {
 		Computer c = null;
-		Connection cn = DB.getConnection();
+		// Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
-		String query = JOINTURE_QUERY + " WHERE C."+ ATTR_ID +"=? ;";
+		String query = SELECT_QUERY + " WHERE C."+ ATTR_ID +"=? ;";
 		try {
 			ps = cn.prepareStatement(query);
 			ps.setInt(1,id);
 			rs = ps.executeQuery();
 
 			logger.info(ps.toString());
+			log.setCommand(ps.toString());
 			if(rs.next())
 				c = entryToComputer(rs);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new DaoException();
 		} finally{
 			closeObjects(cn,ps,rs);
 		}
@@ -176,25 +198,38 @@ public class ComputerDAO {
 	}
 	
 		
-	public List<Computer> retrieveAll(String order,String sens){
+	public List<Computer> retrieve(SearchWrapper sw)  throws DaoException  {
 		List<Computer> c = new ArrayList<Computer>();
-		Connection cn = DB.getConnection();
+		String query = SELECT_QUERY;
+		
+		if(sw.getQuery() != null)
+			query += SEARCH_CLAUSE ;
+		
+		query += getOrderClause(sw);
+		query += getLimitClause(sw);
+		
+		// Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
 		
-		try {
-			if(order == null)
-				ps = cn.prepareStatement(JOINTURE_QUERY);
-			else
-				ps = cn.prepareStatement(JOINTURE_QUERY + " ORDER BY " + getOrderByQuery(order, sens));
+		try {				
+			ps = cn.prepareStatement(query);
+			
+			if(sw.getQuery() != null){
+				ps.setString(1,"%"+sw.getQuery()+"%");
+				ps.setString(2,"%"+sw.getQuery()+"%");
+			}
+			
 			rs = ps.executeQuery();
 
 			logger.info(ps.toString());
+			log.setCommand(ps.toString());
 			while(rs.next())
 				c.add(entryToComputer(rs));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new DaoException();
 		} finally{
 			closeObjects(cn,ps,rs);
 					
@@ -202,40 +237,46 @@ public class ComputerDAO {
 		return c;
 	}
 	
+	public int count(SearchWrapper sw)  throws DaoException  {
+		int nbComputers = 0;
+		String query = COUNT_QUERY;
 		
-	public List<Computer> searchByName(String search,String order,String sens){
-		List<Computer> c = new ArrayList<Computer>();
-		Connection cn = DB.getConnection();
+		if(sw.getQuery() != null)
+			query += SEARCH_CLAUSE ;
+		
+		//query += getOrderClause(sw);
+		
+		// Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
 		
-		try {
-			if(order == null)
-				ps = cn.prepareStatement(SEARCH_QUERY);
-			else
-				ps = cn.prepareStatement(SEARCH_QUERY + " ORDER BY " + getOrderByQuery(order, sens));
+		try {				
+			ps = cn.prepareStatement(query);
 			
-			ps.setString(1,"%"+search+"%");
-			ps.setString(2,"%"+search+"%");
+			if(sw.getQuery() != null){
+				ps.setString(1,"%"+sw.getQuery()+"%");
+				ps.setString(2,"%"+sw.getQuery()+"%");
+			}
 			
-						
 			rs = ps.executeQuery();
 
 			logger.info(ps.toString());
-			while(rs.next())
-				c.add(entryToComputer(rs));
+			log.setCommand(ps.toString());
+			if(rs.next())
+				nbComputers = rs.getInt(1);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new DaoException();
 		} finally{
 			closeObjects(cn,ps,rs);
 					
 		}
-		return c;
+		return nbComputers;
 	}
 	
 	
-	private Computer entryToComputer(ResultSet rs){
+	private Computer entryToComputer(ResultSet rs)  throws DaoException  {
 		Computer c = null;
 		//Map<Integer,Company> companies = CompanyDAO.getInstance().getAll();
 		try {
@@ -249,43 +290,61 @@ public class ComputerDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new DaoException();
 		}
 		
 		return c;
 	}
 	
-	private String getOrderByQuery(String order,String sens){
-		String orderCol ;
-		switch(order){
-			case "intro":
-				orderCol = "C."+ATTR_INTRODUCTION;
-				break;
-			case "disc":
-				orderCol = "C."+ATTR_DISCONTINUED;
-				break;
-			case "company":
-				orderCol = "COM."+CompanyDAO.ATTR_NAME;
-				break;
-			default://case "name"
-				orderCol = "C."+ATTR_NAME;
-				break;
+	private String getOrderClause(SearchWrapper sw){
+		String orderClause ;
+		
+		if(sw.getOrderCol() == null)
+			orderClause = " ";
+		else {
+			orderClause = " ORDER BY " ;
+			switch(sw.getOrderCol()){
+				case intro:
+					orderClause += "C."+ATTR_INTRODUCTION;
+					break;
+				case disc:
+					orderClause += "C."+ATTR_DISCONTINUED;
+					break;
+				case company:
+					orderClause += "COM."+CompanyDAO.ATTR_NAME;
+					break;
+				default://case "name"
+					orderClause += "C."+ATTR_NAME;
+					break;
+			}
+						
+			if(sw.getOrderDirection() !=  null){
+				if(sw.getOrderDirection() == OrderDirection.desc)
+					orderClause += " DESC";
+			}
+		
 		}
-					
-		if(sens !=null){
-			if(sens.equals("desc"))
-				orderCol += " DESC";
+		return orderClause;
+		
+	}
+	
+	private String getLimitClause(SearchWrapper sw){
+		String limitClause = "" ;
+		if(sw.getPage() != 0){
+			int offset = (sw.getPage()-1)*sw.getNbComputersPerPage();
+			limitClause += " LIMIT " + sw.getNbComputersPerPage() + " OFFSET " + offset ;
 		}
-		return orderCol;
+		return limitClause;
 	}
 
 	private void closeObjects(Connection cn,PreparedStatement ps, ResultSet rs){
-		if(cn!=null){
+		/*if(cn!=null){
 				try {
 					cn.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-			}}
+			}}*/
 			if(ps!=null){
 				try {
 					ps.close();

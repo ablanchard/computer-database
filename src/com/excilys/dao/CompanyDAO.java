@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
+import com.excilys.data.Log;
 import com.excilys.servlet.EditComputerServlet;
 
 //Singleton
@@ -26,16 +27,20 @@ public class CompanyDAO {
 	public static final String ATTR_ID = "id";
 
 	final Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
+	private static Connection cn ;
+	private static Log log;
 	
 	private CompanyDAO(){
 		DB = DatabaseHandler.getInstance();
 	}
 	
-	public static CompanyDAO getInstance(){
+	public static CompanyDAO getInstance(Connection con,Log lg){
 		if(INSTANCE == null){
 			INSTANCE = new CompanyDAO();
 			
 		}
+		cn = con;
+		log = lg;
 		return INSTANCE;
 	}
 	
@@ -46,9 +51,9 @@ public class CompanyDAO {
 	//Modification
 	
 	//Selection
-	public Company retrieveById(int id){
+	public Company retrieveById(int id) throws DaoException {
 		Company c = null;
-		Connection cn = DB.getConnection();
+		//Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
 		String query = "SELECT * FROM " + TABLE_COMPANY + " WHERE "+ ATTR_ID +"=? ;";
@@ -58,20 +63,22 @@ public class CompanyDAO {
 			rs = ps.executeQuery();
 
 			logger.info(ps.toString());
+			log.setCommand(ps.toString());
 			if(rs.next())
 				c = entryToCompany(rs);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new DaoException();
 		} finally{
 			closeObjects(cn,ps,rs);
 		}
 		return c;
 	}
 	
-	public List<Company> retrieveAll(){
+	public List<Company> retrieveAll() throws DaoException {
 		List<Company> companies = new ArrayList<Company>();
-		Connection cn = DB.getConnection();
+		//Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
 		String query = "SELECT * FROM " + TABLE_COMPANY + " ;";
@@ -80,12 +87,14 @@ public class CompanyDAO {
 			rs = ps.executeQuery();
 
 			logger.info(ps.toString());
+			log.setCommand(ps.toString());
 			while(rs.next()){
 				companies.add(entryToCompany(rs));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new DaoException();
 		} finally{
 			closeObjects(cn,ps,rs);
 					
@@ -107,13 +116,13 @@ public class CompanyDAO {
 	}
 
 	private void closeObjects(Connection cn,PreparedStatement ps, ResultSet rs){
-		if(cn!=null){
+		/*if(cn!=null){
 				try {
 					cn.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-			}}
+			}}*/
 			if(ps!=null){
 				try {
 					ps.close();

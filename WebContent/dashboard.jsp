@@ -3,11 +3,12 @@
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="com.excilys.data.Computer"%>
 <%@page import="com.excilys.data.Company"%>
+<%@page import="com.excilys.dao.ComputerDAO"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<c:set var="nbElementsParPage" value="${requestScope['nbElementsParPage'] }"></c:set>
-<c:set scope="session" var="page" value="${param['page'] }"></c:set>
+<c:set var="nbElementsParPage" value="${requestScope['sw'].nbComputersPerPage }"></c:set>
+<c:set var="page" value="${requestScope['sw'].page }"></c:set>
 <c:set var="pageMax" value="${requestScope['pageMax'] }"></c:set>
 <c:if test="${empty param['page']}">
 	<c:set var="page" value="1"></c:set>
@@ -15,13 +16,13 @@
 <c:if test="${page < 1}">
 	<c:set var="page" value="1"></c:set>
 </c:if>
-<c:if test="${page > pageMax}">
+<c:if test="${page >= pageMax}">
 	<c:set var="page" value="${pageMax }"></c:set>
 </c:if>
 
-<c:set var="newSens" value="asc"></c:set>
-<c:if test="${param['sens'] == newSens}">
-	<c:set var="newSens" value="desc"></c:set>
+<c:set var="newDirection" value="asc"></c:set>
+<c:if test="${param['direction'] == newDirection}">
+	<c:set var="newDirection" value="desc"></c:set>
 </c:if>
 
 <c:set var="orderName" value="name"></c:set>
@@ -55,25 +56,32 @@
 				
 				<c:url value="/index" var="variableURL">
 						<c:param name="page" value="${page -1 }"/>
-						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
-						<c:if test="${not empty requestScope['order'] }"><c:param name="order" value="${requestScope['order'] }"/></c:if>
-						<c:if test="${not empty requestScope['sens'] }"><c:param name="sens" value="${requestScope['sens'] }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].query }"><c:param name="search" value="${requestScope['sw'].query }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].orderCol }"><c:param name="order" value="${requestScope['sw'].orderCol }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].orderDirection }"><c:param name="direction" value="${requestScope['sw'].orderDirection }"/></c:if>
 				</c:url>
 			  <li <c:if test="${page -1 == 0 }">class="disabled"</c:if>><a href="${variableURL }">&laquo;</a></li>
 			  <c:forEach var="lienPage" begin="1" end="${ pageMax}">
 			  	<c:url value="/index" var="variableURL">
 						<c:param name="page" value="${lienPage }"/>
-						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
-						<c:if test="${not empty requestScope['order'] }"><c:param name="order" value="${requestScope['order'] }"/></c:if>
-						<c:if test="${not empty requestScope['sens'] }"><c:param name="sens" value="${requestScope['sens'] }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].query }"><c:param name="search" value="${requestScope['sw'].query }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].orderCol }"><c:param name="order" value="${requestScope['sw'].orderCol }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].orderDirection }"><c:param name="direction" value="${requestScope['sw'].orderDirection }"/></c:if>
 				</c:url>
 			  	<li <c:if test="${lienPage == page }">class="active"</c:if> ><a href="${variableURL}" >${ lienPage}</a></li>
 			  </c:forEach>
 			  <c:url value="/index" var="variableURL">
-						<c:param name="page" value="${page + 1 }"/>
-						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
-						<c:if test="${not empty requestScope['order'] }"><c:param name="order" value="${requestScope['order'] }"/></c:if>
-						<c:if test="${not empty requestScope['sens'] }"><c:param name="sens" value="${requestScope['sens'] }"/></c:if>
+				  			<c:choose>
+							<c:when test="${page >= pageMax }">
+								<c:param name="page" value="${page}"/>
+							</c:when>
+							<c:when test="${page < pageMax }">
+								<c:param name="page" value="${page + 1 }"/>
+							</c:when>
+						</c:choose>
+						<c:if test="${not empty requestScope['sw'].query }"><c:param name="search" value="${requestScope['sw'].query }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].orderCol }"><c:param name="order" value="${requestScope['sw'].orderCol }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].orderDirection }"><c:param name="direction" value="${requestScope['sw'].orderDirection }"/></c:if>
 				</c:url>
 			  <li <c:if test="${page >= pageMax }">class="disabled"</c:if>><a href="${variableURL }">&raquo;</a></li>
 			</ul>
@@ -88,14 +96,14 @@
 					<!-- Table header for Computer Name -->
 					<c:url value="/index" var="variableURL">
 						<c:param name="page" value="${page}"/>
-						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].query }"><c:param name="search" value="${requestScope['sw'].query }"/></c:if>
 						<c:param name="order" value="${orderName }"/>
 						<c:choose>
-							<c:when test="${requestScope['order'] == orderName}">
-								<c:param name="sens" value="${newSens}"/>
+							<c:when test="${requestScope['sw'].orderCol == orderName}">
+								<c:param name="direction" value="${newDirection}"/>
 							</c:when>
-							<c:when test="${requestScope['order'] != orderName}">
-								<c:param name="sens" value="asc"/>
+							<c:when test="${requestScope['sw'].orderCol != orderName}">
+								<c:param name="direction" value="asc"/>
 							</c:when>
 						</c:choose>
 					</c:url>
@@ -108,14 +116,14 @@
 					
 					<c:url value="/index" var="variableURL">
 						<c:param name="page" value="${page}"/>
-						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].query }"><c:param name="search" value="${requestScope['sw'].query }"/></c:if>
 						<c:param name="order" value="${orderIntro }"/>
 						<c:choose>
-							<c:when test="${requestScope['order'] == orderIntro}">
-								<c:param name="sens" value="${newSens}"/>
+							<c:when test="${requestScope['sw'].orderCol == orderIntro}">
+								<c:param name="direction" value="${newDirection}"/>
 							</c:when>
-							<c:when test="${requestScope['order'] != orderIntro}">
-								<c:param name="sens" value="asc"/>
+							<c:when test="${requestScope['sw'].orderCol != orderIntro}">
+								<c:param name="direction" value="asc"/>
 							</c:when>
 						</c:choose>
 					</c:url>
@@ -128,14 +136,14 @@
 					
 					<c:url value="/index" var="variableURL">
 						<c:param name="page" value="${page}"/>
-						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].query }"><c:param name="search" value="${requestScope['sw'].query }"/></c:if>
 						<c:param name="order" value="${orderDisc }"/>
 						<c:choose>
-							<c:when test="${requestScope['order'] == orderDisc}">
-								<c:param name="sens" value="${newSens}"/>
+							<c:when test="${requestScope['sw'].orderCol == orderDisc}">
+								<c:param name="direction" value="${newDirection}"/>
 							</c:when>
-							<c:when test="${requestScope['order'] != orderDisc}">
-								<c:param name="sens" value="asc"/>
+							<c:when test="${requestScope['sw'].orderCol != orderDisc}">
+								<c:param name="direction" value="asc"/>
 							</c:when>
 						</c:choose>
 					</c:url>
@@ -148,14 +156,14 @@
 					
 					<c:url value="/index" var="variableURL">
 						<c:param name="page" value="${page}"/>
-						<c:if test="${not empty requestScope['search'] }"><c:param name="search" value="${requestScope['search'] }"/></c:if>
+						<c:if test="${not empty requestScope['sw'].query }"><c:param name="search" value="${requestScope['sw'].query }"/></c:if>
 						<c:param name="order" value="${orderCompany }"/>
 						<c:choose>
-							<c:when test="${requestScope['order'] == orderCompany}">
-								<c:param name="sens" value="${newSens}"/>
+							<c:when test="${requestScope['sw'].orderCol == orderCompany}">
+								<c:param name="direction" value="${newDirection}"/>
 							</c:when>
-							<c:when test="${requestScope['order'] != orderCompany}">
-								<c:param name="sens" value="asc"/>
+							<c:when test="${requestScope['sw'].orderCol != orderCompany}">
+								<c:param name="direction" value="asc"/>
 							</c:when>
 						</c:choose>
 					</c:url>
@@ -168,7 +176,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			<c:forEach var="computer" items="${requestScope['computers']}" begin="${nbElementsParPage * (page -1) }" end="${nbElementsParPage*page -1 }" >
+			<c:forEach var="computer" items="${requestScope['computers']}"  >
 			<c:set var="introduction" value="${computer.introduction }" />
 				<tr>
 					<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name }</a></td>
