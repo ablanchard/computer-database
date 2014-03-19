@@ -32,6 +32,9 @@
 
 <div class="container-fluid" id="main">
 	<div class="row">
+	<c:if test="${not empty requestScope['success'] }">
+		<div class="alert alert-success"><p><c:out value="${requestScope['success'] }"></c:out></p></div>
+	</c:if>
 	<div class="col-md-12">
 	<h1 id="homeTitle"><c:out value="${requestScope['nbComputers']}"/> Computers found</h1>
 	</div>

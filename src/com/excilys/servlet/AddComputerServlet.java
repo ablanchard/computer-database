@@ -1,9 +1,6 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -19,6 +16,9 @@ import org.slf4j.LoggerFactory;
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
+import com.excilys.dto.ComputerDTO;
+import com.excilys.dto.DTOException;
+import com.excilys.mapper.ComputerMapper;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 
@@ -27,7 +27,6 @@ import com.excilys.service.ComputerService;
  */
 public class AddComputerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private String error = "";
 
 	final Logger logger = LoggerFactory.getLogger(AddComputerServlet.class);
        
@@ -45,9 +44,11 @@ public class AddComputerServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		SearchWrapper<Company> sw = new SearchWrapper<Company>();
 		CompanyService.getInstance().retrieve(sw);
+		
 		List<Company> companies = sw.getItems();
 		companies.add(0, Company.build().setName("No company").setId(0));
 		request.setAttribute("companies", companies);
+		
 		ServletContext ctx = getServletContext();
 		RequestDispatcher rd = ctx.getRequestDispatcher("/addComputer.jsp");
 		rd.forward(request, response);
@@ -62,66 +63,28 @@ public class AddComputerServlet extends HttpServlet {
 		if(newComputer != null){
 			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(newComputer);
 			ComputerService.getInstance().create(sw);
+			request.setAttribute("success", "Computer successfully added.");
 			response.sendRedirect("/computer-database/index");
 		}
 		else{
-			request.setAttribute("error", error);
 			doGet(request,response);
 		}
 	}
 	
 	private Computer verify(HttpServletRequest request) throws ServletException, IOException {
 		//Non nullité et non vide
-		String pName = request.getParameter("name");
-		
-		//Formatage
-		String pIntroducedDate =  request.getParameter("introducedDate");
-		String pDiscontinuedDate = request.getParameter("discontinuedDate");
-		
-		//Rien de spécifique
-		String pCompanyId= request.getParameter("company");
-		
-		if(pName == null)
-			return null;
-		if(pName.equals("")){
-			error="You must specify a name";
-			return null;
+		ComputerDTO dto = ComputerDTO.build().setName(request.getParameter("name"))
+												.setIntroducedDate(request.getParameter("introducedDate"))
+												.setDiscontinuedDate(request.getParameter("discontinuedDate"))
+												.setCompanyId(Integer.valueOf(request.getParameter("company")));
+		Computer c = null;
+		try{
+			c = ComputerMapper.toComputer(dto);
+		} catch (DTOException e){
+			request.setAttribute("error", e.getMessage());
 		}
 		
-		Date introducedDate = null;
-		Date discontinuedDate = null;
-		if(pIntroducedDate != null){
-			if(!pIntroducedDate.equals("")){
-				try {	
-					introducedDate = new SimpleDateFormat("yyyy-MM-dd").parse(pIntroducedDate);
-				} catch (ParseException e) {
-					error="Introduced Date format is invalid";
-					return null;
-				}
-			}
-		}
-		if(pDiscontinuedDate != null){
-			if(!pDiscontinuedDate.equals("")){
-				try {
-					discontinuedDate = new SimpleDateFormat("yyyy-MM-dd").parse(pDiscontinuedDate);
-				} catch (ParseException e) {
-					error="Discontinued Date format is invalid";
-					return null;
-				}
-			}
-		}
-		
-		
-		int companyId = Integer.valueOf(pCompanyId);
-		SearchWrapper<Company> sw = new SearchWrapper<Company>(Company.build().setId(companyId));
-		System.out.println(sw.toString());
-		CompanyService.getInstance().retrieve(sw);
-		Company company = null;
-		if(sw.getItems().size() == 1)
-			company = sw.getItems().get(0);		
-		return Computer.builder().setName(pName).setIntroduction(introducedDate).setDiscontinued(discontinuedDate).setCompany(company);
-		
-		
+		return c;
 	}
 
 }

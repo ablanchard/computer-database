@@ -64,6 +64,7 @@ public class CompanyDAO extends DAO<Company> {
 			rs = ps.executeQuery();
 
 			logger.info(ps.toString());
+			
 			while(rs.next()){
 				companies.add(entry(rs));
 			}

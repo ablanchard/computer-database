@@ -7,6 +7,9 @@
 <c:set value="Add" var="actionName" scope="request"/>
 <div class="container-fluid" id="main">
 	<div class="row">
+	<c:if test="${not empty requestScope['error'] }">
+		<div class="alert alert-danger"><p><c:out value="${requestScope['error'] }"></c:out></p></div>
+	</c:if>
 	<h1>Add Computer</h1>
 	</div>
 	<div class="row">
