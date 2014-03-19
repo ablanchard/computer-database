@@ -14,12 +14,11 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.dao.ComputerDAO;
 import com.excilys.dao.OrderComputerCol;
 import com.excilys.dao.OrderDirection;
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
-import com.excilys.service.ServiceBean;
+import com.excilys.service.ComputerService;
 
 /**
  * Servlet implementation class DashboardServlet
@@ -55,7 +54,7 @@ public class DashboardServlet extends HttpServlet {
 		String order = request.getParameter(ATTR_ORDER_COL);
 		String direction = request.getParameter(ATTR_ORDER_DIRECTION);
 		String page = request.getParameter(ATTR_PAGE);
-		SearchWrapper sw = SearchWrapper.build(nbComputersPerPage);
+		SearchWrapper<Computer> sw = new SearchWrapper<Computer>(nbComputersPerPage);
 		
 		List<Computer> computers;
 		logger.info("Request parameters : Search : {}, Order : {}, Direction : {}",search,order,direction);
@@ -81,8 +80,9 @@ public class DashboardServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		session.setAttribute("sw", sw);
 		
-		computers = ServiceBean.getInstance().retrieveComputers(sw);
-		int nbComputers = ServiceBean.getInstance().countComputers(sw);
+		ComputerService.getInstance().retrieve(sw);
+		computers = sw.getItems();
+		int nbComputers = sw.getCount();
 		
 		int pageMax = (int)Math.floor(nbComputers/nbComputersPerPage);
 		

@@ -25,7 +25,7 @@ public class Computer {
 		String com = (company==null)?"null":company.getName();
 		String intro = (introduction==null)?"null":introduction.toString();
 		String dis = (discontinued==null)?"null":discontinued.toString();
-		return name + " introduced " + intro + " discontinues " + dis + " company : " + com;
+		return getId() + " " + name + " introduced " + intro + " discontinues " + dis + " company : " + com;
 	}
 	
 	public static Computer builder(){

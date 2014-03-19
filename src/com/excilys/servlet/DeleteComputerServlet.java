@@ -1,11 +1,7 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.List;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,14 +11,9 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.dao.CompanyDAO;
-import com.excilys.dao.ComputerDAO;
-import com.excilys.dao.OrderComputerCol;
-import com.excilys.dao.OrderDirection;
 import com.excilys.dao.SearchWrapper;
-import com.excilys.data.Company;
 import com.excilys.data.Computer;
-import com.excilys.service.ServiceBean;
+import com.excilys.service.ComputerService;
 
 /**
  * Servlet implementation class DeleteComputerServlet
@@ -44,7 +35,8 @@ public class DeleteComputerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int computerId = Integer.valueOf(request.getParameter("id"));
-		ServiceBean.getInstance().deleteComputer(computerId);
+		SearchWrapper<Computer> sw1 = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
+		ComputerService.getInstance().delete(sw1);
 		
 		HttpSession session = request.getSession();
 		SearchWrapper sw = (SearchWrapper) session.getAttribute("sw");

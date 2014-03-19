@@ -19,7 +19,7 @@ import com.excilys.data.Log;
 import com.excilys.servlet.EditComputerServlet;
 
 //Singleton
-public class CompanyDAO implements DAO<Company> {
+public class CompanyDAO extends DAO<Company> {
 	private static CompanyDAO INSTANCE = null;
 	private static DatabaseHandler DB = null;
 	public static final String TABLE = "company";
@@ -27,20 +27,17 @@ public class CompanyDAO implements DAO<Company> {
 	public static final String ATTR_ID = "id";
 
 	final Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
-	private static Connection cn ;
-	private static Log log;
 	
 	private CompanyDAO(){
 		DB = DatabaseHandler.getInstance();
+		setTABLE(TABLE);
 	}
 	
-	public static CompanyDAO getInstance(Connection con,Log lg){
+	public static CompanyDAO getInstance(){
 		if(INSTANCE == null){
 			INSTANCE = new CompanyDAO();
 			
 		}
-		cn = con;
-		log = lg;
 		return INSTANCE;
 	}
 	
@@ -51,45 +48,24 @@ public class CompanyDAO implements DAO<Company> {
 	//Modification
 	
 	//Selection
-	public Company retrieveById(int id) throws DaoException {
-		Company c = null;
-		//Connection cn = DB.getConnection();
-		PreparedStatement ps = null;
-		ResultSet rs  = null;
-		String query = "SELECT * FROM " + TABLE + " WHERE "+ ATTR_ID +"=? ;";
-		try {
-			ps = cn.prepareStatement(query);
-			ps.setInt(1,id);
-			rs = ps.executeQuery();
-
-			logger.info(ps.toString());
-			log.setCommand(ps.toString());
-			if(rs.next())
-				c = entryToCompany(rs);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new DaoException();
-		} finally{
-			closeObjects(cn,ps,rs);
-		}
-		return c;
-	}
 	
-	public List<Company> retrieve(SearchWrapper sw) throws DaoException {
+	public void retrieve(SearchWrapper<Company> sw,Connection cn) throws DaoException {
 		List<Company> companies = new ArrayList<Company>();
 		//Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
-		String query = "SELECT * FROM " + TABLE + " ;";
+		String query = "SELECT * FROM " + TABLE ;
+		if(sw.getItems().size() == 1)// get by id
+			query += " WHERE "+ ATTR_ID +"=? ;";
 		try {
 			ps = cn.prepareStatement(query);
+			if(sw.getItems().size() == 1)// get by id
+				ps.setInt(1, sw.getItems().get(0).getId());
 			rs = ps.executeQuery();
 
 			logger.info(ps.toString());
-			log.setCommand(ps.toString());
 			while(rs.next()){
-				companies.add(entryToCompany(rs));
+				companies.add(entry(rs));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -99,10 +75,10 @@ public class CompanyDAO implements DAO<Company> {
 			closeObjects(cn,ps,rs);
 					
 		}
-		return companies;
+		sw.setItems(companies);
 	}
 	
-	private Company entryToCompany(ResultSet rs){
+	protected Company entry(ResultSet rs){
 		Company c = null;
 		try {
 			c = new Company(rs.getString(ATTR_NAME));
@@ -115,58 +91,26 @@ public class CompanyDAO implements DAO<Company> {
 		return c;
 	}
 
-	private void closeObjects(Connection cn,PreparedStatement ps, ResultSet rs){
-		/*if(cn!=null){
-				try {
-					cn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}*/
-			if(ps!=null){
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}
-			if(rs!=null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}
-	}
-
 	@Override
-	public void create(Company e) throws DaoException {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void update(Company e) throws DaoException {
+	public void create(SearchWrapper<Company> sw,Connection cn) throws DaoException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void delete(Company e) throws DaoException {
+	public void update(SearchWrapper<Company> sw,Connection cn) throws DaoException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteById(int id) throws DaoException {
+	public void delete(SearchWrapper<Company> sw,Connection cn) throws DaoException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public int count(SearchWrapper sw) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	
+
+
+	
 }

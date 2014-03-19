@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.data.Log;
 
-public class LogDAO implements DAO<Log> {
+public class LogDAO extends DAO<Log> {
 	private static LogDAO INSTANCE = null;
 	private static DatabaseHandler DB = null;
-	private static final String TABLE_LOG = "log";
+	private static final String TABLE = "log";
 	private static final String ATTR_EXECUTED = "executed_on";
 	private static final String ATTR_TARGET = "target";
 	private static final String ATTR_OPERATION = "operation";
@@ -23,25 +23,24 @@ public class LogDAO implements DAO<Log> {
 	private static final String ATTR_COMMAND = "command";
 	
 	final Logger logger = LoggerFactory.getLogger(LogDAO.class);
-	private static Connection cn;
-	
+
 	private LogDAO(){
 		DB= DatabaseHandler.getInstance();
 	}
 	
-	public static LogDAO getInstance(Connection con){
+	public static LogDAO getInstance(){
 		if(INSTANCE == null){
 			INSTANCE = new LogDAO();
 		}
-		cn = con;
 		return INSTANCE;
 	}
 	
-	public void create(Log l) throws DaoException {
+	public void create(SearchWrapper<Log> sw,Connection cn) throws DaoException {
+		Log l = sw.getItems().get(0);
 		//Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
 		int rs ;
-		String query = "INSERT INTO " + TABLE_LOG + " ("+ATTR_TARGET+" , "+ATTR_OPERATION+" , "+ATTR_COMMAND + " ) VALUES ( ? , ? , ?  )";
+		String query = "INSERT INTO " + TABLE + " ("+ATTR_TARGET+" , "+ATTR_OPERATION+" , "+ATTR_COMMAND + " ) VALUES ( ? , ? , ?  )";
 		try{
 			ps = cn.prepareStatement(query);
 			ps.setString(1,l.getTarget());
@@ -64,66 +63,33 @@ public class LogDAO implements DAO<Log> {
 			closeObjects(cn,ps,null);
 		}
 	}
+
+	@Override
+	public void retrieve(SearchWrapper<Log> sw,Connection cn) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(SearchWrapper<Log> sw,Connection cn) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void delete(SearchWrapper<Log> sw,Connection cn) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected Log entry(ResultSet rs) throws DaoException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
-	private void closeObjects(Connection cn,PreparedStatement ps, ResultSet rs){
-		/*if(cn!=null){
-				try {
-					cn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}*/
-			if(ps!=null){
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}
-			if(rs!=null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}}
-	}
+	
 
-	@Override
-	public List<Log> retrieve(SearchWrapper sw) throws DaoException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Log retrieveById(int id) throws DaoException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void update(Log e) throws DaoException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void delete(Log e) throws DaoException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void deleteById(int id) throws DaoException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public int count(SearchWrapper sw) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	
 }

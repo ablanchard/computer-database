@@ -1,15 +1,39 @@
 package com.excilys.dao;
 
-public class SearchWrapper {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SearchWrapper<E> {
 	private String query;
 	private OrderComputerCol orderCol;
 	private OrderDirection orderDirection;
 	private int page = 1;
 	private int nbComputersPerPage;
+	private List<E> items;
+	private int count;
 	
-	private SearchWrapper(int nbComputersPerPage){
-		this.nbComputersPerPage = nbComputersPerPage;
+	public SearchWrapper(E e){
+		items = new ArrayList<E>();
+		items.add(0, e);
 	}
+	
+	public SearchWrapper(int nbItemsPerPage){
+		this.nbComputersPerPage = nbItemsPerPage;
+		items = new ArrayList<E>();
+		
+	}
+	
+	public SearchWrapper(){
+		items = new ArrayList<E>();
+	}
+	
+	public String toString(){
+		if(getItems().size() == 1)
+			return getItems().get(0).toString();
+		else
+			return "query : " + getQuery() + " order by " + getOrderCol() + " " + getOrderDirection() + " on page " + getPage();
+	}
+	
 	
 	public String getQuery() {
 		return query;
@@ -48,12 +72,24 @@ public class SearchWrapper {
 		this.nbComputersPerPage = nbComputersPerPage;
 	}
 
-	public static SearchWrapper build(int nbComputersPerPage){
-		return new SearchWrapper(nbComputersPerPage);
+
+
+
+	public List<E> getItems() {
+		return items;
 	}
-	
-	public String toString(){
-		return "page : " + getPage() + " query : " + getQuery();
+
+	public void setItems(List<E> items) {
+		this.items = items;
 	}
-	
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+
 }

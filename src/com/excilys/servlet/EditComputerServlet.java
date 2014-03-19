@@ -13,14 +13,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.excilys.dao.CompanyDAO;
-import com.excilys.dao.ComputerDAO;
-import com.excilys.data.Company;
-import com.excilys.data.Computer;
-import com.excilys.service.ServiceBean;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.excilys.dao.SearchWrapper;
+import com.excilys.data.Company;
+import com.excilys.data.Computer;
+import com.excilys.service.CompanyService;
+import com.excilys.service.ComputerService;
 
 /**
  * Servlet implementation class AddComputerServlet
@@ -43,9 +43,14 @@ public class EditComputerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int computerId = Integer.valueOf(request.getParameter("id"));
-		List<Company> companies = ServiceBean.getInstance().retrieveCompanies();
+		SearchWrapper<Company> sw = new SearchWrapper<Company>();
+		CompanyService.getInstance().retrieve(sw);
+		List<Company> companies = sw.getItems();
 		companies.add(0, Company.build().setName("No company").setId(0));
-		Computer computer = ServiceBean.getInstance().retrieveComputerById(computerId);
+		
+		SearchWrapper<Computer> sw2 = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
+		ComputerService.getInstance().retrieve(sw2);
+		Computer computer = sw2.getItems().get(0);
 		if(computer.getCompany() == null)
 			computer.setCompany(Company.build().setId(0));
 		request.setAttribute("companies", companies);
@@ -64,7 +69,8 @@ public class EditComputerServlet extends HttpServlet {
 		
 		if(computer != null){
 			computer.setId(computerId);
-			ServiceBean.getInstance().updateComputer(computer);
+			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(computer);
+			ComputerService.getInstance().update(sw);
 			response.sendRedirect("/computer-database/index");
 		}
 		else{
@@ -116,8 +122,10 @@ public class EditComputerServlet extends HttpServlet {
 		
 		
 		int companyId = Integer.valueOf(pCompanyId);
-		Company company = ServiceBean.getInstance().retriveCompanyById(companyId);
+		SearchWrapper<Company> sw = new SearchWrapper<Company>(Company.build().setId(companyId));
 		
+		CompanyService.getInstance().retrieve(sw);
+		Company company = sw.getItems().get(0);
 		return Computer.builder().setName(pName).setIntroduction(introducedDate).setDiscontinued(discontinuedDate).setCompany(company);
 		
 		

@@ -34,5 +34,9 @@ public class Company {
 		return new Company();
 	}
 	
+	public String toString(){
+		return getId() + " " + getName();
+	}
+	
 
 }
