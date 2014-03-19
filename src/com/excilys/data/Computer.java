@@ -9,6 +9,7 @@ public class Computer {
 	private Date discontinued;
 	private Company company;
 	
+	
 	public Computer(String name, Date introduction, Date discontinued, Company company){
 		this.name = name;
 		this.introduction = introduction;

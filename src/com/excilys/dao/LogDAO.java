@@ -5,13 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.data.Log;
 
-public class LogDAO {
+public class LogDAO implements DAO<Log> {
 	private static LogDAO INSTANCE = null;
 	private static DatabaseHandler DB = null;
 	private static final String TABLE_LOG = "log";
@@ -36,7 +37,7 @@ public class LogDAO {
 		return INSTANCE;
 	}
 	
-	public void create(Log l){
+	public void create(Log l) throws DaoException {
 		//Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
 		int rs ;
@@ -57,7 +58,8 @@ public class LogDAO {
 		} 
 		catch (SQLException e){
 			logger.error("Exception lors de l'insertion : " + e.getMessage());
-			e.printStackTrace();
+			throw new DaoException();
+			//e.printStackTrace();
 		} finally{
 			closeObjects(cn,ps,null);
 		}
@@ -85,6 +87,42 @@ public class LogDAO {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 			}}
+	}
+
+	@Override
+	public List<Log> retrieve(SearchWrapper sw) throws DaoException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Log retrieveById(int id) throws DaoException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void update(Log e) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void delete(Log e) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteById(int id) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int count(SearchWrapper sw) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	

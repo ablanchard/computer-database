@@ -18,7 +18,7 @@ import com.excilys.data.Operation;
 public class ServiceBean implements Service {
 
 	private static ServiceBean INSTANCE = null;
-
+	
 
 	
 	private ServiceBean(){
@@ -33,7 +33,7 @@ public class ServiceBean implements Service {
 	}
 	
 	public List<Computer> retrieveComputers(SearchWrapper sw){
-		Log log = Log.build().setTarget(ComputerDAO.TABLE_COMPUTER).setOperation(Operation.retrieve);
+		Log log = Log.build().setTarget(ComputerDAO.TABLE).setOperation(Operation.retrieve);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		List<Computer> computers = null;
 		try{
@@ -54,11 +54,11 @@ public class ServiceBean implements Service {
 	}
 
 	public Computer retrieveComputerById(int id){
-		Log log = Log.build().setTarget(ComputerDAO.TABLE_COMPUTER).setOperation(Operation.retrieve);
+		Log log = Log.build().setTarget(ComputerDAO.TABLE).setOperation(Operation.retrieve);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		Computer c = null;
 		try{
-			c = ComputerDAO.getInstance(cn,log).retriveById(id);
+			c = ComputerDAO.getInstance(cn,log).retrieveById(id);
 			LogDAO.getInstance(cn).create(log);
 			cn.commit();
 		} catch (DaoException | SQLException e){
@@ -74,7 +74,7 @@ public class ServiceBean implements Service {
 	}
 	
 	public void createComputer(Computer c){
-		Log log = Log.build().setTarget(ComputerDAO.TABLE_COMPUTER).setOperation(Operation.create);
+		Log log = Log.build().setTarget(ComputerDAO.TABLE).setOperation(Operation.create);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		try{
 			ComputerDAO.getInstance(cn,log).create(c);
@@ -91,7 +91,7 @@ public class ServiceBean implements Service {
 		}
 	}
 	public void updateComputer(Computer c){
-		Log log = Log.build().setTarget(ComputerDAO.TABLE_COMPUTER).setOperation(Operation.update);
+		Log log = Log.build().setTarget(ComputerDAO.TABLE).setOperation(Operation.update);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		try{
 			ComputerDAO.getInstance(cn,log).create(c);
@@ -108,7 +108,7 @@ public class ServiceBean implements Service {
 		}
 	}
 	public void deleteComputer(int computerId){
-		Log log = Log.build().setTarget(ComputerDAO.TABLE_COMPUTER).setOperation(Operation.delete);
+		Log log = Log.build().setTarget(ComputerDAO.TABLE).setOperation(Operation.delete);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		try{
 			ComputerDAO.getInstance(cn,log).deleteById(computerId);
@@ -125,7 +125,7 @@ public class ServiceBean implements Service {
 		}
 	}
 	public int countComputers(SearchWrapper sw){
-		Log log = Log.build().setTarget(ComputerDAO.TABLE_COMPUTER).setOperation(Operation.retrieve);
+		Log log = Log.build().setTarget(ComputerDAO.TABLE).setOperation(Operation.retrieve);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		int result = 0;
 		try{
@@ -144,11 +144,11 @@ public class ServiceBean implements Service {
 		return result;
 	}
 	public List<Company> retrieveCompanies(){
-		Log log = Log.build().setTarget(CompanyDAO.TABLE_COMPANY).setOperation(Operation.retrieve);
+		Log log = Log.build().setTarget(CompanyDAO.TABLE).setOperation(Operation.retrieve);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		List<Company> companies = null;
 		try{
-			companies = CompanyDAO.getInstance(cn,log).retrieveAll();
+			companies = CompanyDAO.getInstance(cn,log).retrieve(null);
 			LogDAO.getInstance(cn).create(log);
 			cn.commit();
 		} catch (DaoException | SQLException e){
@@ -164,7 +164,7 @@ public class ServiceBean implements Service {
 	}
 
 	public Company retriveCompanyById(int id){
-		Log log = Log.build().setTarget(CompanyDAO.TABLE_COMPANY).setOperation(Operation.retrieve);
+		Log log = Log.build().setTarget(CompanyDAO.TABLE).setOperation(Operation.retrieve);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		Company c = null;
 		try{
@@ -182,6 +182,8 @@ public class ServiceBean implements Service {
 		}
 		return c;
 	}
+	
+	
 	
 	public void closeConnection(Connection cn){
 		if(cn!=null){

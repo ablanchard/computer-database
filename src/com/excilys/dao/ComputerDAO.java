@@ -19,17 +19,17 @@ import com.excilys.data.Computer;
 import com.excilys.data.Log;
 
 //Singleton
-public class ComputerDAO  {
+public class ComputerDAO implements DAO<Computer> {
 	
 	private static ComputerDAO INSTANCE = null;
 	private static DatabaseHandler DB = null;
-	public static final String TABLE_COMPUTER = "computer";
+	public static final String TABLE = "computer";
 	private static final String ATTR_NAME = "name";
 	private static final String ATTR_INTRODUCTION = "introduced";
 	private static final String ATTR_DISCONTINUED = "discontinued";
 	private static final String ATTR_ID = "id";
 	private static final String ATTR_COMPANY_ID = "company_id";
-	private static final String TABLE_JOINTURE = TABLE_COMPUTER+" C LEFT OUTER JOIN "+ CompanyDAO.TABLE_COMPANY+" COM ON C."+ATTR_COMPANY_ID+" = COM."+CompanyDAO.ATTR_ID;
+	private static final String TABLE_JOINTURE = TABLE+" C LEFT OUTER JOIN "+ CompanyDAO.TABLE+" COM ON C."+ATTR_COMPANY_ID+" = COM."+CompanyDAO.ATTR_ID;
 	private static final String SELECT_QUERY = "SELECT * FROM "+TABLE_JOINTURE;
 	private static final String COUNT_QUERY = "SELECT COUNT(*) FROM " + TABLE_JOINTURE;
 	private static final String SEARCH_CLAUSE = " WHERE C." + ATTR_NAME + " LIKE ? OR COM." + CompanyDAO.ATTR_NAME + " LIKE ? ";
@@ -57,7 +57,7 @@ public class ComputerDAO  {
 		// Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
 		int rs ;
-		String query = "INSERT INTO " + TABLE_COMPUTER + " ("+ATTR_NAME+" , "+ATTR_INTRODUCTION+" , "+ATTR_DISCONTINUED+" , "+ATTR_COMPANY_ID+" ) VALUES ( ? , ? , ? , ? )";
+		String query = "INSERT INTO " + TABLE + " ("+ATTR_NAME+" , "+ATTR_INTRODUCTION+" , "+ATTR_DISCONTINUED+" , "+ATTR_COMPANY_ID+" ) VALUES ( ? , ? , ? , ? )";
 		try{
 			ps = cn.prepareStatement(query);
 			ps.setString(1,c.getName());
@@ -101,7 +101,7 @@ public class ComputerDAO  {
 		// Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
 		int rs ;
-		String query = "DELETE FROM " + TABLE_COMPUTER + " WHERE "+ATTR_ID+"= ?";
+		String query = "DELETE FROM " + TABLE + " WHERE "+ATTR_ID+"= ?";
 		try{
 			ps = cn.prepareStatement(query);
 			ps.setInt(1,id);
@@ -129,7 +129,7 @@ public class ComputerDAO  {
 		// Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
 		int rs ;
-		String query = "UPDATE " + TABLE_COMPUTER + " SET "+ATTR_NAME+" = ? , "+ ATTR_INTRODUCTION+" = ? , "+ATTR_DISCONTINUED+" = ? , "+ATTR_COMPANY_ID+" = ? WHERE "+ ATTR_ID +" = ? ";
+		String query = "UPDATE " + TABLE + " SET "+ATTR_NAME+" = ? , "+ ATTR_INTRODUCTION+" = ? , "+ATTR_DISCONTINUED+" = ? , "+ATTR_COMPANY_ID+" = ? WHERE "+ ATTR_ID +" = ? ";
 		try{
 			ps = cn.prepareStatement(query);
 			ps.setString(1,c.getName());
@@ -171,7 +171,7 @@ public class ComputerDAO  {
 	}
 	
 	//Selection
-	public Computer retriveById(int id)  throws DaoException  {
+	public Computer retrieveById(int id)  throws DaoException  {
 		Computer c = null;
 		// Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
@@ -359,6 +359,13 @@ public class ComputerDAO  {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 			}}
+	}
+
+
+	@Override
+	public void delete(Computer e) throws DaoException {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

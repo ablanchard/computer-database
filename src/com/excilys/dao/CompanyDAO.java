@@ -19,10 +19,10 @@ import com.excilys.data.Log;
 import com.excilys.servlet.EditComputerServlet;
 
 //Singleton
-public class CompanyDAO {
+public class CompanyDAO implements DAO<Company> {
 	private static CompanyDAO INSTANCE = null;
 	private static DatabaseHandler DB = null;
-	public static final String TABLE_COMPANY = "company";
+	public static final String TABLE = "company";
 	public static final String ATTR_NAME = "name";
 	public static final String ATTR_ID = "id";
 
@@ -56,7 +56,7 @@ public class CompanyDAO {
 		//Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
-		String query = "SELECT * FROM " + TABLE_COMPANY + " WHERE "+ ATTR_ID +"=? ;";
+		String query = "SELECT * FROM " + TABLE + " WHERE "+ ATTR_ID +"=? ;";
 		try {
 			ps = cn.prepareStatement(query);
 			ps.setInt(1,id);
@@ -76,12 +76,12 @@ public class CompanyDAO {
 		return c;
 	}
 	
-	public List<Company> retrieveAll() throws DaoException {
+	public List<Company> retrieve(SearchWrapper sw) throws DaoException {
 		List<Company> companies = new ArrayList<Company>();
 		//Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
-		String query = "SELECT * FROM " + TABLE_COMPANY + " ;";
+		String query = "SELECT * FROM " + TABLE + " ;";
 		try {
 			ps = cn.prepareStatement(query);
 			rs = ps.executeQuery();
@@ -137,5 +137,36 @@ public class CompanyDAO {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 			}}
+	}
+
+	@Override
+	public void create(Company e) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void update(Company e) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void delete(Company e) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteById(int id) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int count(SearchWrapper sw) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
