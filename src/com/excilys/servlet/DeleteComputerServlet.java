@@ -2,6 +2,8 @@ package com.excilys.servlet;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,40 +37,26 @@ public class DeleteComputerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int computerId = Integer.valueOf(request.getParameter("id"));
-		SearchWrapper<Computer> sw1 = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
-		ComputerService.getInstance().delete(sw1);
+		SearchWrapper<Computer> computerToDelete = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
 		
+		ComputerService.getInstance().retrieve(computerToDelete);
+		if(computerToDelete.getItems().size() == 1){
+			ComputerService.getInstance().delete(computerToDelete);
+			request.setAttribute("success", "Computer successfully deleted.");
+		}
+		else{
+			request.setAttribute("error", "This computer doesn't exist.");
+		}
+				
 		HttpSession session = request.getSession();
-		SearchWrapper sw = (SearchWrapper) session.getAttribute("sw");
+		SearchWrapper sw = (SearchWrapper) session.getAttribute(DashboardServlet.ATTR_WRAPPER);
 		
-		String url = "";
+		request.setAttribute(DashboardServlet.ATTR_WRAPPER, sw);		
 		
-		if(sw.getQuery() != null){
-			url += "search=" + sw.getQuery();
-		}
+		ServletContext ctx = getServletContext();
+		RequestDispatcher rd = ctx.getRequestDispatcher("/index");
+		rd.forward(request, response);
 		
-		if(sw.getOrderCol() != null){
-			if(!url.equals(""))
-				url += "&";
-			url += "order=" + sw.getOrderCol();
-		}
-		
-		if(sw.getOrderDirection() !=null){
-			if(!url.equals(""))
-				url += "&";
-			url += "direction=" + sw.getOrderDirection();
-		}
-		
-		if(sw.getPage() != 0){
-
-			if(!url.equals(""))
-				url += "&";
-			url += "page=" + sw.getPage();
-		}
-		if(!url.equals(""))
-			url = "?" + url;
-		
-		response.sendRedirect("/computer-database/index" + url);
 	}
 
 

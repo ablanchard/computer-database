@@ -11,6 +11,7 @@ public class SearchWrapper<E> {
 	private int nbComputersPerPage;
 	private List<E> items;
 	private int count;
+	private int pageMax;
 	
 	public SearchWrapper(E e){
 		items = new ArrayList<E>();
@@ -30,8 +31,19 @@ public class SearchWrapper<E> {
 	public String toString(){
 		if(getItems().size() == 1)
 			return getItems().get(0).toString();
-		else
-			return "query : " + getQuery() + " order by " + getOrderCol() + " " + getOrderDirection() + " on page " + getPage();
+		else{
+			String res = "Page " + getPage();
+			if(getQuery() != null)
+				res += " looking for \"" + getQuery() + "\"";
+			if(getOrderCol() != null){
+				res += " order by " + getOrderCol() ;
+				if(getOrderDirection() != null)
+					res += " " + getOrderDirection();
+				else
+					res += " ASC ";
+			}
+			return res;
+		}
 	}
 	
 	
@@ -89,6 +101,14 @@ public class SearchWrapper<E> {
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+
+	public int getPageMax() {
+		return pageMax;
+	}
+
+	public void setPageMax(int pageMax) {
+		this.pageMax = pageMax;
 	}
 
 

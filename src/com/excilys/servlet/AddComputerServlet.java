@@ -50,7 +50,7 @@ public class AddComputerServlet extends HttpServlet {
 		request.setAttribute("companies", companies);
 		
 		ServletContext ctx = getServletContext();
-		RequestDispatcher rd = ctx.getRequestDispatcher("/addComputer.jsp");
+		RequestDispatcher rd = ctx.getRequestDispatcher("/WEB-INF/addComputer.jsp");
 		rd.forward(request, response);
 	}
 

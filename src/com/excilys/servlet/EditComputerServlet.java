@@ -80,7 +80,7 @@ public class EditComputerServlet extends HttpServlet {
 		request.setAttribute("dto", computerDTO);
 		
 		ServletContext ctx = getServletContext();
-		RequestDispatcher rd = ctx.getRequestDispatcher("/editComputer.jsp");
+		RequestDispatcher rd = ctx.getRequestDispatcher("/WEB-INF/editComputer.jsp");
 		rd.forward(request, response);
 	}
 
