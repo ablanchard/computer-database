@@ -15,7 +15,7 @@ import com.excilys.data.Log;
 
 public abstract class DAO<E> {
 	
-	public static String TABLE ;
+	public String TABLE ;
 	
 	
 	
