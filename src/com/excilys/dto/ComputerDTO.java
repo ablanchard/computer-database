@@ -6,6 +6,7 @@ public class ComputerDTO {
 	private String introducedDate;
 	private String discontinuedDate;
 	private int companyId;
+	private String companyName;
 	
 	public int getId() {
 		return id;
@@ -45,6 +46,12 @@ public class ComputerDTO {
 	
 	public static ComputerDTO build(){
 		return new ComputerDTO();
+	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 	
 	

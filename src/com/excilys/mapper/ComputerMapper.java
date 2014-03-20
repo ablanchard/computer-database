@@ -2,7 +2,9 @@ package com.excilys.mapper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
@@ -74,17 +76,44 @@ public class ComputerMapper {
 		ComputerDTO dto = new ComputerDTO();
 		dto.setName(c.getName());
 		
-		dto.setIntroducedDate(new SimpleDateFormat(DATE_PATTERN).format(c.getIntroduction()));
-		dto.setDiscontinuedDate(new SimpleDateFormat(DATE_PATTERN).format(c.getDiscontinued()));
+		if(c.getIntroduction() == null)
+			dto.setIntroducedDate("");
+		else
+			dto.setIntroducedDate(new SimpleDateFormat(DATE_PATTERN).format(c.getIntroduction()));
+		
+		if(c.getDiscontinued() == null)
+			dto.setDiscontinuedDate("");
+		else
+			dto.setDiscontinuedDate(new SimpleDateFormat(DATE_PATTERN).format(c.getDiscontinued()));
 		
 		dto.setId(c.getId());
 		
-		if(c.getCompany() == null)
+		if(c.getCompany() == null){
 			dto.setCompanyId(0);
-		else
+		}
+		else{
 			dto.setCompanyId(c.getCompany().getId());
+			dto.setCompanyName(c.getCompany().getName());
+		}
+		
 		
 		return dto;
 		
+	}
+
+	public static SearchWrapper<ComputerDTO> toComputerDTOWrapper(SearchWrapper<Computer> sw){
+		SearchWrapper<ComputerDTO> swDTO = new SearchWrapper<ComputerDTO>();
+			
+		swDTO.setQuery(sw.getQuery());
+		swDTO.setOrderCol(sw.getOrderCol());
+		swDTO.setOrderDirection(sw.getOrderDirection());
+		swDTO.setPage(sw.getPage());
+		swDTO.setNbComputersPerPage(sw.getNbComputersPerPage());
+		swDTO.setCount(sw.getCount());
+		swDTO.setPageMax(sw.getPageMax());
+		for(Computer c : sw.getItems()){
+			swDTO.getItems().add(ComputerMapper.toComputerDTO(c));
+		}
+		return swDTO;
 	}
 }

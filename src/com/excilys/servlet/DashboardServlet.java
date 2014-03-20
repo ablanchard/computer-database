@@ -1,6 +1,7 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -18,6 +19,7 @@ import com.excilys.dao.OrderComputerCol;
 import com.excilys.dao.OrderDirection;
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
+import com.excilys.mapper.ComputerMapper;
 import com.excilys.service.ComputerService;
 
 /**
@@ -93,8 +95,17 @@ public class DashboardServlet extends HttpServlet {
 		sw.setPageMax(pageMax);
 		
 		
-		request.setAttribute(ATTR_WRAPPER, sw);
+		request.setAttribute(ATTR_WRAPPER, ComputerMapper.toComputerDTOWrapper(sw));
 		
+		//Headers
+		List<Header> headers = new ArrayList<Header>();
+		headers.add(new Header("Computer Name",OrderComputerCol.name.toString()));
+		headers.add(Header.build().setName("Introduced Date").setOrderName(OrderComputerCol.intro.toString()));
+		headers.add(Header.build().setName("Discontinued Date").setOrderName(OrderComputerCol.disc.toString()));
+		headers.add(Header.build().setName("Company").setOrderName(OrderComputerCol.company.toString()));
+		headers.add(Header.build().setName("Actions"));
+		
+		request.setAttribute("tableHeaders", headers);
 		
 		
 		ServletContext ctx = getServletContext();

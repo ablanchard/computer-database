@@ -28,6 +28,8 @@ public class SearchWrapper<E> {
 		items = new ArrayList<E>();
 	}
 	
+	
+	
 	public String toString(){
 		if(getItems().size() == 1)
 			return getItems().get(0).toString();
