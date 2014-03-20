@@ -44,43 +44,46 @@
 		</div>
 	</div>
 	<c:if test="${count != 0 }">
-	<div class="row">
-		
-		<div class="col-md-12">
-			<cl:pagination page="${page }" pageMax="${pageMax }" query="${query}" orderCol="${orderCol }" orderDirection="${ orderDirection }"></cl:pagination>
+		<div class="row">
+			<div class="col-md-12">
+				<cl:pagination page="${page }" pageMax="${pageMax }" query="${query}" orderCol="${orderCol }" orderDirection="${ orderDirection }"></cl:pagination>
+			</div>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-		<table class="computers table table-striped table-hover table-bordered">
-			<thead>
-				<tr>
-					<c:forEach var="tableHeader" items="${requestScope['tableHeaders']}"  >
-						<th>${tableHeader.name }
-							<c:if test="${not empty tableHeader.orderName }">
-								<cl:orderButton page="${page }" query="${query }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
-							</c:if>
-						</th>
-					</c:forEach>
-				</tr>
-			</thead>
-			<tbody>
-			<c:forEach var="computer" items="${requestScope['sw'].items}"  >
-				<tr>
-					<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name }</a></td>
-					<td>${computer.introducedDate }</td>
-					<td>${computer.discontinuedDate }</td>
-					<td><c:out value="${computer.companyName}" default="No company"/></td>
-					<td>
-						<a href="editComputer?id=${computer.id}" onclick=""><button class="btn btn-primary">Edit</button></a>
-						<a href="deleteComputer?id=${computer.id}" ><button class="btn btn-danger">Delete</button></a>
-					</td>
-				</tr>
-				</c:forEach>				
-			</tbody>
-		</table>
-	</div>
-	</div>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="computers table table-striped table-hover table-bordered">
+					<thead>
+						<tr>
+							<c:forEach var="tableHeader" items="${requestScope['tableHeaders']}"  >
+								<th>${tableHeader.name }
+									<c:if test="${not empty tableHeader.orderName }">
+										<cl:orderButton page="${page }" query="${query }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
+									</c:if>
+								</th>
+							</c:forEach>
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach var="computer" items="${requestScope['sw'].items}"  >
+							<tr>
+								<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name }</a></td>
+								<td>${computer.introducedDate }</td>
+								<td>${computer.discontinuedDate }</td>
+								<td><c:out value="${computer.companyName}" default="No company"/></td>
+								<td>
+									<a href="editComputer?id=${computer.id}" onclick="">
+										<button class="btn btn-primary">Edit</button>
+									</a>
+									<a href="deleteComputer?id=${computer.id}" >
+										<button class="btn btn-danger">Delete</button>
+									</a>
+								</td>
+							</tr>
+						</c:forEach>				
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</c:if>
 </div>
 

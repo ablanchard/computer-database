@@ -50,8 +50,8 @@ public class ComputerDAO extends DAO<Computer> {
 	}
 	
 	//Insertion
-	public void create(SearchWrapper<Computer> sw,Connection cn) throws DaoException {
-		// Connection cn = DB.getConnection();
+	public void create(SearchWrapper<Computer> sw) throws DaoException {
+		Connection cn = DB.getConnection();
 		Computer c = sw.getItems().get(0);
 		PreparedStatement ps =null;
 		int rs ;
@@ -101,8 +101,8 @@ public class ComputerDAO extends DAO<Computer> {
 		}
 	}
 	//Suppresion
-	public void delete(SearchWrapper<Computer> sw,Connection cn)  throws DaoException  {
-		// Connection cn = DB.getConnection();
+	public void delete(SearchWrapper<Computer> sw)  throws DaoException  {
+		Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
 		int rs ;
 		String query = "DELETE FROM " + TABLE + " WHERE "+ATTR_ID+"= ?";
@@ -129,8 +129,8 @@ public class ComputerDAO extends DAO<Computer> {
 		}
 	}
 	//Modification
-	public void update(SearchWrapper<Computer> sw,Connection cn)  throws DaoException  {
-		// Connection cn = DB.getConnection();
+	public void update(SearchWrapper<Computer> sw)  throws DaoException  {
+		Connection cn = DB.getConnection();
 		Computer c = sw.getItems().get(0);
 		PreparedStatement ps =null;
 		int rs ;
@@ -178,7 +178,7 @@ public class ComputerDAO extends DAO<Computer> {
 	//Selection
 	
 		
-	public void retrieve(SearchWrapper<Computer> sw,Connection cn)  throws DaoException  {
+	public void retrieve(SearchWrapper<Computer> sw)  throws DaoException  {
 		List<Computer> computers = new ArrayList<Computer>();
 		String query = SELECT_QUERY;
 		
@@ -193,7 +193,7 @@ public class ComputerDAO extends DAO<Computer> {
 			query += getLimitClause(sw);
 		}
 		
-		// Connection cn = DB.getConnection();
+		Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
 		
@@ -226,10 +226,10 @@ public class ComputerDAO extends DAO<Computer> {
 					
 		}
 		sw.setItems(computers);
-		sw.setCount(count(sw,cn));
+		sw.setCount(count(sw));
 	}
 	
-	public int count(SearchWrapper<Computer> sw,Connection cn)  throws DaoException  {
+	public int count(SearchWrapper<Computer> sw)  throws DaoException  {
 		int nbComputers = 0;
 		String query = COUNT_QUERY;
 		
@@ -238,7 +238,7 @@ public class ComputerDAO extends DAO<Computer> {
 		
 		//query += getOrderClause(sw);
 		
-		// Connection cn = DB.getConnection();
+		Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
 		

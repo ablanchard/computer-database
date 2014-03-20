@@ -26,6 +26,8 @@ public class DatabaseHandler {
 
 	private BoneCP connectionPool = null;
 	
+	public static final ThreadLocal thLocal = new ThreadLocal();
+	
 	final Logger logger = LoggerFactory.getLogger(DatabaseHandler.class);
 	
 	static {
@@ -39,7 +41,6 @@ public class DatabaseHandler {
 	
 	
 	public void initPool(){
-
 		// setup the connection pool
 		BoneCPConfig config = new BoneCPConfig();
 		config.setJdbcUrl(DATABASE_URL +  DATABASE_NAME + DATABASE_PARAMETER); // jdbc url specific to your database, eg jdbc:mysql://127.0.0.1/yourdb
@@ -60,25 +61,38 @@ public class DatabaseHandler {
 		initPool();
 	}
 	
-	public static synchronized DatabaseHandler getInstance(){
+	public static DatabaseHandler getInstance(){
 		if(INSTANCE == null){
 			INSTANCE = new DatabaseHandler();
 		}
 		return INSTANCE;
 	}
 	
-	public Connection getConnection(){
+	public Connection getConnectionFromPool(){
 		try {
 			logger.info("Connexions libres : {}",connectionPool.getTotalFree());
 			Connection c = connectionPool.getConnection();
 			c.setAutoCommit(AUTO_COMMIT);; // fetch a connection
 			return c;
 			//return DriverManager.getConnection(DATABASE_URL + DATABASE_NAME + DATABASE_PARAMETER,DATABASE_USER,DATABASE_PASS);
-					
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void set(Connection cn){
+		thLocal.set(cn);
+	}
+	
+	public void unset(){
+		thLocal.remove();
+	}
+	
+	public Connection getConnection(){
+		if(thLocal.get() == null)
+			set(getConnectionFromPool());
+		return (Connection) thLocal.get();
 	}
 	
 

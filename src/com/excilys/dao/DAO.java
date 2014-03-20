@@ -23,10 +23,10 @@ public abstract class DAO<E> {
 		return null;
 	}
 	
-	public abstract void create(SearchWrapper<E> sw, Connection cn) throws DaoException ;
-	public abstract void retrieve(SearchWrapper<E> sw, Connection cn) throws DaoException ;
-	public abstract void update(SearchWrapper<E> sw, Connection cn) throws DaoException ;
-	public abstract void delete(SearchWrapper<E> sw, Connection cn) throws DaoException ;
+	public abstract void create(SearchWrapper<E> sw) throws DaoException ;
+	public abstract void retrieve(SearchWrapper<E> sw) throws DaoException ;
+	public abstract void update(SearchWrapper<E> sw) throws DaoException ;
+	public abstract void delete(SearchWrapper<E> sw) throws DaoException ;
 	
 	protected abstract E entry(ResultSet rs)  throws DaoException;
 	

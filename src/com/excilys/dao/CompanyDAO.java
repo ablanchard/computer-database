@@ -49,9 +49,9 @@ public class CompanyDAO extends DAO<Company> {
 	
 	//Selection
 	
-	public void retrieve(SearchWrapper<Company> sw,Connection cn) throws DaoException {
+	public void retrieve(SearchWrapper<Company> sw) throws DaoException {
 		List<Company> companies = new ArrayList<Company>();
-		//Connection cn = DB.getConnection();
+		Connection cn = DB.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs  = null;
 		String query = "SELECT * FROM " + TABLE ;
@@ -93,22 +93,23 @@ public class CompanyDAO extends DAO<Company> {
 	}
 
 	@Override
-	public void create(SearchWrapper<Company> sw,Connection cn) throws DaoException {
+	public void create(SearchWrapper<Company> sw) throws DaoException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void update(SearchWrapper<Company> sw,Connection cn) throws DaoException {
+	public void update(SearchWrapper<Company> sw) throws DaoException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void delete(SearchWrapper<Company> sw,Connection cn) throws DaoException {
+	public void delete(SearchWrapper<Company> sw) throws DaoException {
 		// TODO Auto-generated method stub
 		
 	}
+
 
 	
 

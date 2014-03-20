@@ -30,9 +30,9 @@ public abstract class Service<E> {
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		try{
-			dao.retrieve(sw,cn);
+			dao.retrieve(sw);
 			swLog.getItems().get(0).setCommand(sw.toString());
-			LogDAO.getInstance().create(swLog,cn);
+			LogDAO.getInstance().create(swLog);
 			cn.commit();
 		} catch (DaoException | SQLException e){
 			try {
@@ -54,9 +54,9 @@ public abstract class Service<E> {
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		try{
-			dao.create(sw,cn);
+			dao.create(sw);
 			swLog.getItems().get(0).setCommand(sw.toString());
-			LogDAO.getInstance().create(swLog,cn);
+			LogDAO.getInstance().create(swLog);
 			cn.commit();
 		} catch (DaoException | SQLException e){
 			try {
@@ -77,9 +77,9 @@ public abstract class Service<E> {
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		try{
-			dao.update(sw,cn);
+			dao.update(sw);
 			swLog.getItems().get(0).setCommand(sw.toString());
-			LogDAO.getInstance().create(swLog,cn);
+			LogDAO.getInstance().create(swLog);
 			cn.commit();
 		} catch (DaoException | SQLException e){
 			try {
@@ -99,9 +99,9 @@ public abstract class Service<E> {
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		try{
-			dao.delete(sw,cn);
+			dao.delete(sw);
 			swLog.getItems().get(0).setCommand(sw.toString());
-			LogDAO.getInstance().create(swLog,cn);
+			LogDAO.getInstance().create(swLog);
 			cn.commit();
 		} catch (DaoException | SQLException e){
 			try {
@@ -120,6 +120,7 @@ public abstract class Service<E> {
 		if(cn!=null){
 		try {
 			cn.close();
+			DatabaseHandler.getInstance().unset();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

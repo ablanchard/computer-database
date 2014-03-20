@@ -35,9 +35,9 @@ public class LogDAO extends DAO<Log> {
 		return INSTANCE;
 	}
 	
-	public void create(SearchWrapper<Log> sw,Connection cn) throws DaoException {
+	public void create(SearchWrapper<Log> sw) throws DaoException {
 		Log l = sw.getItems().get(0);
-		//Connection cn = DB.getConnection();
+		Connection cn = DB.getConnection();
 		PreparedStatement ps =null;
 		int rs ;
 		String query = "INSERT INTO " + TABLE + " ("+ATTR_TARGET+" , "+ATTR_OPERATION+" , "+ATTR_COMMAND + " ) VALUES ( ? , ? , ?  )";
@@ -64,28 +64,30 @@ public class LogDAO extends DAO<Log> {
 		}
 	}
 
-	@Override
-	public void retrieve(SearchWrapper<Log> sw,Connection cn) throws DaoException {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void update(SearchWrapper<Log> sw,Connection cn) throws DaoException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void delete(SearchWrapper<Log> sw,Connection cn) throws DaoException {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	protected Log entry(ResultSet rs) throws DaoException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void retrieve(SearchWrapper<Log> sw) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(SearchWrapper<Log> sw) throws DaoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void delete(SearchWrapper<Log> sw) throws DaoException {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
