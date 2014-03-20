@@ -96,11 +96,11 @@ public abstract class DAO<E> {
 			}}
 	}
 
-	public static String getTABLE() {
+	public String getTABLE() {
 		return TABLE;
 	}
 
-	public static void setTABLE(String tABLE) {
+	public void setTABLE(String tABLE) {
 		TABLE = tABLE;
 	}
 	

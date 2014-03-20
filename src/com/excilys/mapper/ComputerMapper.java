@@ -18,6 +18,7 @@ public class ComputerMapper {
 	public static Computer toComputer(ComputerDTO dto) throws DTOException {
 		Computer c = Computer.builder();
 		
+		c.setId(dto.getId());
 		
 		if(dto.getName() == null)
 			throw new DTOException("No name setted");
@@ -54,15 +55,14 @@ public class ComputerMapper {
 		c.setDiscontinued(discontinuedDate);
 		
 		
-		int companyId = Integer.valueOf(dto.getCompanyId());
-		
-		SearchWrapper<Company> sw = new SearchWrapper<Company>(Company.build().setId(companyId));
+		SearchWrapper<Company> sw = new SearchWrapper<Company>(Company.build().setId(dto.getCompanyId()));
 		CompanyService.getInstance().retrieve(sw);
 		
 		Company company = null;
-		if(sw.getItems().size() == 1)
+		if(sw.getItems().size() == 1){
 			company = sw.getItems().get(0);	
-		
+			System.out.println(company);
+		}
 		c.setCompany(company);
 		
 		return c;		

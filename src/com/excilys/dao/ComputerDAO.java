@@ -74,7 +74,7 @@ public class ComputerDAO extends DAO<Computer> {
 			if(c.getCompany()==null)
 				ps.setNull(4, 0);
 			else
-				ps.setFloat(4, c.getCompany().getId());
+				ps.setInt(4, c.getCompany().getId());
 			
 			
 			rs = ps.executeUpdate();
@@ -152,18 +152,18 @@ public class ComputerDAO extends DAO<Computer> {
 			if(c.getCompany()==null)
 				ps.setNull(4, 0);
 			else
-				ps.setFloat(4, c.getCompany().getId());
+				ps.setInt(4, c.getCompany().getId());
 			
 			ps.setInt(5, c.getId());
 			
 			rs = ps.executeUpdate();
 
-			logger.info(ps.toString());
+			logger.info("Update {}",c);
 			
-			if(rs != 0)
-				logger.info("Update succeed");
+			/*if(rs != 0)
+				logger.info("Update of {} succeed",c);
 			else
-				throw new DaoException();
+				throw new SQLException();*/
 		
 		} 
 		catch (SQLException e){

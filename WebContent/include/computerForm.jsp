@@ -3,7 +3,7 @@
 
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<c:set var="companyId" value="${computer.company.id }"></c:set>
+<c:set var="companyId" value="${dto.companyId }"></c:set>
 <script type="text/javascript" src="js/verif.js"></script>
 
 <form action="${requestScope['action'] }" id="addComputer" method="POST">
@@ -11,24 +11,22 @@
 			<div class="form-group" id="name-group">
 				<label for="name">Computer name:</label>
 				<div class="input">
-					<input type="text" class="form-control" name="name"  id="name" value="${computer.name }"/>
+					<input type="text" class="form-control" name="name"  id="name" value="${dto.name }"/>
 					<span class="help-block">Required</span>
 				</div>
 			</div>
-			<input type="hidden" value="${computer.id }" name="id"/>
+			<input type="hidden" value="${dto.id }" name="id"/>
 			<div class="form-group" id="intro-group">
 				<label for="introduced">Introduced date:</label>
 				<div class="input">
-					<fmt:formatDate value="${computer.introduction }" pattern="yyyy-MM-dd" var="inDate"/>
-					<input class="form-control"type="date" name="introducedDate" value="${inDate }"  id="introducedDate" />
+					<input class="form-control"type="date" name="introducedDate" value="${dto.introducedDate }"  id="introducedDate" />
 					<span class="help-block">YYYY-MM-DD</span>
 				</div>
 			</div>
 			<div class="form-group" id="discon-group">
 				<label for="discontinued">Discontinued date:</label>
 				<div class="input">
-					<fmt:formatDate value="${computer.discontinued }" pattern="yyyy-MM-dd" var="disDate"/>
-					<input class="form-control"type="date" name="discontinuedDate" value="${disDate }" id="discontinuedDate" />
+					<input class="form-control"type="date" name="discontinuedDate" value="${dto.discontinuedDate }" id="discontinuedDate" />
 					<span class="help-block">YYYY-MM-DD</span>
 				</div>
 			</div>

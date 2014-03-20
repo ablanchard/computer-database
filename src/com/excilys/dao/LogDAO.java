@@ -50,9 +50,9 @@ public class LogDAO extends DAO<Log> {
 		
 			
 			rs = ps.executeUpdate();
-			logger.info(ps.toString());
+			//logger.info(ps.toString());
 			if(rs != 0)
-				logger.info("Insertion succeed");
+				logger.info(l.toString());
 		
 		} 
 		catch (SQLException e){

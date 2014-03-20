@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.dao.ComputerDAO;
 import com.excilys.dao.DAO;
 import com.excilys.dao.DaoException;
@@ -18,9 +21,11 @@ import com.excilys.data.Operation;
 public abstract class Service<E> {
 	
 	protected DAO<E> dao ;
+
+	final Logger logger = LoggerFactory.getLogger(Service.class);
 	
 	public void retrieve(SearchWrapper<E> sw){
-		Log log = Log.build().setTarget(DAO.TABLE).setOperation(Operation.retrieve);
+		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.retrieve);
 
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
@@ -32,6 +37,7 @@ public abstract class Service<E> {
 		} catch (DaoException | SQLException e){
 			try {
 				cn.rollback();
+				logger.info("Rollbacked !");
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -43,7 +49,7 @@ public abstract class Service<E> {
 	}
 	
 	public void create(SearchWrapper<E> sw){
-		Log log = Log.build().setTarget(dao.TABLE).setOperation(Operation.create);
+		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.create);
 
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
@@ -55,6 +61,7 @@ public abstract class Service<E> {
 		} catch (DaoException | SQLException e){
 			try {
 				cn.rollback();
+				logger.info("Rollbacked !");
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -65,7 +72,7 @@ public abstract class Service<E> {
 		
 	}
 	public void update(SearchWrapper<E> sw){
-		Log log = Log.build().setTarget(dao.TABLE).setOperation(Operation.update);
+		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.update);
 
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
@@ -77,6 +84,7 @@ public abstract class Service<E> {
 		} catch (DaoException | SQLException e){
 			try {
 				cn.rollback();
+				logger.info("Rollbacked !");
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -86,7 +94,7 @@ public abstract class Service<E> {
 		}
 	}
 	public void delete(SearchWrapper<E> sw){
-		Log log = Log.build().setTarget(dao.TABLE).setOperation(Operation.delete);
+		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.delete);
 
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
@@ -98,6 +106,7 @@ public abstract class Service<E> {
 		} catch (DaoException | SQLException e){
 			try {
 				cn.rollback();
+				logger.info("Rollbacked !");
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

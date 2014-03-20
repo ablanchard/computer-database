@@ -8,6 +8,10 @@ public class Log {
 	private String target;
 	private String command = "";
 	private Operation operation;
+	
+	public String toString(){
+		return getTarget() +  " " + getOperation();
+	}
 	public int getId() {
 		return id;
 	}

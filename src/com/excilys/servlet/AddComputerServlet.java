@@ -58,33 +58,32 @@ public class AddComputerServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Computer newComputer = verify(request);
 		
-		if(newComputer != null){
-			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(newComputer);
-			ComputerService.getInstance().create(sw);
-			request.setAttribute("success", "Computer successfully added.");
-			response.sendRedirect("/computer-database/index");
-		}
-		else{
-			doGet(request,response);
-		}
-	}
-	
-	private Computer verify(HttpServletRequest request) throws ServletException, IOException {
-		//Non nullité et non vide
 		ComputerDTO dto = ComputerDTO.build().setName(request.getParameter("name"))
-												.setIntroducedDate(request.getParameter("introducedDate"))
-												.setDiscontinuedDate(request.getParameter("discontinuedDate"))
-												.setCompanyId(Integer.valueOf(request.getParameter("company")));
-		Computer c = null;
+				.setIntroducedDate(request.getParameter("introducedDate"))
+				.setDiscontinuedDate(request.getParameter("discontinuedDate"))
+				.setCompanyId(Integer.valueOf(request.getParameter("company")));
+		Computer c;
+		
 		try{
 			c = ComputerMapper.toComputer(dto);
+			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(c);
+			ComputerService.getInstance().create(sw);
+			request.setAttribute("success", "Computer successfully added.");
+			
+			ServletContext ctx = getServletContext();
+			RequestDispatcher rd = ctx.getRequestDispatcher("/index");
+			rd.forward(request, response);
+			
 		} catch (DTOException e){
+			
 			request.setAttribute("error", e.getMessage());
+			request.setAttribute("dto", dto);
+			doGet(request,response);
 		}
 		
-		return c;
+		
 	}
+
 
 }

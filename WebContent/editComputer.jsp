@@ -10,8 +10,10 @@
 <c:set value="editComputer" var="action" scope="request"/>
 <c:set value="Edit" var="actionName" scope="request"/>
 <div class="container-fluid" id="main">
-	<c:if test="${not empty request['error'] }"><p class="bg-danger">${request['error'] }</p></c:if>
 	<div class="row">
+	<c:if test="${not empty requestScope['error'] }">
+		<div class="alert alert-danger"><p><c:out value="${requestScope['error'] }"></c:out></p></div>
+	</c:if>
 	<h1>Edit Computer</h1>
 	</div>
 	<div class="row">
