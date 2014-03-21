@@ -1,27 +1,19 @@
 package com.excilys.dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.data.Company;
-import com.excilys.data.Computer;
-import com.excilys.data.Log;
-import com.excilys.servlet.EditComputerServlet;
 
 //Singleton
 public class CompanyDAO extends DAO<Company> {
 	private static CompanyDAO INSTANCE = null;
-	private static DatabaseHandler DB = null;
 	public static final String TABLE = "company";
 	public static final String ATTR_NAME = "name";
 	public static final String ATTR_ID = "id";
@@ -29,7 +21,6 @@ public class CompanyDAO extends DAO<Company> {
 	final Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
 	
 	private CompanyDAO(){
-		DB = DatabaseHandler.getInstance();
 		setTABLE(TABLE);
 	}
 	
@@ -49,35 +40,6 @@ public class CompanyDAO extends DAO<Company> {
 	
 	//Selection
 	
-	public void retrieve(SearchWrapper<Company> sw) throws DaoException {
-		List<Company> companies = new ArrayList<Company>();
-		Connection cn = DB.getConnection();
-		PreparedStatement ps = null;
-		ResultSet rs  = null;
-		String query = "SELECT * FROM " + TABLE ;
-		if(sw.getItems().size() == 1)// get by id
-			query += " WHERE "+ ATTR_ID +"=? ;";
-		try {
-			ps = cn.prepareStatement(query);
-			if(sw.getItems().size() == 1)// get by id
-				ps.setInt(1, sw.getItems().get(0).getId());
-			rs = ps.executeQuery();
-
-			logger.info(ps.toString());
-			
-			while(rs.next()){
-				companies.add(entry(rs));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new DaoException();
-		} finally{
-			closeObjects(cn,ps,rs);
-					
-		}
-		sw.setItems(companies);
-	}
 	
 	protected Company entry(ResultSet rs){
 		Company c = null;
@@ -92,20 +54,110 @@ public class CompanyDAO extends DAO<Company> {
 		return c;
 	}
 
+
 	@Override
-	public void create(SearchWrapper<Company> sw) throws DaoException {
+	public String getCreateQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void prepareCreateStatement(PreparedStatement ps,
+			SearchWrapper<Company> sw) throws SQLException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void update(SearchWrapper<Company> sw) throws DaoException {
+	public void getCreateResult(ResultSet rs, SearchWrapper<Company> sw)
+			throws SQLException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void delete(SearchWrapper<Company> sw) throws DaoException {
+	public String getRetrieveQuery(SearchWrapper<Company> sw) {
+		String query = "SELECT * FROM " + TABLE ;
+		if(sw.getItems().size() == 1)// get by id
+			query += " WHERE "+ ATTR_ID +"=? ;";
+		return query ;
+	}
+
+	@Override
+	public void prepareRetrieveStatement(PreparedStatement ps,
+			SearchWrapper<Company> sw) throws SQLException {
+		if(sw.getItems().size() == 1)// get by id
+			ps.setInt(1, sw.getItems().get(0).getId());
+		
+	}
+
+	@Override
+	public void getRetrieveResult(ResultSet rs, SearchWrapper<Company> sw)
+			throws SQLException {
+		List<Company> companies = new ArrayList<Company>();
+		while(rs.next())
+			companies.add(entry(rs));
+		
+		sw.setItems(companies);
+		
+	}
+
+	@Override
+	public String getCountQuery(SearchWrapper<Company> sw) {
+		// TODO Auto-generated method stub
+		return "SELECT COUNT(*) FROM " + TABLE ;
+	}
+
+	@Override
+	public void prepareCountStatement(PreparedStatement ps,
+			SearchWrapper<Company> sw) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void getCountResult(ResultSet rs, SearchWrapper<Company> sw)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getUpdateQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void prepareUpdateStatement(PreparedStatement ps,
+			SearchWrapper<Company> sw) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void getUpdateResult(ResultSet rs, SearchWrapper<Company> sw)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getDeleteQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void prepareDeleteStatement(PreparedStatement ps,
+			SearchWrapper<Company> sw) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void getDeleteResult(ResultSet rs, SearchWrapper<Company> sw)
+			throws SQLException {
 		// TODO Auto-generated method stub
 		
 	}

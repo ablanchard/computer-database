@@ -19,7 +19,7 @@ public abstract class ComputerServlet extends HttpServlet {
 	
 
 	public static final String FORM_ATTR_NAME = "name";
-	public static final String FORM_ATTR_INTRO = "introductedDate";
+	public static final String FORM_ATTR_INTRO = "introducedDate";
 	public static final String FORM_ATTR_DISC = "discontinuedDate";
 	public static final String FORM_ATTR_COMPANY = "company";
 	public static final String FORM_ATTR_ID = "id";
