@@ -69,7 +69,7 @@
 								<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name }</a></td>
 								<td>${computer.introducedDate }</td>
 								<td>${computer.discontinuedDate }</td>
-								<td><c:out value="${computer.companyName}" default="No company"/></td>
+								<td>${computer.companyName}</td>
 								<td>
 									<a href="editComputer?id=${computer.id}" onclick="">
 										<button class="btn btn-primary">Edit</button>

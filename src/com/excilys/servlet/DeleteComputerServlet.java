@@ -8,7 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +15,18 @@ import org.slf4j.LoggerFactory;
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
 import com.excilys.service.ComputerService;
+import com.excilys.service.NotExistException;
+import com.excilys.service.Service;
+import com.excilys.service.ServiceException;
 
 /**
  * Servlet implementation class DeleteComputerServlet
  */
-public class DeleteComputerServlet extends HttpServlet {
+public class DeleteComputerServlet extends ComputerServlet {
 	private static final long serialVersionUID = 1L;
+
+	public static final String SUCCESS_MESSAGE = "Computer successfully deleted.";
+	
 
 	final Logger logger = LoggerFactory.getLogger(DeleteComputerServlet.class);
     /**
@@ -36,28 +41,23 @@ public class DeleteComputerServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int computerId = Integer.valueOf(request.getParameter("id"));
+		int computerId = Integer.valueOf(request.getParameter(ATTR_ID));
 		SearchWrapper<Computer> computerToDelete = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
 		
-		ComputerService.getInstance().retrieve(computerToDelete);
-		if(computerToDelete.getItems().size() == 1){
+		try{
 			ComputerService.getInstance().delete(computerToDelete);
-			request.setAttribute("success", "Computer successfully deleted.");
+			request.setAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
+		} catch (NotExistException e){
+			request.setAttribute(ATTR_ERROR, ComputerService.NOT_EXIST);
+		} catch (ServiceException e){
+			request.setAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
 		}
-		else{
-			request.setAttribute("error", "This computer doesn't exist.");
-		}
-				
-		HttpSession session = request.getSession();
-		SearchWrapper sw = (SearchWrapper) session.getAttribute(DashboardServlet.ATTR_WRAPPER);
 		
-		request.setAttribute(DashboardServlet.ATTR_WRAPPER, sw);		
-		
-		ServletContext ctx = getServletContext();
-		RequestDispatcher rd = ctx.getRequestDispatcher("/index");
-		rd.forward(request, response);
+		backToIndex(request, response);
 		
 	}
+	
+
 
 
 

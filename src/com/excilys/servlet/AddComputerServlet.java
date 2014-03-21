@@ -21,13 +21,18 @@ import com.excilys.dto.DTOException;
 import com.excilys.mapper.ComputerMapper;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
+import com.excilys.service.Service;
+import com.excilys.service.ServiceException;
 
 /**
  * Servlet implementation class AddComputerServlet
  */
-public class AddComputerServlet extends HttpServlet {
+public class AddComputerServlet extends ComputerServlet {
 	private static final long serialVersionUID = 1L;
 
+	public static final String SUCCESS_MESSAGE = "Computer successfully added." ;
+	public static final String JSP = "/WEB-INF/addComputer.jsp";
+	
 	final Logger logger = LoggerFactory.getLogger(AddComputerServlet.class);
        
     /**
@@ -42,16 +47,21 @@ public class AddComputerServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		SearchWrapper<Company> sw = new SearchWrapper<Company>();
-		CompanyService.getInstance().retrieve(sw);
-		
-		List<Company> companies = sw.getItems();
-		companies.add(0, Company.build().setName("No company").setId(0));
-		request.setAttribute("companies", companies);
-		
-		ServletContext ctx = getServletContext();
-		RequestDispatcher rd = ctx.getRequestDispatcher("/WEB-INF/addComputer.jsp");
-		rd.forward(request, response);
+		try {
+			SearchWrapper<Company> sw = new SearchWrapper<Company>();
+			CompanyService.getInstance().retrieve(sw);
+			
+			List<Company> companies = sw.getItems();
+			companies.add(0, Company.build().setName(NO_COMPANY_DEFAULT_NAME).setId(0));
+			request.setAttribute(ATTR_COMPANIES, companies);
+			
+			ServletContext ctx = getServletContext();
+			RequestDispatcher rd = ctx.getRequestDispatcher(JSP);
+			rd.forward(request, response);
+		} catch (ServiceException e){
+			request.setAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
+			backToIndex(request, response);
+		}
 	}
 
 	/**
@@ -59,31 +69,34 @@ public class AddComputerServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		ComputerDTO dto = ComputerDTO.build().setName(request.getParameter("name"))
-				.setIntroducedDate(request.getParameter("introducedDate"))
-				.setDiscontinuedDate(request.getParameter("discontinuedDate"))
-				.setCompanyId(Integer.valueOf(request.getParameter("company")));
+		ComputerDTO dto = ComputerDTO.build().setName(request.getParameter(FORM_ATTR_NAME))
+				.setIntroducedDate(request.getParameter(FORM_ATTR_INTRO))
+				.setDiscontinuedDate(request.getParameter(FORM_ATTR_DISC))
+				.setCompanyId(Integer.valueOf(request.getParameter(FORM_ATTR_COMPANY)));
 		Computer c;
 		
 		try{
 			c = ComputerMapper.toComputer(dto);
 			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(c);
 			ComputerService.getInstance().create(sw);
-			request.setAttribute("success", "Computer successfully added.");
+			request.setAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
 			
-			ServletContext ctx = getServletContext();
-			RequestDispatcher rd = ctx.getRequestDispatcher("/index");
-			rd.forward(request, response);
+			backToIndex(request, response);
 			
 		} catch (DTOException e){
 			
-			request.setAttribute("error", e.getMessage());
-			request.setAttribute("dto", dto);
+			request.setAttribute(ATTR_ERROR, e.getMessage());
+			request.setAttribute(ATTR_DTO, dto);
 			doGet(request,response);
+			
+		} catch (ServiceException e){
+			request.setAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
+			backToIndex(request, response);
 		}
 		
 		
 	}
+	
 
 
 }

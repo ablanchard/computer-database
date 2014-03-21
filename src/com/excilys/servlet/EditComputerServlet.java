@@ -1,9 +1,6 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -24,15 +21,19 @@ import com.excilys.dto.DTOException;
 import com.excilys.mapper.ComputerMapper;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
+import com.excilys.service.NotExistException;
+import com.excilys.service.Service;
+import com.excilys.service.ServiceException;
 
 /**
  * Servlet implementation class AddComputerServlet
  */
-public class EditComputerServlet extends HttpServlet {
+public class EditComputerServlet extends ComputerServlet {
 	private static final long serialVersionUID = 1L;
-	private String error = "";
 	final Logger logger = LoggerFactory.getLogger(EditComputerServlet.class);
-       
+	
+	public static final String JSP = "/WEB-INF/editComputer.jsp";
+	public static final String SUCCESS_MESSAGE = "Computer successfully edited.";
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -48,51 +49,64 @@ public class EditComputerServlet extends HttpServlet {
 		ComputerDTO computerDTO ;
 		
 		//Le champ dto n'est pas présent => premier access au formulaire
-		if(request.getAttribute("dto") == null){
-			int computerId = Integer.valueOf(request.getParameter("id"));
+		try{
+			if(request.getAttribute(ATTR_DTO) == null){
+				int computerId = Integer.valueOf(request.getParameter(ATTR_ID));
+				
+				SearchWrapper<Computer> computerWrap = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
+				ComputerService.getInstance().retrieve(computerWrap);
+				
+				if(computerWrap.getItems().size() == 0)
+					throw new NotExistException(ComputerService.NOT_EXIST);
+					
+				Computer computer = computerWrap.getItems().get(0);
+				
+				if(computer.getCompany() == null)
+					computer.setCompany(Company.build().setId(0));
+				
 			
-			SearchWrapper<Computer> computerWrap = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
-			ComputerService.getInstance().retrieve(computerWrap);
-			Computer computer = computerWrap.getItems().get(0);
+				computerDTO = ComputerMapper.toComputerDTO(computer);
+	
+			}
+			else {
+				//Le champ est présent => nouvel access apres avoir fait une faute lors du doPost
+				computerDTO = (ComputerDTO) request.getAttribute(ATTR_DTO);
+			}
 			
-			if(computer.getCompany() == null)
-				computer.setCompany(Company.build().setId(0));
+			//Recupération de la liste des companies
+			SearchWrapper<Company> sw = new SearchWrapper<Company>();
+			CompanyService.getInstance().retrieve(sw);	
+			List<Company> companies = sw.getItems();
 			
-		
-			computerDTO = ComputerMapper.toComputerDTO(computer);
-
+			//Ajout de la company d'id 0
+			companies.add(0, Company.build().setName(NO_COMPANY_DEFAULT_NAME).setId(0));
+			
+			
+			request.setAttribute(ATTR_COMPANIES, companies);		
+			request.setAttribute(ATTR_DTO, computerDTO);
+			
+			ServletContext ctx = getServletContext();
+			RequestDispatcher rd = ctx.getRequestDispatcher(JSP);
+			rd.forward(request, response);
+			
+		} catch(NotExistException e){
+			request.setAttribute(ATTR_ERROR, e.getMessage());
+			backToIndex(request, response);
+		} catch (ServiceException e){
+			request.setAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
+			backToIndex(request, response);
 		}
-		else {
-			//Le champ est présent => nouvel access apres avoir fait une faute lors du doPost
-			computerDTO = (ComputerDTO) request.getAttribute("dto");
-		}
-		
-		//Recupération de la liste des companies
-		SearchWrapper<Company> sw = new SearchWrapper<Company>();
-		CompanyService.getInstance().retrieve(sw);	
-		List<Company> companies = sw.getItems();
-		
-		//Ajout de la company d'id 0
-		companies.add(0, Company.build().setName("No company").setId(0));
-		
-		
-		request.setAttribute("companies", companies);		
-		request.setAttribute("dto", computerDTO);
-		
-		ServletContext ctx = getServletContext();
-		RequestDispatcher rd = ctx.getRequestDispatcher("/WEB-INF/editComputer.jsp");
-		rd.forward(request, response);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ComputerDTO dto = ComputerDTO.build().setName(request.getParameter("name"))
-				.setIntroducedDate(request.getParameter("introducedDate"))
-				.setDiscontinuedDate(request.getParameter("discontinuedDate"))
-				.setCompanyId(Integer.valueOf(request.getParameter("company")))
-				.setId(Integer.valueOf(request.getParameter("id")));
+		ComputerDTO dto = ComputerDTO.build().setName(request.getParameter(FORM_ATTR_NAME))
+				.setIntroducedDate(request.getParameter(FORM_ATTR_INTRO))
+				.setDiscontinuedDate(request.getParameter(FORM_ATTR_DISC))
+				.setCompanyId(Integer.valueOf(request.getParameter(FORM_ATTR_COMPANY)))
+				.setId(Integer.valueOf(request.getParameter(FORM_ATTR_ID)));
 		
 		Computer c;
 		
@@ -101,21 +115,28 @@ public class EditComputerServlet extends HttpServlet {
 			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(c);
 			ComputerService.getInstance().update(sw);
 			
-			
-			request.setAttribute("success", "Computer successfully edited.");
-			
-			ServletContext ctx = getServletContext();
-			RequestDispatcher rd = ctx.getRequestDispatcher("/index");
-			rd.forward(request, response);
-			
+			request.setAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
+			backToIndex(request, response);
 		} catch (DTOException e){
 			
-			request.setAttribute("error", e.getMessage());
-			request.setAttribute("dto", dto);
+			request.setAttribute(ATTR_ERROR, e.getMessage());
+			request.setAttribute(ATTR_DTO, dto);
 			doGet(request,response);
+			
+		} catch(NotExistException e){
+			
+			request.setAttribute(ATTR_ERROR, ComputerService.NOT_EXIST);
+			backToIndex(request, response);
+			
+		} catch (ServiceException e){
+			request.setAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
+			backToIndex(request, response);
 		}
 		
+		
 	}
+	
+
 	
 
 

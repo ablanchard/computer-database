@@ -160,10 +160,10 @@ public class ComputerDAO extends DAO<Computer> {
 
 			logger.info("Update {}",c);
 			
-			/*if(rs != 0)
-				logger.info("Update of {} succeed",c);
+			if(rs != 0)
+				logger.info("Successful update");
 			else
-				throw new SQLException();*/
+				throw new SQLException();
 		
 		} 
 		catch (SQLException e){

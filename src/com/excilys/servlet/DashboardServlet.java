@@ -21,11 +21,13 @@ import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
 import com.excilys.mapper.ComputerMapper;
 import com.excilys.service.ComputerService;
+import com.excilys.service.Service;
+import com.excilys.service.ServiceException;
 
 /**
  * Servlet implementation class DashboardServlet
  */
-public class DashboardServlet extends HttpServlet {
+public class DashboardServlet extends ComputerServlet {
 	private static final long serialVersionUID = 1L;
 	private int nbComputersPerPage= 15;
 	public static final String ATTR_SEARCH = "search";
@@ -37,6 +39,16 @@ public class DashboardServlet extends HttpServlet {
 	public static final String ATTR_PAGE_MAX = "pageMax";
 	public static final String ATTR_PAGE = "page";
 	public static final String ATTR_WRAPPER = "sw";
+	public static final String ATTR_TABLE_HEADERS = "tableHeaders";
+	
+	public static final String TABLE_HEADER_NAME = "Computer name";
+	public static final String TABLE_HEADER_INTRO = "Introduced Date";
+	public static final String TABLE_HEADER_DISC = "Discontinued Date";
+	public static final String TABLE_HEADER_COMPANY = "Company";
+	public static final String TABLE_HEADER_ACTIONS  = "Actions";
+	
+	public static final String PATH = "/index" ;
+	public static final String JSP = "/WEB-INF/dashboard.jsp";
 
 	final Logger logger = LoggerFactory.getLogger(DashboardServlet.class);
     /**
@@ -84,32 +96,36 @@ public class DashboardServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		session.setAttribute(ATTR_WRAPPER, sw);
 		
+		try {
+			
 		
-		ComputerService.getInstance().retrieve(sw);
-				
-		int pageMax = (int)Math.floor(sw.getCount()/nbComputersPerPage);
-		
-		if (sw.getCount()%nbComputersPerPage != 0)
-			pageMax++;
-		
-		sw.setPageMax(pageMax);
-		
-		
-		request.setAttribute(ATTR_WRAPPER, ComputerMapper.toComputerDTOWrapper(sw));
-		
+			ComputerService.getInstance().retrieve(sw);
+					
+			int pageMax = (int)Math.floor(sw.getCount()/nbComputersPerPage);
+			
+			if (sw.getCount()%nbComputersPerPage != 0)
+				pageMax++;
+			
+			sw.setPageMax(pageMax);
+			
+			
+			request.setAttribute(ATTR_WRAPPER, ComputerMapper.toComputerDTOWrapper(sw));
+		} catch (ServiceException e){
+			request.setAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
+		}
 		//Headers
 		List<Header> headers = new ArrayList<Header>();
-		headers.add(new Header("Computer Name",OrderComputerCol.name.toString()));
-		headers.add(Header.build().setName("Introduced Date").setOrderName(OrderComputerCol.intro.toString()));
-		headers.add(Header.build().setName("Discontinued Date").setOrderName(OrderComputerCol.disc.toString()));
-		headers.add(Header.build().setName("Company").setOrderName(OrderComputerCol.company.toString()));
-		headers.add(Header.build().setName("Actions"));
+		headers.add(new Header(TABLE_HEADER_NAME,OrderComputerCol.name.toString()));
+		headers.add(Header.build().setName(TABLE_HEADER_INTRO).setOrderName(OrderComputerCol.intro.toString()));
+		headers.add(Header.build().setName(TABLE_HEADER_DISC).setOrderName(OrderComputerCol.disc.toString()));
+		headers.add(Header.build().setName(TABLE_HEADER_COMPANY).setOrderName(OrderComputerCol.company.toString()));
+		headers.add(Header.build().setName(TABLE_HEADER_ACTIONS));
 		
-		request.setAttribute("tableHeaders", headers);
+		request.setAttribute(ATTR_TABLE_HEADERS, headers);
 		
 		
 		ServletContext ctx = getServletContext();
-		RequestDispatcher rd = ctx.getRequestDispatcher("/WEB-INF/dashboard.jsp");
+		RequestDispatcher rd = ctx.getRequestDispatcher(JSP);
 		rd.forward(request, response);
 		
 	}
@@ -117,6 +133,16 @@ public class DashboardServlet extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
+	}
+	
+	public static void setAttrAsLastPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		HttpSession session = request.getSession();
+		SearchWrapper sw = (SearchWrapper) session.getAttribute(DashboardServlet.ATTR_WRAPPER);
+		
+		request.setAttribute(DashboardServlet.ATTR_WRAPPER, sw);		
+		
+	
 	}
 
 

@@ -23,8 +23,10 @@ public abstract class Service<E> {
 	protected DAO<E> dao ;
 
 	final Logger logger = LoggerFactory.getLogger(Service.class);
+
+	public static final String SERVICE_ERROR = "An error has occured while connecting to the server. Contact admin.";
 	
-	public void retrieve(SearchWrapper<E> sw){
+	public void retrieve(SearchWrapper<E> sw) throws ServiceException {
 		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.retrieve);
 
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
@@ -34,21 +36,15 @@ public abstract class Service<E> {
 			swLog.getItems().get(0).setCommand(sw.toString());
 			LogDAO.getInstance().create(swLog);
 			cn.commit();
-		} catch (DaoException | SQLException e){
-			try {
-				cn.rollback();
-				logger.info("Rollbacked !");
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		} finally{
+		} catch (DaoException | SQLException e) {
+			rollbabk(cn);
+			throw new ServiceException();
+		} finally {
 			closeConnection(cn);
 		}
 		
 	}
-	
-	public void create(SearchWrapper<E> sw){
+	public void create(SearchWrapper<E> sw) throws ServiceException {
 		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.create);
 
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
@@ -58,20 +54,15 @@ public abstract class Service<E> {
 			swLog.getItems().get(0).setCommand(sw.toString());
 			LogDAO.getInstance().create(swLog);
 			cn.commit();
-		} catch (DaoException | SQLException e){
-			try {
-				cn.rollback();
-				logger.info("Rollbacked !");
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		} finally{
+		} catch (DaoException | SQLException e) {
+			rollbabk(cn);
+			throw new ServiceException();
+		} finally {
 			closeConnection(cn);
 		}
 		
 	}
-	public void update(SearchWrapper<E> sw){
+	public void update(SearchWrapper<E> sw) throws ServiceException, NotExistException {
 		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.update);
 
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
@@ -81,19 +72,17 @@ public abstract class Service<E> {
 			swLog.getItems().get(0).setCommand(sw.toString());
 			LogDAO.getInstance().create(swLog);
 			cn.commit();
-		} catch (DaoException | SQLException e){
-			try {
-				cn.rollback();
-				logger.info("Rollbacked !");
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		} finally{
+		} catch (SQLException e) {//throwed by commit
+			rollbabk(cn);
+			throw new ServiceException();
+		} catch (DaoException e){//throwed by DAO
+			rollbabk(cn);
+			throw new NotExistException();
+		} finally {
 			closeConnection(cn);
 		}
 	}
-	public void delete(SearchWrapper<E> sw){
+	public void delete(SearchWrapper<E> sw) throws ServiceException, NotExistException {
 		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.delete);
 
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
@@ -103,15 +92,13 @@ public abstract class Service<E> {
 			swLog.getItems().get(0).setCommand(sw.toString());
 			LogDAO.getInstance().create(swLog);
 			cn.commit();
-		} catch (DaoException | SQLException e){
-			try {
-				cn.rollback();
-				logger.info("Rollbacked !");
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		} finally{
+		} catch (SQLException e) {//throwed by commit
+			rollbabk(cn);
+			throw new ServiceException();
+		} catch (DaoException e){//throwed by DAO
+			rollbabk(cn);
+			throw new NotExistException();
+		} finally {
 			closeConnection(cn);
 		}
 	}
@@ -126,7 +113,16 @@ public abstract class Service<E> {
 			e.printStackTrace();
 		}}
 	}
-
+	
+	public void rollbabk(Connection cn){
+		try {
+			cn.rollback();
+			logger.info("Rollbacked !");
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
 	public DAO<E> getDao() {
 		return dao;
 	}

@@ -10,7 +10,7 @@ public class SearchWrapper<E> {
 	private int page = 1;
 	private int nbComputersPerPage;
 	private List<E> items;
-	private int count;
+	private int count = 0;
 	private int pageMax;
 	
 	public SearchWrapper(E e){
