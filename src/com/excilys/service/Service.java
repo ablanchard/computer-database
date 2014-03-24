@@ -59,9 +59,12 @@ public abstract class Service<E> {
 			LogDAO.getInstance().create(swLog);
 			cn.commit();
 			getLogger().info("Commited {} {}",op,sw);
-		} catch (DaoException | SQLException e) {
+		} catch (SQLException e) { //throwed by commit
 			rollbabk(cn);
 			throw new ServiceException();
+		} catch (DaoException e){
+			rollbabk(cn);
+			throw new NotExistException();
 		} finally {
 			closeConnection(cn);
 		}
