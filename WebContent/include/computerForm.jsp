@@ -8,8 +8,7 @@
 <c:set var="companyId" value="${dto.companyId }"></c:set>
 <c:set var="form" value="${requestScope['form_attrs'] }"></c:set>
 <c:set var="companies" value="${requestScope['companies']}" ></c:set>
-<script type="text/javascript" src="js/verif.js"></script>
-
+<jsp:include page="verification.jsp" />
 <form action="${requestScope['action'] }" id="addComputer" method="POST">
 		<fieldset>
 			<div class="form-group" id="name-group">

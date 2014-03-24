@@ -80,10 +80,11 @@ public class CompanyDAO extends DAO<Company> {
 	public String getRetrieveQuery(SearchWrapper<Company> sw) {
 		StringBuilder query = new StringBuilder("SELECT * FROM ");
 		query.append(TABLE) ;
-		if(sw.getItems().size() == 1)// get by id
+		if(sw.getItems().size() == 1) {// get by id
 			query.append(" WHERE ");
 			query.append(ATTR_ID);
 			query.append("=? ;");
+		}
 		return query.toString() ;
 	}
 

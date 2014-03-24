@@ -87,6 +87,7 @@ public class EditComputerServlet extends ComputerServlet {
 			
 			//On affecte les bons noms aux inputs
 			request.setAttribute(FORM_ATTRS, ComputerForm.getInstance());
+			request.setAttribute(FORM_ERRORS, ComputerForm.getErrors());
 			
 			ServletContext ctx = getServletContext();
 			RequestDispatcher rd = ctx.getRequestDispatcher(JSP);

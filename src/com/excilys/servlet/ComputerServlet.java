@@ -22,7 +22,7 @@ public abstract class ComputerServlet extends HttpServlet {
 
 	
 	public static final String FORM_ATTRS = "form_attrs";
-	
+	public static final String FORM_ERRORS = "form_errors";
 
 	public static final String NO_COMPANY_DEFAULT_NAME = "No company";
 	

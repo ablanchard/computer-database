@@ -55,6 +55,7 @@ public class AddComputerServlet extends ComputerServlet {
 			companies.add(0, Company.build().setName(NO_COMPANY_DEFAULT_NAME).setId(0));
 			request.setAttribute(ATTR_COMPANIES, companies);
 			
+			request.setAttribute(FORM_ERRORS, ComputerForm.getErrors());
 			request.setAttribute(FORM_ATTRS, ComputerForm.getInstance());
 			
 			ServletContext ctx = getServletContext();

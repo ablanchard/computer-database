@@ -84,12 +84,12 @@ public class ComputerDAO extends DAO<Computer> {
 			ps.setString(1,c.getName());
 			
 			if(c.getIntroduction() == null)
-				ps.setNull(2, 0);
+				ps.setTimestamp(2, new Timestamp(0));//MySQL compatibility
 			else
 				ps.setTimestamp(2, new Timestamp(c.getIntroduction().getTime()));
 			
 			if(c.getDiscontinued() == null)
-				ps.setNull(3,0);
+				ps.setTimestamp(3, new Timestamp(0));//MySQL compatibility
 			else
 				ps.setTimestamp(3, new Timestamp(c.getDiscontinued().getTime()));
 			
@@ -206,12 +206,12 @@ public class ComputerDAO extends DAO<Computer> {
 		ps.setString(1,c.getName());
 			
 			if(c.getIntroduction() == null)
-				ps.setNull(2, 0);
+				ps.setTimestamp(2, new Timestamp(0));//MySQL compatibility
 			else
 				ps.setTimestamp(2, new Timestamp(c.getIntroduction().getTime()));
 			
 			if(c.getDiscontinued() == null)
-				ps.setNull(3,0);
+				ps.setTimestamp(3, new Timestamp(0));//MySQL compatibility
 			else
 				ps.setTimestamp(3, new Timestamp(c.getDiscontinued().getTime()));
 			
