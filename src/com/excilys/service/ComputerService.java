@@ -17,6 +17,7 @@ public class ComputerService extends Service<Computer>{
 	
 	private ComputerService(){
 		setDao(ComputerDAO.getInstance());
+		setLogger(logger);
 	}
 	
 	public static ComputerService getInstance(){
@@ -26,5 +27,4 @@ public class ComputerService extends Service<Computer>{
 		return INSTANCE;
 	}
 	
-
 }

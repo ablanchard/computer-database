@@ -22,84 +22,65 @@ public abstract class Service<E> {
 	
 	protected DAO<E> dao ;
 
-	final Logger logger = LoggerFactory.getLogger(Service.class);
+	Logger logger ;
 
 	public static final String SERVICE_ERROR = "An error has occured while connecting to the server. Contact admin.";
 	
 	public void retrieve(SearchWrapper<E> sw) throws ServiceException {
-		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.retrieve);
-
-		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
-		Connection cn = DatabaseHandler.getInstance().getConnection();
-		try{
-			dao.retrieve(sw);
-			swLog.getItems().get(0).setCommand(sw.toString());
-			LogDAO.getInstance().create(swLog);
-			cn.commit();
-		} catch (DaoException | SQLException e) {
-			rollbabk(cn);
-			throw new ServiceException();
-		} finally {
-			closeConnection(cn);
+		try {
+			operation(sw, Operation.retrieve);
+		} catch (NotExistException e) {
+			
 		}
+		
 		
 	}
 	public void create(SearchWrapper<E> sw) throws ServiceException {
-		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.create);
-
-		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
-		Connection cn = DatabaseHandler.getInstance().getConnection();
-		try{
-			dao.create(sw);
-			swLog.getItems().get(0).setCommand(sw.toString());
-			LogDAO.getInstance().create(swLog);
-			cn.commit();
-		} catch (DaoException | SQLException e) {
-			rollbabk(cn);
-			throw new ServiceException();
-		} finally {
-			closeConnection(cn);
+		try {
+			operation(sw, Operation.create);
+		} catch (NotExistException e) {
 		}
 		
 	}
 	public void update(SearchWrapper<E> sw) throws ServiceException, NotExistException {
-		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.update);
-
+		operation(sw, Operation.update);
+	}
+	public void delete(SearchWrapper<E> sw) throws ServiceException, NotExistException {
+		operation(sw,Operation.delete);
+	}
+	
+	private void operation(SearchWrapper<E> sw,Operation op) throws ServiceException, NotExistException {
+		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(op);
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		try{
-			dao.update(sw);
+			daoOperation(sw, op);
 			swLog.getItems().get(0).setCommand(sw.toString());
 			LogDAO.getInstance().create(swLog);
 			cn.commit();
-		} catch (SQLException e) {//throwed by commit
+			getLogger().info("Commited {} {}",op,sw);
+		} catch (DaoException | SQLException e) {
 			rollbabk(cn);
 			throw new ServiceException();
-		} catch (DaoException e){//throwed by DAO
-			rollbabk(cn);
-			throw new NotExistException();
 		} finally {
 			closeConnection(cn);
 		}
 	}
-	public void delete(SearchWrapper<E> sw) throws ServiceException, NotExistException {
-		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(Operation.delete);
-
-		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
-		Connection cn = DatabaseHandler.getInstance().getConnection();
-		try{
-			dao.delete(sw);
-			swLog.getItems().get(0).setCommand(sw.toString());
-			LogDAO.getInstance().create(swLog);
-			cn.commit();
-		} catch (SQLException e) {//throwed by commit
-			rollbabk(cn);
-			throw new ServiceException();
-		} catch (DaoException e){//throwed by DAO
-			rollbabk(cn);
-			throw new NotExistException();
-		} finally {
-			closeConnection(cn);
+	
+	private void daoOperation(SearchWrapper<E> sw,Operation op) throws DaoException{
+		switch(op){
+			case create :
+				dao.create(sw);
+				break;
+			case retrieve:
+				dao.retrieve(sw);
+				break;
+			case update:
+				dao.update(sw);
+				break;
+			case delete:
+				dao.delete(sw);
+				break;
 		}
 	}
 	
@@ -117,7 +98,7 @@ public abstract class Service<E> {
 	public void rollbabk(Connection cn){
 		try {
 			cn.rollback();
-			logger.info("Rollbacked !");
+			getLogger().info("Rollbacked !");
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -127,9 +108,20 @@ public abstract class Service<E> {
 		return dao;
 	}
 
-	public void setDao(DAO<E> dao) {
+	protected void setDao(DAO<E> dao) {
 		this.dao = dao;
 	}
+	
+	public Logger getLogger(){
+		return logger;
+	}
+	
+	protected void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+	
+	
+	
 	
 
 }

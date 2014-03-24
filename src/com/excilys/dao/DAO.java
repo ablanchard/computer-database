@@ -14,38 +14,57 @@ import org.slf4j.LoggerFactory;
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
 import com.excilys.data.Log;
+import com.excilys.data.Operation;
 
 public abstract class DAO<E> {
 	
 	public String TABLE ;
 	
-	final Logger logger = LoggerFactory.getLogger(DAO.class);
+	Logger logger ;
 	
 	public static DAO getInstance() {
 		return null;
 	}
 	
 	public void create(SearchWrapper<E> sw) throws DaoException {
+		operation(sw, Operation.create);
+	}
+	
+	public void retrieve(SearchWrapper<E> sw) throws DaoException {
+		operation(sw, Operation.retrieve);
+	}
+	
+	public void count(SearchWrapper<E> sw)  throws DaoException  {
+		operation(sw, Operation.count);
+	}
+	
+	public void update(SearchWrapper<E> sw) throws DaoException {
+		operation(sw, Operation.update);
+	}
+	public void delete(SearchWrapper<E> sw) throws DaoException {
+		operation(sw, Operation.delete);
+	}
+	
+	private void operation(SearchWrapper<E> sw,Operation op) throws DaoException {
 		Connection cn = DatabaseHandler.getInstance().getConnection();
 		PreparedStatement ps =null;
-		int rs ;
-		ResultSet generatedKeys;
+		ResultSet rs = null;
+		
 		try{
-			ps = cn.prepareStatement(getCreateQuery(),PreparedStatement.RETURN_GENERATED_KEYS);
-			prepareCreateStatement(ps, sw);
 			
-			rs = ps.executeUpdate();
-		    generatedKeys = ps.getGeneratedKeys();
+			ps = cn.prepareStatement(getQuery(sw,op));
+			prepareStatement(ps, sw ,op);
 			
-			if(rs != 0){
-				logger.info("Insertion succeed");
-				getCreateResult(generatedKeys,sw);
+			rs = execute(ps,op);
+			getResult(rs,sw,op);
+			getLogger().info("{} succeed",op);
+			if(op == Operation.retrieve){
+				operation(sw,Operation.count);
 			}
-			else
-				throw new DaoException();
+			
 		} 
 		catch (SQLException e){
-			logger.error("Exception lors de l'insertion : " + e.getMessage());
+			getLogger().error("Exception when {} : {}",op,e.getMessage());
 			e.printStackTrace();
 			throw new DaoException() ;
 		} finally{
@@ -53,173 +72,143 @@ public abstract class DAO<E> {
 		}
 	}
 	
-	public void retrieve(SearchWrapper<E> sw) throws DaoException {
-				
-		Connection cn = DatabaseHandler.getInstance().getConnection();
-		PreparedStatement ps = null;
-		ResultSet rs  = null;
-		
-		try {				
-			ps = cn.prepareStatement(getRetrieveQuery(sw));
-			
-			prepareRetrieveStatement(ps, sw);
-			rs = ps.executeQuery();
-
-			getRetrieveResult(rs,sw);
-			
-			count(sw);
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new DaoException();
-		} finally{
-			closeObjects(cn,ps,rs);
-					
+	private ResultSet execute(PreparedStatement ps,Operation op) throws SQLException {
+		if(op ==  Operation.retrieve || op == Operation.count){
+			return ps.executeQuery();
+		} else{
+			if( ps.executeUpdate() == 0){
+				throw new SQLException("Failed to update");
+			}
+		    return  ps.getGeneratedKeys();
 		}
 	}
 	
-	public void count(SearchWrapper<E> sw)  throws DaoException  {
-		Connection cn = DatabaseHandler.getInstance().getConnection();
-		PreparedStatement ps = null;
-		ResultSet rs  = null;
-		
-		try {				
-			ps = cn.prepareStatement(getCountQuery(sw));
-			
-			prepareCountStatement(ps, sw);
-			
-			rs = ps.executeQuery();
-
-			getCountResult(rs,sw);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new DaoException();
-		} finally{
-			closeObjects(cn,ps,rs);
-					
+	private String getQuery(SearchWrapper<E> sw,Operation op){
+		switch(op){
+			case create :
+				return getCreateQuery();
+			case retrieve:
+				return getRetrieveQuery(sw);
+			case update:
+				return getUpdateQuery();
+			case delete:
+				return getDeleteQuery();
+			case count:
+				return getCountQuery(sw);
+			default:
+				return "";
 		}
 	}
 	
-	public void update(SearchWrapper<E> sw) throws DaoException {
-		Connection cn = DatabaseHandler.getInstance().getConnection();
-		PreparedStatement ps =null;
-		int rs ;
-		try{
-			ps = cn.prepareStatement(getUpdateQuery());
-			
-			prepareUpdateStatement(ps,sw);
-			
-			rs = ps.executeUpdate();
-
-			
-			
-			if(rs != 0)
-				logger.info("Successful update");
-			else
-				throw new SQLException();
-		
-		} 
-		catch (SQLException e){
-			logger.error("Exception lors de l'insertion : " + e.getMessage());
-			e.printStackTrace();
-			throw new DaoException();
-		} finally{
-			closeObjects(cn,ps,null);
+	private void prepareStatement(PreparedStatement ps,SearchWrapper<E> sw,Operation op) throws SQLException {
+		switch(op){
+			case create :
+				prepareCreateStatement(ps, sw);
+				break;
+			case retrieve:
+				prepareRetrieveStatement(ps, sw);
+				break;
+			case update:
+				prepareUpdateStatement(ps, sw);
+				break;
+			case delete:
+				prepareDeleteStatement(ps, sw);
+				break;
+			case count:
+				prepareCountStatement(ps, sw);
+				break;
 		}
 	}
-	public void delete(SearchWrapper<E> sw) throws DaoException {
-		Connection cn = DatabaseHandler.getInstance().getConnection();
-		PreparedStatement ps =null;
-		int rs ;
-		try{
-			ps = cn.prepareStatement(getDeleteQuery());
-			prepareDeleteStatement(ps, sw);
-			
-			rs = ps.executeUpdate();
-
-			logger.info(ps.toString());
-			
-			if(rs != 0)
-				logger.info("Deletion succeed");
-			else
-				throw new DaoException();
-		
-		} 
-		catch (SQLException e){
-			logger.error("Exception lors de l'insertion : " + e.getMessage());
-			e.printStackTrace();
-			throw new DaoException();
-		} finally{
-			closeObjects(cn,ps,null);
+	
+	private void getResult(ResultSet rs,SearchWrapper<E> sw,Operation op)throws SQLException {
+		switch(op){
+			case create :
+				getCreateResult(rs,sw);
+				break;
+			case retrieve:
+				getRetrieveResult(rs,sw);
+				break;
+			case update:
+				getUpdateResult(rs,sw);
+				break;
+			case delete:
+				getDeleteResult(rs,sw);
+				break;
+			case count:
+				getCountResult(rs,sw);
+				break;
 		}
 	}
 	
 	protected abstract E entry(ResultSet rs)  throws SQLException;
 	
-	public abstract String getCreateQuery();
-	public abstract void prepareCreateStatement(PreparedStatement ps,SearchWrapper<E> sw) throws SQLException;
-	public abstract void getCreateResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
+	protected abstract String getCreateQuery();
+	protected abstract void prepareCreateStatement(PreparedStatement ps,SearchWrapper<E> sw) throws SQLException;
+	protected abstract void getCreateResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
 	
-	public abstract String getRetrieveQuery(SearchWrapper<E> sw);
-	public abstract void prepareRetrieveStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
-	public abstract void getRetrieveResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
+	protected abstract String getRetrieveQuery(SearchWrapper<E> sw);
+	protected abstract void prepareRetrieveStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
+	protected abstract void getRetrieveResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
 	
-	public abstract String getCountQuery(SearchWrapper<E> sw);
-	public abstract void prepareCountStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
-	public abstract void getCountResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
-	
-
-	public abstract String getUpdateQuery();
-	public abstract void prepareUpdateStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
-	public abstract void getUpdateResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
+	protected abstract String getCountQuery(SearchWrapper<E> sw);
+	protected abstract void prepareCountStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
+	protected abstract void getCountResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
 	
 
-	public abstract String getDeleteQuery();
-	public abstract void prepareDeleteStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
-	public abstract void getDeleteResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
+	protected abstract String getUpdateQuery();
+	protected abstract void prepareUpdateStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
+	protected abstract void getUpdateResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
+	
+
+	protected abstract String getDeleteQuery();
+	protected abstract void prepareDeleteStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
+	protected abstract void getDeleteResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
 	
 		
 	protected String getOrderClause(SearchWrapper<E> sw){
-		String orderClause ;
+		StringBuilder orderClause = new StringBuilder(" ");
 		
-		if(sw.getOrderCol() == null)
-			orderClause = " ";
-		else {
-			orderClause = " ORDER BY " ;
+		if(sw.getOrderCol() != null){
+			orderClause.append("ORDER BY ") ;
 			switch(sw.getOrderCol()){
 				case intro:
-					orderClause += "C."+ComputerDAO.ATTR_INTRODUCTION;
+					orderClause.append("C.");
+					orderClause.append(ComputerDAO.ATTR_INTRODUCTION);
 					break;
 				case disc:
-					orderClause += "C."+ComputerDAO.ATTR_DISCONTINUED;
+					orderClause.append("C.");
+					orderClause.append(ComputerDAO.ATTR_DISCONTINUED);
 					break;
 				case company:
-					orderClause += "COM."+CompanyDAO.ATTR_NAME;
+					orderClause.append("COM.");
+					orderClause.append(CompanyDAO.ATTR_NAME);
 					break;
 				default://case "name"
-					orderClause += "C."+ComputerDAO.ATTR_NAME;
+					orderClause.append("C.");
+					orderClause.append(ComputerDAO.ATTR_NAME);
 					break;
 			}
 						
 			if(sw.getOrderDirection() !=  null){
 				if(sw.getOrderDirection() == OrderDirection.desc)
-					orderClause += " DESC";
+					orderClause.append(" DESC");
 			}
 		
 		}
-		return orderClause;
+		return orderClause.toString();
 		
 	}
 	
 	protected String getLimitClause(SearchWrapper<E> sw){
-		String limitClause = "" ;
+		StringBuilder limitClause = new StringBuilder("");
 		if(sw.getPage() != 0){
 			int offset = (sw.getPage()-1)*sw.getNbComputersPerPage();
-			limitClause += " LIMIT " + sw.getNbComputersPerPage() + " OFFSET " + offset ;
+			limitClause.append(" LIMIT " );
+			limitClause.append(sw.getNbComputersPerPage());
+			limitClause.append(" OFFSET ");
+			limitClause.append(offset);
 		}
-		return limitClause;
+		return limitClause.toString();
 	}
 
 	protected void closeObjects(Connection cn,PreparedStatement ps, ResultSet rs){
@@ -251,10 +240,17 @@ public abstract class DAO<E> {
 		return TABLE;
 	}
 
-	public void setTABLE(String tABLE) {
+	protected void setTABLE(String tABLE) {
 		TABLE = tABLE;
 	}
 	
+	public Logger getLogger(){
+		return logger;
+	}
+	
+	protected void setLogger(Logger logger){
+		this.logger = logger;
+	}
 
 	
 	

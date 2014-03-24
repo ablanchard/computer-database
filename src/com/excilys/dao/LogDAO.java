@@ -21,6 +21,8 @@ public class LogDAO extends DAO<Log> {
 	final Logger logger = LoggerFactory.getLogger(LogDAO.class);
 
 	private LogDAO(){
+		setTABLE(TABLE);
+		setLogger(logger);
 	}
 	
 	public static LogDAO getInstance(){
@@ -36,8 +38,16 @@ public class LogDAO extends DAO<Log> {
 
 	@Override
 	public String getCreateQuery() {
-		return  "INSERT INTO " + TABLE + " ("+ATTR_TARGET+" , "+ATTR_OPERATION+" , "+ATTR_COMMAND + " ) VALUES ( ? , ? , ?  )";
-		
+		StringBuilder query = new StringBuilder("INSERT INTO ");
+		query.append( TABLE );
+		query.append( " (");
+		query.append(ATTR_TARGET);
+		query.append(" , ");
+		query.append(ATTR_OPERATION);
+		query.append(" , ");
+		query.append(ATTR_COMMAND );
+		query.append( " ) VALUES ( ? , ? , ?  )");
+		return query.toString();		
 	}
 
 	@Override

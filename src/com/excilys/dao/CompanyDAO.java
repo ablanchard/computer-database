@@ -22,6 +22,7 @@ public class CompanyDAO extends DAO<Company> {
 	
 	private CompanyDAO(){
 		setTABLE(TABLE);
+		setLogger(logger);
 	}
 	
 	public static CompanyDAO getInstance(){
@@ -77,10 +78,13 @@ public class CompanyDAO extends DAO<Company> {
 
 	@Override
 	public String getRetrieveQuery(SearchWrapper<Company> sw) {
-		String query = "SELECT * FROM " + TABLE ;
+		StringBuilder query = new StringBuilder("SELECT * FROM ");
+		query.append(TABLE) ;
 		if(sw.getItems().size() == 1)// get by id
-			query += " WHERE "+ ATTR_ID +"=? ;";
-		return query ;
+			query.append(" WHERE ");
+			query.append(ATTR_ID);
+			query.append("=? ;");
+		return query.toString() ;
 	}
 
 	@Override
@@ -95,9 +99,9 @@ public class CompanyDAO extends DAO<Company> {
 	public void getRetrieveResult(ResultSet rs, SearchWrapper<Company> sw)
 			throws SQLException {
 		List<Company> companies = new ArrayList<Company>();
-		while(rs.next())
+		while(rs.next()){
 			companies.add(entry(rs));
-		
+		}
 		sw.setItems(companies);
 		
 	}

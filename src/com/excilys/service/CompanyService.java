@@ -14,6 +14,7 @@ private static CompanyService INSTANCE = null;
 	
 	private CompanyService(){
 		setDao(CompanyDAO.getInstance());
+		setLogger(logger);
 	}
 	
 	public static CompanyService getInstance(){

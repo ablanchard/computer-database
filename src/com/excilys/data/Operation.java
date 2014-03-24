@@ -4,7 +4,8 @@ public enum Operation {
 	create,
 	retrieve,
 	update,
-	delete;
+	delete,
+	count;
 	
 	public int toInt(){
 		switch(this){
@@ -16,6 +17,9 @@ public enum Operation {
 			return 2;
 		case delete:
 			return 3;
+
+		case count:
+			return 4;
 		}
 		return -1;
 	}
@@ -30,6 +34,8 @@ public enum Operation {
 			return update;
 		case 3:
 			return delete;
+		case 4:
+			return count;
 		}
 		return null;
 	}

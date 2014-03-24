@@ -1,6 +1,8 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -18,11 +20,8 @@ public abstract class ComputerServlet extends HttpServlet {
 	public static final String ATTR_ID = "id";
 	
 
-	public static final String FORM_ATTR_NAME = "name";
-	public static final String FORM_ATTR_INTRO = "introducedDate";
-	public static final String FORM_ATTR_DISC = "discontinuedDate";
-	public static final String FORM_ATTR_COMPANY = "company";
-	public static final String FORM_ATTR_ID = "id";
+	
+	public static final String FORM_ATTRS = "form_attrs";
 	
 
 	public static final String NO_COMPANY_DEFAULT_NAME = "No company";
@@ -34,4 +33,5 @@ public abstract class ComputerServlet extends HttpServlet {
 		RequestDispatcher rd = ctx.getRequestDispatcher(DashboardServlet.PATH);
 		rd.forward(request, response);
 	}
+	
 }

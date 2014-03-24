@@ -85,6 +85,9 @@ public class EditComputerServlet extends ComputerServlet {
 			request.setAttribute(ATTR_COMPANIES, companies);		
 			request.setAttribute(ATTR_DTO, computerDTO);
 			
+			//On affecte les bons noms aux inputs
+			request.setAttribute(FORM_ATTRS, ComputerForm.getInstance());
+			
 			ServletContext ctx = getServletContext();
 			RequestDispatcher rd = ctx.getRequestDispatcher(JSP);
 			rd.forward(request, response);
@@ -102,11 +105,11 @@ public class EditComputerServlet extends ComputerServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ComputerDTO dto = ComputerDTO.build().setName(request.getParameter(FORM_ATTR_NAME))
-				.setIntroducedDate(request.getParameter(FORM_ATTR_INTRO))
-				.setDiscontinuedDate(request.getParameter(FORM_ATTR_DISC))
-				.setCompanyId(Integer.valueOf(request.getParameter(FORM_ATTR_COMPANY)))
-				.setId(Integer.valueOf(request.getParameter(FORM_ATTR_ID)));
+		ComputerDTO dto = ComputerDTO.build().setName(ComputerForm.getInstance().getName().getValue(request))
+				.setIntroducedDate(ComputerForm.getInstance().getIntro().getValue(request))
+				.setDiscontinuedDate(ComputerForm.getInstance().getDisc().getValue(request))
+				.setCompanyId(Integer.valueOf(ComputerForm.getInstance().getCompany().getValue(request)))
+				.setId(Integer.valueOf(ComputerForm.getInstance().getId().getValue(request)));
 		
 		Computer c;
 		

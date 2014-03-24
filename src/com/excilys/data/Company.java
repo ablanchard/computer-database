@@ -35,7 +35,10 @@ public class Company {
 	}
 	
 	public String toString(){
-		return getId() + " " + getName();
+		StringBuilder res = new StringBuilder(getId());
+		res.append(" ");
+		res.append(getName());
+		return res.toString();
 	}
 	
 

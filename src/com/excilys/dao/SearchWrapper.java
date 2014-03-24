@@ -31,20 +31,29 @@ public class SearchWrapper<E> {
 	
 	
 	public String toString(){
+		StringBuilder res = new StringBuilder();
 		if(getItems().size() == 1)
 			return getItems().get(0).toString();
 		else{
-			String res = "Page " + getPage();
-			if(getQuery() != null)
-				res += " looking for \"" + getQuery() + "\"";
-			if(getOrderCol() != null){
-				res += " order by " + getOrderCol() ;
-				if(getOrderDirection() != null)
-					res += " " + getOrderDirection();
-				else
-					res += " ASC ";
+			res.append("Page " );
+			res.append(getPage());
+			if(getQuery() != null){
+				res.append(" looking for \"" );
+				res.append(getQuery() );
+				res.append( "\"");
 			}
-			return res;
+			if(getOrderCol() != null){
+				res.append(" order by ");
+				res.append(getOrderCol());
+				if(getOrderDirection() != null){
+					res.append(" ");
+					res.append(getOrderDirection());
+				}
+				else {
+					res.append(" ASC ");
+				}
+			}
+			return res.toString();
 		}
 	}
 	

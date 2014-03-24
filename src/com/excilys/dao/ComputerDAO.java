@@ -33,6 +33,7 @@ public class ComputerDAO extends DAO<Computer> {
 	
 	private ComputerDAO(){
 		setTABLE(TABLE);
+		setLogger(logger);
 	}
 	
 	public static ComputerDAO getInstance(){
@@ -61,7 +62,18 @@ public class ComputerDAO extends DAO<Computer> {
 
 	@Override
 	public String getCreateQuery() {
-		return "INSERT INTO " + TABLE + " ("+ATTR_NAME+" , "+ATTR_INTRODUCTION+" , "+ATTR_DISCONTINUED+" , "+ATTR_COMPANY_ID+" ) VALUES ( ? , ? , ? , ? )";
+		StringBuilder query = new StringBuilder("INSERT INTO ");
+		query.append( TABLE );
+		query.append( " (");
+		query.append(ATTR_NAME);
+		query.append(" , ");
+		query.append(ATTR_INTRODUCTION);
+		query.append(" , ");
+		query.append(ATTR_DISCONTINUED);
+		query.append(" , ");
+		query.append(ATTR_COMPANY_ID);
+		query.append(" ) VALUES ( ? , ? , ? , ? )");
+		return query.toString();
 
 	}
 
@@ -100,19 +112,20 @@ public class ComputerDAO extends DAO<Computer> {
 
 	@Override
 	public String getRetrieveQuery(SearchWrapper<Computer> sw) {
-		String query = SELECT_QUERY;
+		StringBuilder query = new StringBuilder(SELECT_QUERY);
 		
-		if(sw.getItems().size() == 1)
-			query += " WHERE C."+ ATTR_ID +"=? ;";
+		if(sw.getItems().size() == 1){
+			query.append(" WHERE C."+ ATTR_ID +"=? ;");
+		}
 		else{
 		
 			if(sw.getQuery() != null)
-				query += SEARCH_CLAUSE ;
+				query.append(SEARCH_CLAUSE );
 			
-			query += getOrderClause(sw);
-			query += getLimitClause(sw);
+			query.append(getOrderClause(sw));
+			query.append(getLimitClause(sw));
 		}
-		return query;
+		return query.toString();
 	}
 
 	@Override
@@ -143,11 +156,11 @@ public class ComputerDAO extends DAO<Computer> {
 	
 	@Override
 	public String getCountQuery(SearchWrapper<Computer> sw) {
-		String query = COUNT_QUERY;
+		StringBuilder query = new StringBuilder(COUNT_QUERY);
 		
 		if(sw.getQuery() != null)
-			query += SEARCH_CLAUSE ;
-		return query;
+			query.append(SEARCH_CLAUSE);
+		return query.toString();
 	}
 
 	@Override
@@ -170,7 +183,20 @@ public class ComputerDAO extends DAO<Computer> {
 
 	@Override
 	public String getUpdateQuery() {
-		return "UPDATE " + TABLE + " SET "+ATTR_NAME+" = ? , "+ ATTR_INTRODUCTION+" = ? , "+ATTR_DISCONTINUED+" = ? , "+ATTR_COMPANY_ID+" = ? WHERE "+ ATTR_ID +" = ? ";
+		StringBuilder query = new StringBuilder("UPDATE ");
+		query.append( TABLE);
+		query.append( " SET ");
+		query.append(ATTR_NAME);
+		query.append(" = ? , ");
+		query.append( ATTR_INTRODUCTION);
+		query.append(" = ? , ");
+		query.append(ATTR_DISCONTINUED);
+		query.append(" = ? , ");
+		query.append(ATTR_COMPANY_ID);
+		query.append(" = ? WHERE ");
+		query.append( ATTR_ID );
+		query.append(" = ? ");
+		return query.toString();
 	}
 
 	@Override
@@ -207,8 +233,12 @@ public class ComputerDAO extends DAO<Computer> {
 
 	@Override
 	public String getDeleteQuery() {
-		// TODO Auto-generated method stub
-		return "DELETE FROM " + TABLE + " WHERE "+ATTR_ID+"= ?";
+		StringBuilder query = new StringBuilder("DELETE FROM ");
+		query.append(TABLE );
+		query.append( " WHERE ");
+		query.append(ATTR_ID);
+		query.append("= ?");
+		return query.toString();
 	}
 
 	@Override

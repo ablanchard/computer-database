@@ -55,9 +55,12 @@ public class AddComputerServlet extends ComputerServlet {
 			companies.add(0, Company.build().setName(NO_COMPANY_DEFAULT_NAME).setId(0));
 			request.setAttribute(ATTR_COMPANIES, companies);
 			
+			request.setAttribute(FORM_ATTRS, ComputerForm.getInstance());
+			
 			ServletContext ctx = getServletContext();
 			RequestDispatcher rd = ctx.getRequestDispatcher(JSP);
 			rd.forward(request, response);
+			
 		} catch (ServiceException e){
 			request.setAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
 			backToIndex(request, response);
@@ -69,10 +72,10 @@ public class AddComputerServlet extends ComputerServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		ComputerDTO dto = ComputerDTO.build().setName(request.getParameter(FORM_ATTR_NAME))
-				.setIntroducedDate(request.getParameter(FORM_ATTR_INTRO))
-				.setDiscontinuedDate(request.getParameter(FORM_ATTR_DISC))
-				.setCompanyId(Integer.valueOf(request.getParameter(FORM_ATTR_COMPANY)));
+		ComputerDTO dto = ComputerDTO.build().setName(ComputerForm.getInstance().getName().getValue(request))
+				.setIntroducedDate(ComputerForm.getInstance().getIntro().getValue(request))
+				.setDiscontinuedDate(ComputerForm.getInstance().getDisc().getValue(request))
+				.setCompanyId(Integer.valueOf(ComputerForm.getInstance().getCompany().getValue(request)));
 		Computer c;
 		
 		try{
