@@ -42,15 +42,14 @@ public class CompanyDAO extends DAO<Company> {
 	//Selection
 	
 	
-	protected Company entry(ResultSet rs){
+	protected Company entry(ResultSet rs)throws SQLException{
 		Company c = null;
 		try {
 			c = new Company(rs.getString(ATTR_NAME));
 			c.setId(rs.getInt(ATTR_ID));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			
-LOGGER.error(e.getMessage(), e.getCause());
+			LOGGER.error(e.getMessage(), e.getCause());
+			throw new SQLException("Error while converting entries : " + e.getMessage());
 		}
 		
 		return c;

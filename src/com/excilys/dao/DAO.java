@@ -60,7 +60,7 @@ public abstract class DAO<E> {
 			getLogger().error("Exception when {} : {}",op,e.getMessage());
 			
 			getLogger().error(e.getMessage(), e.getCause());
-			throw new DaoException() ;
+			throw new DaoException(op + " failed : " +e.getMessage()) ;
 		} finally{
 			closeObjects(cn,ps,null);
 		}
@@ -205,31 +205,31 @@ public abstract class DAO<E> {
 		return limitClause.toString();
 	}
 
-	protected void closeObjects(Connection cn,PreparedStatement ps, ResultSet rs){
-		try {
-			if(cn!=null && cn.getAutoCommit()){
-				cn.close();
+	private void closeObjects(Connection cn,PreparedStatement ps, ResultSet rs) throws DaoException{
+		if(cn != null){
+			try {
+				if(cn.getAutoCommit()){
+					cn.close();
+				}
+			} catch (SQLException e) {
+				getLogger().error(e.getMessage(), e.getCause());
+				throw new DaoException("Impossible to close connection:"+ e.getMessage());
 			}
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
-			if(ps!=null){
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					
-					getLogger().error(e.getMessage(), e.getCause());
-			}}
-			if(rs!=null){
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					
-					getLogger().error(e.getMessage(), e.getCause());
-			}}
+		if(ps!=null){
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				getLogger().error(e.getMessage(), e.getCause());
+				throw new DaoException("Impossible to close preparedStatement:"+ e.getMessage());
+		}}
+		if(rs!=null){
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				getLogger().error(e.getMessage(), e.getCause());
+				throw new DaoException("Impossible to close resultSet:"+ e.getMessage());
+		}}
 	}
 
 	public String getTABLE() {
