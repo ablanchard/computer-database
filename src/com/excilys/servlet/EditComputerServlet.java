@@ -30,7 +30,7 @@ import com.excilys.service.ServiceException;
  */
 public class EditComputerServlet extends ComputerServlet {
 	private static final long serialVersionUID = 1L;
-	final Logger logger = LoggerFactory.getLogger(EditComputerServlet.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EditComputerServlet.class);
 	
 	public static final String JSP = "/WEB-INF/editComputer.jsp";
 	public static final String SUCCESS_MESSAGE = "Computer successfully edited.";

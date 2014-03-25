@@ -28,7 +28,7 @@ public class DeleteComputerServlet extends ComputerServlet {
 	public static final String SUCCESS_MESSAGE = "Computer successfully deleted.";
 	
 
-	final Logger logger = LoggerFactory.getLogger(DeleteComputerServlet.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DeleteComputerServlet.class);
     /**
      * @see HttpServlet#HttpServlet()
      */

@@ -1,14 +1,11 @@
 package com.excilys.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.servlet.EditComputerServlet;
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 
@@ -26,16 +23,15 @@ public class DatabaseHandler {
 
 	private BoneCP connectionPool = null;
 	
-	public static final ThreadLocal thLocal = new ThreadLocal();
+	public static final ThreadLocal<Connection> thLocal = new ThreadLocal<Connection>();
 	
-	final Logger logger = LoggerFactory.getLogger(DatabaseHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseHandler.class);
 	
 	static {
 		try {
 			Class.forName(DATABASE_DRIVER);
 		} catch (ClassNotFoundException  e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e.getCause());
 		}
 	}
 	
@@ -51,9 +47,8 @@ public class DatabaseHandler {
 		config.setPartitionCount(1);
 		try {
 			connectionPool = new BoneCP(config);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SQLException e) {			
+			LOGGER.error(e.getMessage(), e.getCause());
 		} // setup the connection pool
 	}
 	
@@ -70,13 +65,14 @@ public class DatabaseHandler {
 	
 	public Connection getConnectionFromPool(){
 		try {
-			logger.info("Connexions libres : {}",connectionPool.getTotalFree());
+			LOGGER.info("Connexions libres : {}",connectionPool.getTotalFree());
 			Connection c = connectionPool.getConnection();
-			c.setAutoCommit(AUTO_COMMIT);; // fetch a connection
+			c.setAutoCommit(AUTO_COMMIT); // fetch a connection
 			return c;
 			//return DriverManager.getConnection(DATABASE_URL + DATABASE_NAME + DATABASE_PARAMETER,DATABASE_USER,DATABASE_PASS);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			
+			LOGGER.error(e.getMessage(), e.getCause());
 		}
 		return null;
 	}

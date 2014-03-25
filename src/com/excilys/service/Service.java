@@ -2,19 +2,14 @@ package com.excilys.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.excilys.dao.ComputerDAO;
 import com.excilys.dao.DAO;
 import com.excilys.dao.DaoException;
 import com.excilys.dao.DatabaseHandler;
 import com.excilys.dao.LogDAO;
 import com.excilys.dao.SearchWrapper;
-import com.excilys.data.Company;
-import com.excilys.data.Computer;
 import com.excilys.data.Log;
 import com.excilys.data.Operation;
 
@@ -22,7 +17,7 @@ public abstract class Service<E> {
 	
 	protected DAO<E> dao ;
 
-	Logger logger ;
+	Logger LOGGER ;
 
 	public static final String SERVICE_ERROR = "An error has occured while connecting to the server. Contact admin.";
 	
@@ -84,6 +79,8 @@ public abstract class Service<E> {
 			case delete:
 				dao.delete(sw);
 				break;
+		default:
+			break;
 		}
 	}
 	
@@ -91,10 +88,12 @@ public abstract class Service<E> {
 		if(cn!=null){
 		try {
 			cn.close();
+			
 			DatabaseHandler.getInstance().unset();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			
+			LOGGER.error(e.getMessage(), e.getCause());
 		}}
 	}
 	
@@ -102,9 +101,8 @@ public abstract class Service<E> {
 		try {
 			cn.rollback();
 			getLogger().info("Rollbacked !");
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (SQLException e) {
+			LOGGER.error(e.getMessage(), e.getCause());
 		}
 	}
 	public DAO<E> getDao() {
@@ -116,11 +114,11 @@ public abstract class Service<E> {
 	}
 	
 	public Logger getLogger(){
-		return logger;
+		return LOGGER;
 	}
 	
-	protected void setLogger(Logger logger) {
-		this.logger = logger;
+	protected void setLogger(Logger LOGGER) {
+		this.LOGGER = LOGGER;
 	}
 	
 	

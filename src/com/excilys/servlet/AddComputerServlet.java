@@ -33,7 +33,7 @@ public class AddComputerServlet extends ComputerServlet {
 	public static final String SUCCESS_MESSAGE = "Computer successfully added." ;
 	public static final String JSP = "/WEB-INF/addComputer.jsp";
 	
-	final Logger logger = LoggerFactory.getLogger(AddComputerServlet.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AddComputerServlet.class);
        
     /**
      * @see HttpServlet#HttpServlet()

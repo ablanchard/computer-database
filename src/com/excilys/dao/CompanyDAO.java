@@ -18,11 +18,11 @@ public class CompanyDAO extends DAO<Company> {
 	public static final String ATTR_NAME = "name";
 	public static final String ATTR_ID = "id";
 
-	final Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
 	
 	private CompanyDAO(){
 		setTABLE(TABLE);
-		setLogger(logger);
+		setLogger(LOGGER);
 	}
 	
 	public static CompanyDAO getInstance(){
@@ -49,7 +49,8 @@ public class CompanyDAO extends DAO<Company> {
 			c.setId(rs.getInt(ATTR_ID));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+LOGGER.error(e.getMessage(), e.getCause());
 		}
 		
 		return c;

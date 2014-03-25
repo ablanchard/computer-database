@@ -29,11 +29,11 @@ public class ComputerDAO extends DAO<Computer> {
 	private static final String SEARCH_CLAUSE = " WHERE C." + ATTR_NAME + " LIKE ? OR COM." + CompanyDAO.ATTR_NAME + " LIKE ? ";
 	//private static final String LIMIT_CLAUSE = " LIMIT ? OFFSET ? ";
 	
-	final Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 	
 	private ComputerDAO(){
 		setTABLE(TABLE);
-		setLogger(logger);
+		setLogger(LOGGER);
 	}
 	
 	public static ComputerDAO getInstance(){
@@ -105,6 +105,7 @@ public class ComputerDAO extends DAO<Computer> {
 	public void getCreateResult(ResultSet gk,SearchWrapper<Computer> sw) throws SQLException {
 		 if (gk.next()) {
 	            sw.getItems().get(0).setId(gk.getInt(1));
+	            LOGGER.debug("Generated id {}",gk.getInt(1));
 	        } else {
 	            throw new SQLException("Creating user failed, no generated key obtained.");
 	        }
@@ -176,9 +177,9 @@ public class ComputerDAO extends DAO<Computer> {
 	@Override
 	public void getCountResult(ResultSet rs, SearchWrapper<Computer> sw)
 			throws SQLException {
-		if(rs.next())
+		if(rs.next()){
 				sw.setCount(rs.getInt(1));
-		
+		}
 	}
 
 	@Override

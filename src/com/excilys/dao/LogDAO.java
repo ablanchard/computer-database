@@ -18,11 +18,11 @@ public class LogDAO extends DAO<Log> {
 	private static final String ATTR_ID = "id";
 	private static final String ATTR_COMMAND = "command";
 	
-	final Logger logger = LoggerFactory.getLogger(LogDAO.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(LogDAO.class);
 
 	private LogDAO(){
 		setTABLE(TABLE);
-		setLogger(logger);
+		setLogger(LOGGER);
 	}
 	
 	public static LogDAO getInstance(){

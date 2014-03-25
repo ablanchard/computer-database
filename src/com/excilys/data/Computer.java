@@ -26,8 +26,8 @@ public class Computer {
 		String intro = (introduction==null)?"null":introduction.toString();
 		String dis = (discontinued==null)?"null":discontinued.toString();
 		
-		StringBuilder res = new StringBuilder(getId());
-		res.append(" " );
+		StringBuilder res = new StringBuilder(Integer.toString(getId()));
+		res.append(" ");
 		res.append(name );
 		res.append(" introduced " );
 		res.append(intro );

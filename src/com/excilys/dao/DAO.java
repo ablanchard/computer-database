@@ -4,25 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.excilys.data.Company;
-import com.excilys.data.Computer;
-import com.excilys.data.Log;
 import com.excilys.data.Operation;
 
 public abstract class DAO<E> {
 	
 	public String TABLE ;
 	
-	Logger logger ;
+	Logger LOGGER ;
 	
-	public static DAO getInstance() {
+	public static DAO<?> getInstance() {
 		return null;
 	}
 	
@@ -52,7 +45,7 @@ public abstract class DAO<E> {
 		
 		try{
 			
-			ps = cn.prepareStatement(getQuery(sw,op));
+			ps = cn.prepareStatement(getQuery(sw,op),PreparedStatement.RETURN_GENERATED_KEYS);
 			prepareStatement(ps, sw ,op);
 			
 			rs = execute(ps,op);
@@ -65,7 +58,8 @@ public abstract class DAO<E> {
 		} 
 		catch (SQLException e){
 			getLogger().error("Exception when {} : {}",op,e.getMessage());
-			e.printStackTrace();
+			
+			getLogger().error(e.getMessage(), e.getCause());
 			throw new DaoException() ;
 		} finally{
 			closeObjects(cn,ps,null);
@@ -225,14 +219,16 @@ public abstract class DAO<E> {
 					ps.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					
+					getLogger().error(e.getMessage(), e.getCause());
 			}}
 			if(rs!=null){
 				try {
 					rs.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					
+					getLogger().error(e.getMessage(), e.getCause());
 			}}
 	}
 
@@ -245,11 +241,11 @@ public abstract class DAO<E> {
 	}
 	
 	public Logger getLogger(){
-		return logger;
+		return LOGGER;
 	}
 	
-	protected void setLogger(Logger logger){
-		this.logger = logger;
+	protected void setLogger(Logger LOGGER){
+		this.LOGGER = LOGGER;
 	}
 
 	

@@ -61,28 +61,28 @@ public class SearchWrapper<E> {
 	public String getQuery() {
 		return query;
 	}
-	public SearchWrapper setQuery(String query) {
+	public SearchWrapper<E> setQuery(String query) {
 		this.query = query;
 		return this;
 	}
 	public OrderComputerCol getOrderCol() {
 		return orderCol;
 	}
-	public SearchWrapper setOrderCol(OrderComputerCol orderCol) {
+	public SearchWrapper<E> setOrderCol(OrderComputerCol orderCol) {
 		this.orderCol = orderCol;
 		return this;
 	}
 	public OrderDirection getOrderDirection() {
 		return orderDirection;
 	}
-	public SearchWrapper setOrderDirection(OrderDirection orderDirection) {
+	public SearchWrapper<E> setOrderDirection(OrderDirection orderDirection) {
 		this.orderDirection = orderDirection;
 		return this;
 	}
 	public int getPage() {
 		return page;
 	}
-	public SearchWrapper setPage(int page) {
+	public SearchWrapper<E> setPage(int page) {
 		this.page = page;
 		return this;
 	}

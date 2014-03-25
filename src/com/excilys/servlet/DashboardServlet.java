@@ -50,7 +50,7 @@ public class DashboardServlet extends ComputerServlet {
 	public static final String PATH = "/index" ;
 	public static final String JSP = "/WEB-INF/dashboard.jsp";
 
-	final Logger logger = LoggerFactory.getLogger(DashboardServlet.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DashboardServlet.class);
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -72,7 +72,7 @@ public class DashboardServlet extends ComputerServlet {
 			String page = request.getParameter(ATTR_PAGE);
 			
 			
-			//logger.info("Request parameters : Search : {}, Order : {}, Direction : {}",search,order,direction);
+			//LOGGER.info("Request parameters : Search : {}, Order : {}, Direction : {}",search,order,direction);
 			
 			if(search != null){
 				sw.setQuery(search);

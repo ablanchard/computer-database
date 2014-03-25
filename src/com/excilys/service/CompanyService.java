@@ -10,11 +10,11 @@ public class CompanyService extends Service<Company> {
 	
 private static CompanyService INSTANCE = null;
 	
-	final Logger logger = LoggerFactory.getLogger(CompanyService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyService.class);
 	
 	private CompanyService(){
 		setDao(CompanyDAO.getInstance());
-		setLogger(logger);
+		setLogger(LOGGER);
 	}
 	
 	public static CompanyService getInstance(){
