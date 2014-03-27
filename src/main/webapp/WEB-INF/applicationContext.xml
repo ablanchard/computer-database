@@ -1,0 +1,114 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+		 <!-- Database Manager-->
+        <bean 	id="DatabaseManager" 
+        		class="com.excilys.dao.DatabaseHandler" 
+        />
+         
+         <!-- Abstract DAO and Service -->
+        <bean 	id="dao" 
+        		class="com.excilys.dao.DAO" 
+         		abstract="true" 
+         		scope="singleton"
+         		factory-method="getInstance"
+        />
+         
+        <bean 	id="service" 
+         		class="com.excilys.dao.Service" 
+         		abstract="true" 
+         		scope="singleton"
+         		factory-method="getInstance"
+        />
+         
+         <!-- Computer DAO and Service-->
+        <bean 	id="computerDAO" 
+        		class="com.excilys.dao.ComputerDAO" 
+        		scope="singleton"
+        		factory-method="getInstance">
+        		<property name="DatabaseManager">
+                        <ref bean="DatabaseManager"/>
+                </property>
+        </bean>
+
+        <bean 	id="computerService" 
+        		class="com.excilys.service.ComputerService" 
+        		scope="singleton"
+        		factory-method="getInstance">
+                <property name="computerDAO">
+                        <ref bean="computerDAO"/>
+                </property>
+                <property name="DatabaseManager">
+                        <ref bean="DatabaseManager"/>
+                </property>
+        </bean>
+
+        <!-- Company DAO and service -->
+        <bean 	id="companyDAO" 
+        		class="com.excilys.dao.CompanyDAO" 
+        		scope="singleton"
+        		factory-method="getInstance">
+        	<property name="DatabaseManager">
+                        <ref bean="DatabaseManager"/>
+                </property>
+        </bean>
+        <bean 	id="companyService"
+        		class="com.excilys.service.CompanyService"
+        		scope="singleton"
+        		factory-method="getInstance">
+                <property name="companyDAO">
+                        <ref bean="companyDAO"/>
+                </property>
+                <property name="DatabaseManager">
+                        <ref bean="DatabaseManager"/>
+                </property>
+        </bean>
+
+		<!-- Log DAO -->
+        <bean 	id="logDAO" 
+        		class="com.excilys.dao.LogDAO"
+        		scope="singleton"
+        		factory-method="getInstance">
+                <property name="DatabaseManager">
+                        <ref bean="DatabaseManager"/>
+                </property>
+        </bean>
+
+	<!-- Servlets -->
+    <bean id="dashboardServlet" class="com.excilys.servlet.DashboardServlet" >
+            <property name="computerService">
+                    <ref bean="computerService"/>
+            </property>
+    </bean>
+    <bean id="addComputerServlet" class="com.excilys.servlet.AddComputerServlet" >
+            <property name="computerService">
+                    <ref bean="computerService"/>
+            </property>
+            <property name="companyService">
+                    <ref bean="companyService"/>
+            </property>
+    </bean>
+    <bean id="editComputerServlet" class="com.excilys.servlet.EditComputerServlet" >
+            <property name="computerService">
+                    <ref bean="computerService"/>
+            </property>
+            <property name="companyService">
+                    <ref bean="companyService"/>
+            </property>
+    </bean>
+    <bean id="deleteComputerServlet" class="com.excilys.servlet.DeleteComputerServlet" >
+            <property name="computerService">
+                    <ref bean="computerService"/>
+            </property>
+    </bean>
+    
+    <!--  Model -->
+    <bean id="company" class="com.excilys.data.Company"></bean>
+    <bean id="computer" class="com.excilys.data.Computer">
+    	<property name="company">
+    		<ref bean="company"></ref>
+    	</property>
+    </bean>
+</beans>
