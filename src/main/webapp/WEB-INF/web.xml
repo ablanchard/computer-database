@@ -5,7 +5,7 @@
     <welcome-file>index</welcome-file>
   </welcome-file-list>
   
-  <context-param>
+  	<context-param>
 	        <param-name>contextConfigLocation</param-name>
 	        <param-value>/WEB-INF/applicationContext.xml</param-value>
 	</context-param>
@@ -13,7 +13,17 @@
 	<listener>
 	        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-
+	<!-- 
+		<servlet>
+		<servlet-name>mainController</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>mainController</servlet-name>
+		<url-pattern>*</url-pattern>
+	</servlet-mapping>
+	-->
   <servlet>
     <description></description>
     <display-name>DashboardServlet</display-name>

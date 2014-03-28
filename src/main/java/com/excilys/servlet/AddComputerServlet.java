@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
@@ -34,6 +37,7 @@ public class AddComputerServlet extends ComputerServlet {
 	public static final String JSP = "/WEB-INF/addComputer.jsp";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AddComputerServlet.class);
+
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -49,7 +53,7 @@ public class AddComputerServlet extends ComputerServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			SearchWrapper<Company> sw = new SearchWrapper<Company>();
-			CompanyService.getInstance().retrieve(sw);
+			getCompanyService().retrieve(sw);
 			
 			List<Company> companies = sw.getItems();
 			companies.add(0, Company.build().setName(NO_COMPANY_DEFAULT_NAME).setId(0));
@@ -82,7 +86,7 @@ public class AddComputerServlet extends ComputerServlet {
 		try{
 			c = ComputerMapper.toComputer(dto);
 			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(c);
-			ComputerService.getInstance().create(sw);
+			getComputerService().create(sw);
 			request.setAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
 			
 			backToIndex(request, response);
@@ -100,7 +104,8 @@ public class AddComputerServlet extends ComputerServlet {
 		
 		
 	}
-	
+
+
 
 
 }

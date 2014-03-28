@@ -14,6 +14,9 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import com.excilys.dao.OrderComputerCol;
 import com.excilys.dao.OrderDirection;
@@ -49,6 +52,8 @@ public class DashboardServlet extends ComputerServlet {
 	
 	public static final String PATH = "/index" ;
 	public static final String JSP = "/WEB-INF/dashboard.jsp";
+	
+	
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DashboardServlet.class);
     /**
@@ -99,7 +104,7 @@ public class DashboardServlet extends ComputerServlet {
 		try {
 			
 		
-			ComputerService.getInstance().retrieve(sw);
+			getComputerService().retrieve(sw);
 					
 			int pageMax = (int)Math.floor(sw.getCount()/nbComputersPerPage);
 			
@@ -144,6 +149,10 @@ public class DashboardServlet extends ComputerServlet {
 		
 	
 	}
+
+	
+
+	
 
 
 

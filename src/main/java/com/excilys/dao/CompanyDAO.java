@@ -13,7 +13,6 @@ import com.excilys.data.Company;
 
 //Singleton
 public class CompanyDAO extends DAO<Company> {
-	private static CompanyDAO INSTANCE = null;
 	public static final String TABLE = "company";
 	public static final String ATTR_NAME = "name";
 	public static final String ATTR_ID = "id";
@@ -25,13 +24,7 @@ public class CompanyDAO extends DAO<Company> {
 		setLogger(LOGGER);
 	}
 	
-	public static CompanyDAO getInstance(){
-		if(INSTANCE == null){
-			INSTANCE = new CompanyDAO();
-			
-		}
-		return INSTANCE;
-	}
+	
 	
 	//Insertion
 	

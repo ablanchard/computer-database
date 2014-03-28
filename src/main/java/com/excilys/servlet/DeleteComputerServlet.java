@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
@@ -26,7 +29,7 @@ public class DeleteComputerServlet extends ComputerServlet {
 	private static final long serialVersionUID = 1L;
 
 	public static final String SUCCESS_MESSAGE = "Computer successfully deleted.";
-	
+
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DeleteComputerServlet.class);
     /**
@@ -45,7 +48,7 @@ public class DeleteComputerServlet extends ComputerServlet {
 		SearchWrapper<Computer> computerToDelete = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
 		
 		try{
-			ComputerService.getInstance().delete(computerToDelete);
+			getComputerService().delete(computerToDelete);
 			request.setAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
 		} catch (NotExistException e){
 			request.setAttribute(ATTR_ERROR, ComputerService.NOT_EXIST);
@@ -56,6 +59,9 @@ public class DeleteComputerServlet extends ComputerServlet {
 		backToIndex(request, response);
 		
 	}
+
+
+
 	
 
 

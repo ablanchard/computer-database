@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
@@ -21,6 +23,8 @@ import com.excilys.validator.ComputerValidator;
 public class ComputerMapper {
 	
 	public static final String DATE_PATTERN = "yyyy-MM-dd";
+	
+	private static CompanyService companyService = null;
 
 	public static Computer toComputer(ComputerDTO dto) throws DTOException {
 		Computer c = Computer.builder();
@@ -38,7 +42,7 @@ public class ComputerMapper {
 		
 		try{
 			SearchWrapper<Company> sw = new SearchWrapper<Company>(Company.build().setId(dto.getCompanyId()));
-			CompanyService.getInstance().retrieve(sw);
+			companyService.retrieve(sw);
 			
 			Company company = null;
 			if(sw.getItems().size() == 1){
@@ -98,6 +102,17 @@ public class ComputerMapper {
 		}
 		return swDTO;
 	}
+
+	public static CompanyService getCompanyService() {
+		return companyService;
+	}
+
+	@Autowired
+	public static void setCompanyService(CompanyService companyService) {
+		ComputerMapper.companyService = companyService;
+	}
+
+
 	
 	
 	

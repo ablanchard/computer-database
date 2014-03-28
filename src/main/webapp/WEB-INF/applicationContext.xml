@@ -1,114 +1,154 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p	="http://www.springframework.org/schema/p"
     xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
-
+       	http://www.springframework.org/schema/beans 
+      	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+      	
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+	<!-- 
+	<context:component-scan base-package=""/>
+	
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+	<bean 	class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+			p:prefix="/jsp/"
+			p:suffix=".jsp" />-->
 		 <!-- Database Manager-->
+		
+		
+        <bean 	id="boneCPDataSource"
+        		class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+
+			       <property name="driverClass" value="com.mysql.jdbc.Driver" />
+			       <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull" />
+			       <property name="username" value="jee-cdb" />
+			       <property name="password" value="password" />
+			       <property name="minConnectionsPerPartition" value="5" />
+			       <property name="maxConnectionsPerPartition" value="10" />
+			       <property name="partitionCount" value="1" />
+
+       	</bean>
+       
+		
+		<bean 	id="threadLocal"
+				class="java.lang.ThreadLocal"
+		/>
         <bean 	id="DatabaseManager" 
-        		class="com.excilys.dao.DatabaseHandler" 
-        />
+        		class="com.excilys.dao.DatabaseHandler">
+        	<property name="ds">
+        		<ref bean="boneCPDataSource"/>
+        	</property>
+        	<property name="thLocal">
+        		<ref bean="threadLocal"/>
+        	</property>
+        		
+        </bean>
+        
          
          <!-- Abstract DAO and Service -->
         <bean 	id="dao" 
         		class="com.excilys.dao.DAO" 
-         		abstract="true" 
-         		scope="singleton"
-         		factory-method="getInstance"
-        />
+         		abstract="true">
+         	<property name="dh">
+         		<ref bean="DatabaseManager"/>
+         	</property>		
+         		
+         </bean>
          
         <bean 	id="service" 
-         		class="com.excilys.dao.Service" 
-         		abstract="true" 
-         		scope="singleton"
-         		factory-method="getInstance"
-        />
+         		class="com.excilys.service.Service" 
+         		abstract="true">
+         	<property name="dh">
+         		<ref bean="DatabaseManager"/>
+         	</property>		
+         	<property name="logDAO">
+         		<ref bean="logDAO"/>
+         	</property> 
+         			
+        </bean>
          
          <!-- Computer DAO and Service-->
         <bean 	id="computerDAO" 
-        		class="com.excilys.dao.ComputerDAO" 
-        		scope="singleton"
-        		factory-method="getInstance">
-        		<property name="DatabaseManager">
-                        <ref bean="DatabaseManager"/>
-                </property>
+        		class="com.excilys.dao.ComputerDAO"
+        		parent="dao">
         </bean>
 
         <bean 	id="computerService" 
-        		class="com.excilys.service.ComputerService" 
-        		scope="singleton"
-        		factory-method="getInstance">
-                <property name="computerDAO">
+        		class="com.excilys.service.ComputerService"
+        		parent="service">
+                <property name="dao">
                         <ref bean="computerDAO"/>
-                </property>
-                <property name="DatabaseManager">
-                        <ref bean="DatabaseManager"/>
                 </property>
         </bean>
 
         <!-- Company DAO and service -->
         <bean 	id="companyDAO" 
-        		class="com.excilys.dao.CompanyDAO" 
-        		scope="singleton"
-        		factory-method="getInstance">
-        	<property name="DatabaseManager">
-                        <ref bean="DatabaseManager"/>
-                </property>
+        		class="com.excilys.dao.CompanyDAO"
+        		parent="dao">
         </bean>
         <bean 	id="companyService"
         		class="com.excilys.service.CompanyService"
-        		scope="singleton"
-        		factory-method="getInstance">
-                <property name="companyDAO">
+        		parent="service">
+                <property name="dao">
                         <ref bean="companyDAO"/>
-                </property>
-                <property name="DatabaseManager">
-                        <ref bean="DatabaseManager"/>
                 </property>
         </bean>
 
 		<!-- Log DAO -->
         <bean 	id="logDAO" 
         		class="com.excilys.dao.LogDAO"
-        		scope="singleton"
-        		factory-method="getInstance">
-                <property name="DatabaseManager">
-                        <ref bean="DatabaseManager"/>
-                </property>
+        		parent="dao">
         </bean>
 
 	<!-- Servlets -->
-    <bean id="dashboardServlet" class="com.excilys.servlet.DashboardServlet" >
-            <property name="computerService">
+	
+	<bean id="computerServlet" class="com.excilys.servlet.ComputerServlet" abstract="true">
+			<property name="computerService">
                     <ref bean="computerService"/>
             </property>
-    </bean>
-    <bean id="addComputerServlet" class="com.excilys.servlet.AddComputerServlet" >
-            <property name="computerService">
-                    <ref bean="computerService"/>
-            </property>
+            
             <property name="companyService">
                     <ref bean="companyService"/>
             </property>
+	
+	</bean>
+    <!-- 
+    <bean 	id="dashboardServlet" 
+    		class="com.excilys.servlet.DashboardServlet" >
+    </bean>
+    
+    <bean id="addComputerServlet" class="com.excilys.servlet.AddComputerServlet" >
+           
     </bean>
     <bean id="editComputerServlet" class="com.excilys.servlet.EditComputerServlet" >
-            <property name="computerService">
-                    <ref bean="computerService"/>
-            </property>
-            <property name="companyService">
-                    <ref bean="companyService"/>
-            </property>
+            
     </bean>
     <bean id="deleteComputerServlet" class="com.excilys.servlet.DeleteComputerServlet" >
-            <property name="computerService">
-                    <ref bean="computerService"/>
-            </property>
+           
+    </bean>
+    -->
+    <bean id="computerMapper" class="com.excilys.mapper.ComputerMapper" >
+    	<property name="companyService">
+    		<ref bean="companyService"/>
+    	</property>
     </bean>
     
     <!--  Model -->
-    <bean id="company" class="com.excilys.data.Company"></bean>
-    <bean id="computer" class="com.excilys.data.Computer">
+    
+    <bean id="company" class="com.excilys.data.Company" scope="prototype"></bean>
+    <bean id="computer" class="com.excilys.data.Computer" scope="prototype">
     	<property name="company">
     		<ref bean="company"></ref>
     	</property>
     </bean>
+    <bean id="log" class="com.excilys.data.Log" scope="prototype">
+    	<property name="operation">
+    		<ref bean="operation" />
+    	</property>
+    </bean>
+    <bean id="operation" class="com.excilys.data.Operation" scope="prototype"></bean>
+    <bean id="sw" class="com.excilys.dao.SearchWrapper" scope="prototype"/>
 </beans>

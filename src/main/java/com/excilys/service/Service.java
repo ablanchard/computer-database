@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.excilys.dao.DAO;
 import com.excilys.dao.DaoException;
@@ -15,9 +16,12 @@ import com.excilys.data.Operation;
 
 public abstract class Service<E> {
 	
-	protected DAO<E> dao ;
+	
 
 	Logger LOGGER ;
+	
+	private DatabaseHandler dh = null;
+	private LogDAO logDAO = null;
 
 	public static final String SERVICE_ERROR = "An error has occured while connecting to the server. Contact admin.";
 	
@@ -45,13 +49,13 @@ public abstract class Service<E> {
 	}
 	
 	private void operation(SearchWrapper<E> sw,Operation op) throws ServiceException, NotExistException {
-		Log log = Log.build().setTarget(dao.getTABLE()).setOperation(op);
+		Log log = Log.build().setTarget(getDao().getTABLE()).setOperation(op);
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
-		Connection cn = DatabaseHandler.getInstance().getConnection();
+		Connection cn = getDh().getConnection();
 		try{
 			daoOperation(sw, op);
 			swLog.getItems().get(0).setCommand(sw.toString());
-			LogDAO.getInstance().create(swLog);
+			logDAO.create(swLog);
 			cn.commit();
 			getLogger().debug("Commited {} {}",op,sw);
 		} catch (SQLException e) { //throwed by commit
@@ -68,16 +72,16 @@ public abstract class Service<E> {
 	private void daoOperation(SearchWrapper<E> sw,Operation op) throws DaoException{
 		switch(op){
 			case create :
-				dao.create(sw);
+				getDao().create(sw);
 				break;
 			case retrieve:
-				dao.retrieve(sw);
+				getDao().retrieve(sw);
 				break;
 			case update:
-				dao.update(sw);
+				getDao().update(sw);
 				break;
 			case delete:
-				dao.delete(sw);
+				getDao().delete(sw);
 				break;
 		default:
 			break;
@@ -89,7 +93,7 @@ public abstract class Service<E> {
 		try {
 			cn.close();
 			
-			DatabaseHandler.getInstance().unset();
+			dh.unset();
 		} catch (SQLException e) {
 			
 			
@@ -105,13 +109,6 @@ public abstract class Service<E> {
 			LOGGER.error(e.getMessage(), e.getCause());
 		}
 	}
-	public DAO<E> getDao() {
-		return dao;
-	}
-
-	protected void setDao(DAO<E> dao) {
-		this.dao = dao;
-	}
 	
 	public Logger getLogger(){
 		return LOGGER;
@@ -120,6 +117,24 @@ public abstract class Service<E> {
 	protected void setLogger(Logger LOGGER) {
 		this.LOGGER = LOGGER;
 	}
+	public DatabaseHandler getDh() {
+		return dh;
+	}
+	
+	
+	public void setDh(DatabaseHandler dh) {
+		this.dh = dh;
+	}
+	public LogDAO getLogDAO() {
+		return logDAO;
+	}
+	
+	
+	public void setLogDAO(LogDAO logDAO) {
+		this.logDAO = logDAO;
+	}
+	
+	protected abstract DAO<E> getDao();
 	
 	
 	

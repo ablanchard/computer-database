@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
@@ -34,6 +37,8 @@ public class EditComputerServlet extends ComputerServlet {
 	
 	public static final String JSP = "/WEB-INF/editComputer.jsp";
 	public static final String SUCCESS_MESSAGE = "Computer successfully edited.";
+	
+
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -54,7 +59,7 @@ public class EditComputerServlet extends ComputerServlet {
 				int computerId = Integer.valueOf(request.getParameter(ATTR_ID));
 				
 				SearchWrapper<Computer> computerWrap = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
-				ComputerService.getInstance().retrieve(computerWrap);
+				getComputerService().retrieve(computerWrap);
 				
 				if(computerWrap.getItems().size() == 0)
 					throw new NotExistException(ComputerService.NOT_EXIST);
@@ -75,7 +80,7 @@ public class EditComputerServlet extends ComputerServlet {
 			
 			//Recupération de la liste des companies
 			SearchWrapper<Company> sw = new SearchWrapper<Company>();
-			CompanyService.getInstance().retrieve(sw);	
+			getCompanyService().retrieve(sw);	
 			List<Company> companies = sw.getItems();
 			
 			//Ajout de la company d'id 0
@@ -117,7 +122,7 @@ public class EditComputerServlet extends ComputerServlet {
 		try{
 			c = ComputerMapper.toComputer(dto);
 			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(c);
-			ComputerService.getInstance().update(sw);
+			getComputerService().update(sw);
 			
 			request.setAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
 			backToIndex(request, response);
@@ -139,6 +144,9 @@ public class EditComputerServlet extends ComputerServlet {
 		
 		
 	}
+
+
+	
 	
 
 	

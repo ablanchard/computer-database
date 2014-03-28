@@ -16,7 +16,6 @@ import com.excilys.data.Computer;
 //Singleton
 public class ComputerDAO extends DAO<Computer> {
 	
-	private static ComputerDAO INSTANCE = null;
 	public static final String TABLE = "computer";
 	public static final String ATTR_NAME = "name";
 	public static final String ATTR_INTRODUCTION = "introduced";
@@ -30,18 +29,13 @@ public class ComputerDAO extends DAO<Computer> {
 	//private static final String LIMIT_CLAUSE = " LIMIT ? OFFSET ? ";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
-	
+
 	private ComputerDAO(){
 		setTABLE(TABLE);
 		setLogger(LOGGER);
 	}
 	
-	public static ComputerDAO getInstance(){
-		if(INSTANCE == null){
-			INSTANCE = new ComputerDAO();
-		}
-		return INSTANCE;
-	}
+	
 	
 		
 	protected Computer entry(ResultSet rs)  throws SQLException  {

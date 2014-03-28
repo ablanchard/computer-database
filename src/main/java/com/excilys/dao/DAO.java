@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.excilys.data.Operation;
 
@@ -15,9 +16,8 @@ public abstract class DAO<E> {
 	
 	Logger LOGGER ;
 	
-	public static DAO<?> getInstance() {
-		return null;
-	}
+	private DatabaseHandler dh ;
+
 	
 	public void create(SearchWrapper<E> sw) throws DaoException {
 		operation(sw, Operation.create);
@@ -39,7 +39,7 @@ public abstract class DAO<E> {
 	}
 	
 	private void operation(SearchWrapper<E> sw,Operation op) throws DaoException {
-		Connection cn = DatabaseHandler.getInstance().getConnection();
+		Connection cn = getDh().getConnection();
 		PreparedStatement ps =null;
 		ResultSet rs = null;
 		
@@ -246,6 +246,15 @@ public abstract class DAO<E> {
 	
 	protected void setLogger(Logger LOGGER){
 		this.LOGGER = LOGGER;
+	}
+
+	public DatabaseHandler getDh() {
+		return dh;
+	}
+
+	@Autowired
+	public void setDh(DatabaseHandler dh) {
+		this.dh = dh;
 	}
 
 	

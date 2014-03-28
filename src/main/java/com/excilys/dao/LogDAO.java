@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import com.excilys.data.Log;
 
 public class LogDAO extends DAO<Log> {
-	private static LogDAO INSTANCE = null;
 	private static final String TABLE = "log";
 	private static final String ATTR_EXECUTED = "executed_on";
 	private static final String ATTR_TARGET = "target";
@@ -25,12 +24,6 @@ public class LogDAO extends DAO<Log> {
 		setLogger(LOGGER);
 	}
 	
-	public static LogDAO getInstance(){
-		if(INSTANCE == null){
-			INSTANCE = new LogDAO();
-		}
-		return INSTANCE;
-	}
 	
 
 
