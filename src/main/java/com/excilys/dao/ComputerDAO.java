@@ -9,11 +9,12 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
 
-//Singleton
+@Component
 public class ComputerDAO extends DAO<Computer> {
 	
 	public static final String TABLE = "computer";
@@ -77,12 +78,12 @@ public class ComputerDAO extends DAO<Computer> {
 		
 			ps.setString(1,c.getName());
 			
-			if(c.getIntroduction() == null){
+			if(c.getIntroduced() == null){
 				//ps.setTimestamp(2, new Timestamp(0));//MySQL compatibility
 				ps.setNull(2,0);
 			}
 			else{
-				ps.setTimestamp(2, new Timestamp(c.getIntroduction().getTime()));
+				ps.setTimestamp(2, new Timestamp(c.getIntroduced().getTime()));
 			}
 			
 			if(c.getDiscontinued() == null){
@@ -208,10 +209,10 @@ public class ComputerDAO extends DAO<Computer> {
 		Computer c = sw.getItems().get(0);
 		ps.setString(1,c.getName());
 			
-			if(c.getIntroduction() == null)
+			if(c.getIntroduced() == null)
 				ps.setTimestamp(2, new Timestamp(0));//MySQL compatibility
 			else
-				ps.setTimestamp(2, new Timestamp(c.getIntroduction().getTime()));
+				ps.setTimestamp(2, new Timestamp(c.getIntroduced().getTime()));
 			
 			if(c.getDiscontinued() == null)
 				ps.setTimestamp(3, new Timestamp(0));//MySQL compatibility

@@ -51,7 +51,7 @@ public class DashboardServlet extends ComputerServlet {
 	public static final String TABLE_HEADER_ACTIONS  = "Actions";
 	
 	public static final String PATH = "/index" ;
-	public static final String JSP = "/WEB-INF/dashboard.jsp";
+	public static final String JSP = "/WEB-INF/jsp/dashboard.jsp";
 	
 	
 
@@ -77,22 +77,37 @@ public class DashboardServlet extends ComputerServlet {
 			String page = request.getParameter(ATTR_PAGE);
 			
 			
+			
 			//LOGGER.debug("Request parameters : Search : {}, Order : {}, Direction : {}",search,order,direction);
 			
 			if(search != null){
-				sw.setQuery(search);
+				if(!search.equals("")){
+					sw.setQuery(search);
+				}
 			}
 			
 			if(order != null){
-				sw.setOrderCol(OrderComputerCol.valueOf(order));
+				try {
+					sw.setOrderCol(OrderComputerCol.valueOf(order));
+				} catch(IllegalArgumentException e){
+					
+				}
 			}
 			
 			if(direction !=null){
-				sw.setOrderDirection(OrderDirection.valueOf(direction));
+				try {
+					sw.setOrderDirection(OrderDirection.valueOf(direction));
+				}catch(IllegalArgumentException e){
+					
+				}
 			}
 			
 			if(page != null){
-				sw.setPage(Integer.parseInt(page));
+				try{
+					sw.setPage(Integer.parseInt(page));
+				}catch(NumberFormatException e){
+					
+				}
 			}
 		} else {
 			sw = (SearchWrapper<Computer>) request.getAttribute(ATTR_WRAPPER);

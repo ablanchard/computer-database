@@ -28,7 +28,6 @@ public abstract class ComputerServlet extends HttpServlet  {
 	public static final String ATTR_DTO = "dto";
 	public static final String ATTR_COMPANIES = "companies";
 	public static final String ATTR_ID = "id";
-	
 	 
 	public static final String FORM_ATTRS = "form_attrs";
 	public static final String FORM_ERRORS = "form_errors";
@@ -47,18 +46,14 @@ public abstract class ComputerServlet extends HttpServlet  {
 
 	public ComputerService getComputerService() {
 		WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());  // (1) get ctx using the WebApplicationContextUtils class
-
 		return (ComputerService ) ctx.getBean("computerService");  // (2) I have a service factory class that retrieves the beans for me.
-
 	}
 
 
 
 	public CompanyService getCompanyService() {
 		WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());  // (1) get ctx using the WebApplicationContextUtils class
-
 		return (CompanyService ) ctx.getBean("companyService");  // (2) I have a service factory class that retrieves the beans for me.
-
 	}
 
 

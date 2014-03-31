@@ -6,6 +6,7 @@
 <%@ attribute name="query" type="java.lang.String" %>
 <%@ attribute name="orderCol" type="java.lang.String" %>
 <%@ attribute name="orderDirection" type="java.lang.String" %>
+<%@ attribute name="context" type="java.lang.String" %>
 
 <c:if test="${empty page}">
 	<c:set var="page" value="1"></c:set>
@@ -19,13 +20,13 @@
 
 <ul class="pagination">
   <li <c:if test="${page -1 == 0 }">class="disabled"</c:if> >
-  	<cl:link page="${page-1 }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
+  	<cl:link context="${context }" page="${page-1 }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
   		&laquo;
   	</cl:link>
   </li>
   <c:forEach var="lienPage" begin="1" end="${ pageMax}">
   	<li <c:if test="${lienPage == page }">class="active"</c:if> >
-	  	<cl:link page="${lienPage }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
+	  	<cl:link context="${context }" page="${lienPage }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
 	  		${ lienPage}
 	  	</cl:link>
   	</li>
@@ -34,7 +35,7 @@
 			<c:set var="page" value="${page - 1 }"></c:set>
 			class="disabled"
 		</c:if>>
-	  <cl:link page="${page + 1 }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
+	  <cl:link context="${context }" page="${page + 1 }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
 		   &raquo;
 	  </cl:link>
 	</li>

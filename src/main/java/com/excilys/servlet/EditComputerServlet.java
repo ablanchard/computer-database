@@ -35,7 +35,7 @@ public class EditComputerServlet extends ComputerServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(EditComputerServlet.class);
 	
-	public static final String JSP = "/WEB-INF/editComputer.jsp";
+	public static final String JSP = "/WEB-INF/jsp/editComputer.jsp";
 	public static final String SUCCESS_MESSAGE = "Computer successfully edited.";
 	
 
@@ -98,7 +98,7 @@ public class EditComputerServlet extends ComputerServlet {
 			RequestDispatcher rd = ctx.getRequestDispatcher(JSP);
 			rd.forward(request, response);
 			
-		} catch(NotExistException e){
+		} catch(NotExistException | NumberFormatException e){
 			request.setAttribute(ATTR_ERROR, e.getMessage());
 			backToIndex(request, response);
 		} catch (ServiceException e){

@@ -5,14 +5,14 @@ import java.util.Date;
 public class Computer {
 	private int id;
 	private String name;
-	private Date introduction;
+	private Date introduced;
 	private Date discontinued;
 	private Company company;
 	
 	
-	public Computer(String name, Date introduction, Date discontinued, Company company){
+	public Computer(String name, Date introduced, Date discontinued, Company company){
 		this.name = name;
-		this.introduction = introduction;
+		this.introduced = introduced;
 		this.discontinued = discontinued;
 		this.company = company;
 	}
@@ -23,7 +23,7 @@ public class Computer {
 	
 	public String toString(){
 		String com = (company==null)?"null":company.getName();
-		String intro = (introduction==null)?"null":introduction.toString();
+		String intro = (introduced==null)?"null":introduced.toString();
 		String dis = (discontinued==null)?"null":discontinued.toString();
 		
 		StringBuilder res = new StringBuilder(Integer.toString(getId()));
@@ -64,12 +64,12 @@ public class Computer {
 		return this;
 	}
 
-	public Date getIntroduction() {
-		return introduction;
+	public Date getIntroduced() {
+		return introduced;
 	}
 
-	public Computer setIntroduction(Date introduction) {
-		this.introduction = introduction;
+	public Computer setIntroduced(Date introduced) {
+		this.introduced = introduced;
 		return this;
 	}
 

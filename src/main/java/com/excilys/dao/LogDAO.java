@@ -6,9 +6,11 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.excilys.data.Log;
 
+@Component
 public class LogDAO extends DAO<Log> {
 	private static final String TABLE = "log";
 	private static final String ATTR_EXECUTED = "executed_on";

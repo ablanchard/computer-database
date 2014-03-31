@@ -7,15 +7,18 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.excilys.data.Operation;
 
+@Component
 public abstract class DAO<E> {
 	
 	public String TABLE ;
 	
 	Logger LOGGER ;
 	
+	@Autowired
 	private DatabaseHandler dh ;
 
 	

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.excilys.dao.DAO;
 import com.excilys.dao.DaoException;
@@ -14,13 +15,18 @@ import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Log;
 import com.excilys.data.Operation;
 
+
+@Component
 public abstract class Service<E> {
 	
 	
 
 	Logger LOGGER ;
 	
+	@Autowired
 	private DatabaseHandler dh = null;
+	
+	@Autowired
 	private LogDAO logDAO = null;
 
 	public static final String SERVICE_ERROR = "An error has occured while connecting to the server. Contact admin.";

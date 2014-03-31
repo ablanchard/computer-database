@@ -8,10 +8,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.excilys.data.Company;
 
-//Singleton
+@Component
 public class CompanyDAO extends DAO<Company> {
 	public static final String TABLE = "company";
 	public static final String ATTR_NAME = "name";

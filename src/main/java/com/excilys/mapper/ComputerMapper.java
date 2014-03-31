@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
@@ -20,10 +21,12 @@ import com.excilys.service.ServiceException;
 import com.excilys.servlet.ComputerForm;
 import com.excilys.validator.ComputerValidator;
 
+@Component
 public class ComputerMapper {
 	
 	public static final String DATE_PATTERN = "yyyy-MM-dd";
 	
+	@Autowired
 	private static CompanyService companyService = null;
 
 	public static Computer toComputer(ComputerDTO dto) throws DTOException {
@@ -37,7 +40,7 @@ public class ComputerMapper {
 		Date introducedDate = ComputerValidator.date(dto.getIntroducedDate(), ComputerForm.TITLE_INTRO) ;//new Date(0);
 		Date discontinuedDate = ComputerValidator.date(dto.getDiscontinuedDate(), ComputerForm.TITLE_DISC);
 				
-		c.setIntroduction(introducedDate);
+		c.setIntroduced(introducedDate);
 		c.setDiscontinued(discontinuedDate);
 		
 		try{
@@ -62,10 +65,10 @@ public class ComputerMapper {
 		ComputerDTO dto = new ComputerDTO();
 		dto.setName(c.getName());
 		
-		if(c.getIntroduction() == null)
+		if(c.getIntroduced() == null)
 			dto.setIntroducedDate("");
 		else
-			dto.setIntroducedDate(new SimpleDateFormat(DATE_PATTERN).format(c.getIntroduction()));
+			dto.setIntroducedDate(new SimpleDateFormat(DATE_PATTERN).format(c.getIntroduced()));
 		
 		if(c.getDiscontinued() == null)
 			dto.setDiscontinuedDate("");

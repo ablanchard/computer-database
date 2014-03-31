@@ -44,13 +44,14 @@ public class DeleteComputerServlet extends ComputerServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int computerId = Integer.valueOf(request.getParameter(ATTR_ID));
-		SearchWrapper<Computer> computerToDelete = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
-		
 		try{
+			int computerId = Integer.valueOf(request.getParameter(ATTR_ID));
+			SearchWrapper<Computer> computerToDelete = new SearchWrapper<Computer>(Computer.builder().setId(computerId));
+		
+		
 			getComputerService().delete(computerToDelete);
 			request.setAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
-		} catch (NotExistException e){
+		} catch (NotExistException | NumberFormatException e){
 			request.setAttribute(ATTR_ERROR, ComputerService.NOT_EXIST);
 		} catch (ServiceException e){
 			request.setAttribute(ATTR_ERROR, Service.SERVICE_ERROR);

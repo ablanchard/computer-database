@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>computer-database</display-name>
-  <welcome-file-list>
-    <welcome-file>index</welcome-file>
-  </welcome-file-list>
   
+  <!-- <welcome-file-list>
+    <welcome-file>index</welcome-file>
+  </welcome-file-list> -->
+  <!-- 
   	<context-param>
 	        <param-name>contextConfigLocation</param-name>
-	        <param-value>/WEB-INF/applicationContext.xml</param-value>
-	</context-param>
+	        <param-value>/rapplicationContext.xml</param-value>
+	</context-param>-->
 	 
 	<listener>
 	        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-	<!-- 
-		<servlet>
+	
+	<servlet>
 		<servlet-name>mainController</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>mainController</servlet-name>
-		<url-pattern>*</url-pattern>
+		<url-pattern>/spring/*</url-pattern>
 	</servlet-mapping>
-	-->
+<!-- Ancienne servlets 
   <servlet>
     <description></description>
     <display-name>DashboardServlet</display-name>
@@ -63,5 +64,5 @@
   <servlet-mapping>
     <servlet-name>DeleteComputerServlet</servlet-name>
     <url-pattern>/deleteComputer</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping> -->
 </web-app>

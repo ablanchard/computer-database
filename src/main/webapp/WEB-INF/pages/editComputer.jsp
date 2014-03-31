@@ -1,4 +1,4 @@
-<jsp:include page="include/header.jsp" />
+<jsp:include page="../include/header.jsp" />
 
 <%@page import="java.util.List"%>
 <%@page import="com.excilys.data.Company"%>
@@ -18,9 +18,9 @@
 	</div>
 	<div class="row">
 	<div class="col-md-4">
-	<jsp:include page="include/computerForm.jsp" />
+	<jsp:include page="../include/computerForm.jsp" />
 	</div>
 	</div>
 </div>
 
-<jsp:include page="include/footer.jsp" />
+<jsp:include page="../include/footer.jsp" />

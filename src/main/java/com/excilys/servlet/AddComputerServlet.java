@@ -34,7 +34,7 @@ public class AddComputerServlet extends ComputerServlet {
 	private static final long serialVersionUID = 1L;
 
 	public static final String SUCCESS_MESSAGE = "Computer successfully added." ;
-	public static final String JSP = "/WEB-INF/addComputer.jsp";
+	public static final String JSP = "/WEB-INF/jsp/addComputer.jsp";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AddComputerServlet.class);
 

@@ -1,4 +1,4 @@
-<jsp:include page="include/header.jsp" />
+<jsp:include page="../include/header.jsp" />
 <%@page import="java.util.List"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="com.excilys.data.Computer"%>
@@ -48,7 +48,7 @@
 	<c:if test="${count != 0 }">
 		<div class="row">
 			<div class="col-md-12">
-				<cl:pagination page="${page }" pageMax="${pageMax }" query="${query}" orderCol="${orderCol }" orderDirection="${ orderDirection }"></cl:pagination>
+				<cl:pagination context="${pageContext.request.contextPath}" page="${page }" pageMax="${pageMax }" query="${query}" orderCol="${orderCol }" orderDirection="${ orderDirection }"></cl:pagination>
 			</div>
 		</div>
 		<div class="row">
@@ -59,7 +59,7 @@
 							<c:forEach var="tableHeader" items="${requestScope['tableHeaders']}"  >
 								<th>${tableHeader.name }
 									<c:if test="${not empty tableHeader.orderName }">
-										<cl:orderButton page="${page }" query="${query }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
+										<cl:orderButton  context="${pageContext.request.contextPath}" page="${page }" query="${query }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
 									</c:if>
 								</th>
 							</c:forEach>
@@ -89,4 +89,4 @@
 	</c:if>
 </div>
 
-<jsp:include page="include/footer.jsp" />
+<jsp:include page="../include/footer.jsp" />

@@ -9,12 +9,13 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 
 
-//Singleton
+@Component
 public class DatabaseHandler {
 	private static final String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/";
 	private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
@@ -24,10 +25,10 @@ public class DatabaseHandler {
 	private static final String DATABASE_PASS = "password";
 	private static final boolean AUTO_COMMIT = false;
 
-	
+	@Autowired
 	DataSource ds;
 	
-	private ThreadLocal<Connection> thLocal = null;
+	private ThreadLocal<Connection> thLocal = new ThreadLocal<Connection>();
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseHandler.class);
 	
@@ -59,8 +60,8 @@ public class DatabaseHandler {
 	
 	private DatabaseHandler(){
 		initPool();
-	}*/
-	
+	}
+	*/
 	
 	
 	public Connection getConnectionFromPool(){
@@ -113,11 +114,12 @@ public class DatabaseHandler {
 		this.thLocal = thLocal;
 	}
 
+	
 	public DataSource getDs() {
 		return ds;
 	}
 
-	@Autowired
+	
 	public void setDs(DataSource ds) {
 		this.ds = ds;
 	}
