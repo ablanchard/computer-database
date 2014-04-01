@@ -59,11 +59,12 @@ public abstract class Service<E> {
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
 		Connection cn = getDh().getConnection();
 		try{
+			getLogger().debug("Start transaction");
 			daoOperation(sw, op);
 			swLog.getItems().get(0).setCommand(sw.toString());
 			logDAO.create(swLog);
 			cn.commit();
-			getLogger().debug("Commited {} {}",op,sw);
+			getLogger().debug("Transaction commited {} {}",op,sw);
 		} catch (SQLException e) { //throwed by commit
 			rollbabk(cn);
 			throw new ServiceException();

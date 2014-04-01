@@ -21,7 +21,7 @@
 		<c:set var="direction" value="asc"/>
 	</c:when>
 </c:choose>
-<cl:link page="${page }" query="${query }" orderCol="${colName }" orderDirection="${direction }" context="${context }" >
+<cl:link page="${page }" query="${query }" orderCol="${colName }" orderDirection="${direction }"  >
 
 	<button type="button" class="btn btn-default btn-md">
 			 <span class="glyphicon glyphicon-sort"></span> Order

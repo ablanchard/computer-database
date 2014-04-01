@@ -18,7 +18,7 @@
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
       
-      <a class="navbar-brand" href="index">Application - Computer Database</a>
+      <a class="navbar-brand" href="${pageContext.request.contextPath}/index">Application - Computer Database</a>
     </div>
 </div>
 </nav>

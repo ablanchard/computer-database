@@ -3,6 +3,8 @@ package com.excilys.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.ModelAttribute;
+
 public class SearchWrapper<E> {
 	private String query;
 	private OrderComputerCol orderCol;

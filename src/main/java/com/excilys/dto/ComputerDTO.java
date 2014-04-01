@@ -1,11 +1,11 @@
 package com.excilys.dto;
 
 public class ComputerDTO {
-	private int id;
+	private int id = -1;
 	private String name;
 	private String introducedDate;
 	private String discontinuedDate;
-	private int companyId;
+	private int companyId = -1;
 	private String companyName;
 	
 	public int getId() {
@@ -54,6 +54,9 @@ public class ComputerDTO {
 		this.companyName = companyName;
 	}
 	
+	public String toString(){
+		return getId() + " " + getName() + " " + getCompanyName();
+	}
 	
 
 }

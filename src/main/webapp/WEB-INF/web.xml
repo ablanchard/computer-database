@@ -2,9 +2,9 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>computer-database</display-name>
   
-  <!-- <welcome-file-list>
-    <welcome-file>index</welcome-file>
-  </welcome-file-list> -->
+<welcome-file-list>
+    <welcome-file></welcome-file>
+</welcome-file-list>
   <!-- 
   	<context-param>
 	        <param-name>contextConfigLocation</param-name>
@@ -22,7 +22,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>mainController</servlet-name>
-		<url-pattern>/spring/*</url-pattern>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 <!-- Ancienne servlets 
   <servlet>

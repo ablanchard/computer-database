@@ -21,11 +21,11 @@
 
 <div class="container-fluid" id="main">
 	<div class="row">
-	<c:if test="${not empty requestScope['success'] }">
-		<div class="alert alert-success"><p><c:out value="${requestScope['success'] }"></c:out></p></div>
+	<c:if test="${not empty param.success }">
+		<div class="alert alert-success"><p><c:out value="${param.success }"></c:out></p></div>
 	</c:if>
-	<c:if test="${not empty requestScope['error'] }">
-		<div class="alert alert-danger"><p><c:out value="${requestScope['error'] }"></c:out></p></div>
+	<c:if test="${not empty param.error }">
+		<div class="alert alert-danger"><p><c:out value="${param.error }"></c:out></p></div>
 	</c:if>
 	<div class="col-md-12">
 	<h1 id="homeTitle"><c:out value="${count}"/> Computers found</h1>
@@ -42,13 +42,13 @@
 		</form>
 		</div>
 		<div class="col-md-1">
-		<a href="addComputer" class="btn btn-success" id="add" >Add Computer</a>
+		<a href="${pageContext.request.contextPath}/create" class="btn btn-success" id="add" >Add Computer</a>
 		</div>
 	</div>
 	<c:if test="${count != 0 }">
 		<div class="row">
 			<div class="col-md-12">
-				<cl:pagination context="${pageContext.request.contextPath}" page="${page }" pageMax="${pageMax }" query="${query}" orderCol="${orderCol }" orderDirection="${ orderDirection }"></cl:pagination>
+				<cl:pagination  page="${page }" pageMax="${pageMax }" query="${query}" orderCol="${orderCol }" orderDirection="${ orderDirection }"></cl:pagination>
 			</div>
 		</div>
 		<div class="row">
@@ -59,7 +59,7 @@
 							<c:forEach var="tableHeader" items="${requestScope['tableHeaders']}"  >
 								<th>${tableHeader.name }
 									<c:if test="${not empty tableHeader.orderName }">
-										<cl:orderButton  context="${pageContext.request.contextPath}" page="${page }" query="${query }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
+										<cl:orderButton   page="${page }" query="${query }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
 									</c:if>
 								</th>
 							</c:forEach>
@@ -68,15 +68,15 @@
 					<tbody>
 						<c:forEach var="computer" items="${requestScope['sw'].items}"  >
 							<tr>
-								<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name }</a></td>
+								<td><a href="edit?id=${computer.id}" onclick="">${computer.name }</a></td>
 								<td>${computer.introducedDate }</td>
 								<td>${computer.discontinuedDate }</td>
 								<td>${computer.companyName}</td>
 								<td>
-									<a href="editComputer?id=${computer.id}" onclick="">
+									<a href="edit?id=${computer.id}" onclick="">
 										<button class="btn btn-primary">Edit</button>
 									</a>
-									<a href="deleteComputer?id=${computer.id}" >
+									<a href="delete?id=${computer.id}" >
 										<button class="btn btn-danger">Delete</button>
 									</a>
 								</td>

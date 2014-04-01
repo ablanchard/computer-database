@@ -10,7 +10,7 @@ public class ComputerForm {
 	public static final String ATTR_NAME = "name";
 	public static final String ATTR_INTRO = "introducedDate";
 	public static final String ATTR_DISC = "discontinuedDate";
-	public static final String ATTR_COMPANY = "company";
+	public static final String ATTR_COMPANY = "companyId";
 	public static final String ATTR_ID = "id";
 	
 

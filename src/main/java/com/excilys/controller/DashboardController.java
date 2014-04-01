@@ -3,30 +3,32 @@ package com.excilys.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.MatrixVariable;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.excilys.dao.OrderComputerCol;
 import com.excilys.dao.OrderDirection;
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
-import com.excilys.mapper.ComputerMapper;
-import com.excilys.service.Service;
+import com.excilys.dto.ComputerDTO;
 import com.excilys.service.ServiceException;
 import com.excilys.servlet.Header;
 
 @Component
 @Controller
+@SessionAttributes("sw")
 public class DashboardController extends ComputerController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
 
 
 	private int nbComputersPerPage= 15;
@@ -41,42 +43,51 @@ public class DashboardController extends ComputerController {
 	public static final String ATTR_TABLE_HEADERS = "tableHeaders";
 	
 
-	@RequestMapping(value = "/index/{page}", method = RequestMethod.GET)
-    public String helloWorld(Model model,
-    		@PathVariable int page, 
-    		@MatrixVariable(required=true, defaultValue="") String search, 
-    		@MatrixVariable(required=true, defaultValue="") String order, 
-    		@MatrixVariable(required=true, defaultValue="") String direction) {
+	@RequestMapping(value = "index", 
+			//params = {"page","search","order","direction"},
+			method = RequestMethod.GET)
+    public String show(Model model,
+    		@RequestParam(value="page", required=false, defaultValue="1") Integer page, 
+    		@RequestParam(value="search", required=false, defaultValue="") String search, 
+    		@RequestParam(value="order", required=false, defaultValue="") String order, 
+    		@RequestParam(value="direction", required=false, defaultValue="") String direction) {
 		
 		SearchWrapper<Computer> sw = new SearchWrapper<Computer>(nbComputersPerPage);
-			//LOGGER.debug("Request parameters : Search : {}, Order : {}, Direction : {}",search,order,direction);
-			
-			if(search != null){
-				if(!search.equals("")){
-					sw.setQuery(search);
-				}
+		//LOGGER.debug("Request parameters : Search : {}, Order : {}, Direction : {}",search,order,direction);
+		
+		if(search != null){
+			if(!search.equals("")){
+				sw.setQuery(search);
 			}
-			
-			if(order != null){
-				try {
-					sw.setOrderCol(OrderComputerCol.valueOf(order));
-				} catch(IllegalArgumentException e){
-					
-				}
+		}
+		
+		if(order != null){
+			try {
+				sw.setOrderCol(OrderComputerCol.valueOf(order));
+			} catch(IllegalArgumentException e){
+				
 			}
-			
-			if(direction !=null){
-				try {
-					sw.setOrderDirection(OrderDirection.valueOf(direction));
-				}catch(IllegalArgumentException e){
-					
-				}
+		}
+		
+		if(direction !=null){
+			try {
+				sw.setOrderDirection(OrderDirection.valueOf(direction));
+			}catch(IllegalArgumentException e){
+				
+			}
+		}
+		
+		if(page != null){
+			if(page <= 0){
+				page = 1;
 			}
 			sw.setPage(page);
+		}
 		
+		model.addAttribute(sw);
+		LOGGER.info(sw.toString());
 		try {
 			
-		
 			getComputerService().retrieve(sw);
 					
 			int pageMax = (int)Math.floor(sw.getCount()/nbComputersPerPage);
@@ -87,7 +98,7 @@ public class DashboardController extends ComputerController {
 			sw.setPageMax(pageMax);
 			
 			
-			model.addAttribute(ATTR_WRAPPER,ComputerMapper.toComputerDTOWrapper(sw));
+			model.addAttribute(ATTR_WRAPPER,getComputerMapper().toComputerDTOWrapper(sw));
 		} catch (ServiceException e){
 			//request.setAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
 		}
@@ -102,7 +113,47 @@ public class DashboardController extends ComputerController {
 		model.addAttribute(ATTR_TABLE_HEADERS, headers);
 		
 		
-       // model.addAttribute("message", "Hello World!");
-        return "dashboard";
+		return "dashboard";
     }
+/*
+	@RequestMapping(value = "index", method = RequestMethod.GET)
+	public String show(Model model,
+			@MatrixVariable(required=false, defaultValue="") String search, 
+			@MatrixVariable(required=false, defaultValue="") String order, 
+			@MatrixVariable(required=false, defaultValue="") String direction) {
+		return show(model, 1, search, order, direction);
+	}*/
+	
+	
+	
+	@RequestMapping(value="return")
+	public String show(Model model,
+			@ModelAttribute("sw") SearchWrapper<ComputerDTO> sw,
+			@RequestParam(value="success",required=false) String success,
+			@RequestParam(value="error",required=false) String error){
+		
+		
+		UriComponents uriComponents =
+		        UriComponentsBuilder.newInstance()
+		            .path("index")
+		            .queryParam("page", sw.getPage())
+		            .queryParam("search",sw.getQuery())
+		            .queryParam("order",sw.getOrderCol())
+		            .queryParam("direction",sw.getOrderDirection())
+		            .build();
+		
+		if(success != null){
+			model.addAttribute("success", success);
+		}
+		
+		if(error != null){
+			model.addAttribute("error", error);
+		}
+		
+		return "redirect:"+uriComponents;
+	}
+	
+	
+	
+	
 }

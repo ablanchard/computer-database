@@ -20,13 +20,13 @@
 
 <ul class="pagination">
   <li <c:if test="${page -1 == 0 }">class="disabled"</c:if> >
-  	<cl:link context="${context }" page="${page-1 }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
+  	<cl:link page="${page-1 }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
   		&laquo;
   	</cl:link>
   </li>
   <c:forEach var="lienPage" begin="1" end="${ pageMax}">
   	<li <c:if test="${lienPage == page }">class="active"</c:if> >
-	  	<cl:link context="${context }" page="${lienPage }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
+	  	<cl:link  page="${lienPage }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
 	  		${ lienPage}
 	  	</cl:link>
   	</li>
@@ -35,7 +35,7 @@
 			<c:set var="page" value="${page - 1 }"></c:set>
 			class="disabled"
 		</c:if>>
-	  <cl:link context="${context }" page="${page + 1 }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
+	  <cl:link  page="${page + 1 }" query="${query }" orderCol="${orderCol }" orderDirection="${orderDirection }">
 		   &raquo;
 	  </cl:link>
 	</li>

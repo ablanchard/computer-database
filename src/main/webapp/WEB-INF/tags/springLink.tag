@@ -8,7 +8,7 @@
 <%@ attribute name="context" type="java.lang.String" %>
 
 
-<c:if test="${empty value }"><c:set var="value" value="${context }/spring/index/"/></c:if>
+<c:if test="${empty value }"><c:set var="value" value="${context }/index/"/></c:if>
 <c:set var="url" value="${value}${page }"/>
 
 <c:if test="${not empty query }"><c:set var="url" value="${url};search=${query }"></c:set></c:if>

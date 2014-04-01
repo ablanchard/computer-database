@@ -27,9 +27,9 @@ public class ComputerMapper {
 	public static final String DATE_PATTERN = "yyyy-MM-dd";
 	
 	@Autowired
-	private static CompanyService companyService = null;
+	private CompanyService companyService ;
 
-	public static Computer toComputer(ComputerDTO dto) throws DTOException {
+	public Computer toComputer(ComputerDTO dto) throws DTOException {
 		Computer c = Computer.builder();
 		
 		c.setId(dto.getId());
@@ -45,7 +45,7 @@ public class ComputerMapper {
 		
 		try{
 			SearchWrapper<Company> sw = new SearchWrapper<Company>(Company.build().setId(dto.getCompanyId()));
-			companyService.retrieve(sw);
+			getCompanyService().retrieve(sw);
 			
 			Company company = null;
 			if(sw.getItems().size() == 1){
@@ -61,7 +61,7 @@ public class ComputerMapper {
 		
 	}
 	
-	public static ComputerDTO toComputerDTO(Computer c){
+	public ComputerDTO toComputerDTO(Computer c){
 		ComputerDTO dto = new ComputerDTO();
 		dto.setName(c.getName());
 		
@@ -90,7 +90,7 @@ public class ComputerMapper {
 		
 	}
 
-	public static SearchWrapper<ComputerDTO> toComputerDTOWrapper(SearchWrapper<Computer> sw){
+	public  SearchWrapper<ComputerDTO> toComputerDTOWrapper(SearchWrapper<Computer> sw){
 		SearchWrapper<ComputerDTO> swDTO = new SearchWrapper<ComputerDTO>();
 			
 		swDTO.setQuery(sw.getQuery());
@@ -101,18 +101,18 @@ public class ComputerMapper {
 		swDTO.setCount(sw.getCount());
 		swDTO.setPageMax(sw.getPageMax());
 		for(Computer c : sw.getItems()){
-			swDTO.getItems().add(ComputerMapper.toComputerDTO(c));
+			swDTO.getItems().add(this.toComputerDTO(c));
 		}
 		return swDTO;
 	}
 
-	public static CompanyService getCompanyService() {
+	public  CompanyService getCompanyService() {
 		return companyService;
 	}
 
-	@Autowired
-	public static void setCompanyService(CompanyService companyService) {
-		ComputerMapper.companyService = companyService;
+	
+	public void setCompanyService(CompanyService companyService) {
+		this.companyService = companyService;
 	}
 
 
