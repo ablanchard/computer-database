@@ -2,10 +2,16 @@ package com.excilys.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +28,7 @@ import com.excilys.service.NotExistException;
 import com.excilys.service.Service;
 import com.excilys.service.ServiceException;
 import com.excilys.servlet.ComputerForm;
+import com.excilys.validator.ComputerDTOValidator;
 
 
 @Controller
@@ -32,15 +39,17 @@ public class AddController extends ComputerController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AddController.class);
 
-   
+	@Autowired
+	private ComputerDTOValidator computerDTOValidator;
 
 	@RequestMapping(value = "edit", method = RequestMethod.GET)
 	public String edit(Model model,
 			@ModelAttribute("dto") ComputerDTO dto,
+			BindingResult results,
     		@RequestParam(value="id", required=true) Integer id,
     		RedirectAttributes redirectAttributes){
 		ComputerDTO computerDTO = new ComputerDTO();
-		LOGGER.info(dto + " " + id);
+		LOGGER.debug(dto + " " + id);
 		//Le champ dto n'est pas présent => premier access au formulaire
 		try{
 			//Edition
@@ -100,14 +109,23 @@ public class AddController extends ComputerController {
 
 	@RequestMapping(value = "create", method = RequestMethod.GET)
 	public String create(Model model){
-		return edit(model,null, -1,null);
+		return edit(model,null,null, -1,null);
 	}
 	
 	@RequestMapping(value = "insert", method = RequestMethod.POST)
-	protected String insert(@ModelAttribute("dto") ComputerDTO dto, 
-			Model model,
+	protected String insert(Model model,
+			@Valid @ModelAttribute("dto") ComputerDTO dto, 
+			BindingResult results,
 			RedirectAttributes redirectAttributes){
 		Computer c;
+		if(results.hasErrors()){
+			LOGGER.debug("There is errors {}",results.toString());
+			//Erreur dans le formulaire. On renvoie la meme page avec une erreur et les champs déjà remplis.
+			//model.addAttribute(ATTR_ERROR, e.getMessage());
+			
+			model.addAttribute(ATTR_DTO, dto);
+			return edit(model,dto,results,dto.getId(),null);
+		}
 		try{
 			c = getComputerMapper().toComputer(dto);
 			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(c);
@@ -117,13 +135,7 @@ public class AddController extends ComputerController {
 			} else{
 				getComputerService().update(sw);
 				redirectAttributes.addAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE_EDIT);
-			}
-		} catch (DTOException e){
-			
-			//Erreur dans le formulaire. On renvoi la meme page avec une erreur et les champs déjà remplis.
-			model.addAttribute(ATTR_ERROR, e.getMessage());
-			model.addAttribute(ATTR_DTO, dto);
-			return edit(model,dto,dto.getId(),null);
+			}		
 			
 		} catch (ServiceException e){
 			redirectAttributes.addAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
@@ -155,5 +167,18 @@ public class AddController extends ComputerController {
 		}
 		
 		return "redirect:return";
+	}
+	
+	@InitBinder("dto")
+	public void initBinderAll(WebDataBinder binder) {
+		binder.setValidator(computerDTOValidator);
+	}
+
+	public ComputerDTOValidator getComputerDTOValidator() {
+		return computerDTOValidator;
+	}
+
+	public void setComputerDTOValidator(ComputerDTOValidator computerDTOValidator) {
+		this.computerDTOValidator = computerDTOValidator;
 	}
 }

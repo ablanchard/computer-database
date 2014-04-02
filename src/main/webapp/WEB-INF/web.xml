@@ -3,7 +3,7 @@
   <display-name>computer-database</display-name>
   
 <welcome-file-list>
-    <welcome-file></welcome-file>
+    <welcome-file>/index</welcome-file>
 </welcome-file-list>
   <!-- 
   	<context-param>

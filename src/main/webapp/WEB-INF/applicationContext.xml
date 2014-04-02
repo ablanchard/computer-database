@@ -26,6 +26,7 @@
 	<context:component-scan base-package="com.excilys.dao" />
 	<context:component-scan base-package="com.excilys.service" />
 	<context:component-scan base-package="com.excilys.mapper" />
+	<context:component-scan base-package="com.excilys.validator" />
     <!--  Model -->
     
     <bean id="company" class="com.excilys.data.Company" scope="prototype"></bean>

@@ -19,7 +19,7 @@ import com.excilys.service.ComputerService;
 import com.excilys.service.Service;
 import com.excilys.service.ServiceException;
 import com.excilys.servlet.ComputerForm;
-import com.excilys.validator.ComputerValidator;
+import com.excilys.validator.ComputerDTOValidator;
 
 @Component
 public class ComputerMapper {
@@ -29,32 +29,26 @@ public class ComputerMapper {
 	@Autowired
 	private CompanyService companyService ;
 
-	public Computer toComputer(ComputerDTO dto) throws DTOException {
+	public Computer toComputer(ComputerDTO dto) throws ServiceException {
 		Computer c = Computer.builder();
 		
 		c.setId(dto.getId());
-		ComputerValidator.name(dto.getName());
 		c.setName(dto.getName());
 								
 		
-		Date introducedDate = ComputerValidator.date(dto.getIntroducedDate(), ComputerForm.TITLE_INTRO) ;//new Date(0);
-		Date discontinuedDate = ComputerValidator.date(dto.getDiscontinuedDate(), ComputerForm.TITLE_DISC);
-				
-		c.setIntroduced(introducedDate);
-		c.setDiscontinued(discontinuedDate);
+		c.setIntroduced(toDate(dto.getIntroducedDate()));
+		c.setDiscontinued(toDate(dto.getDiscontinuedDate()));
 		
-		try{
-			SearchWrapper<Company> sw = new SearchWrapper<Company>(Company.build().setId(dto.getCompanyId()));
-			getCompanyService().retrieve(sw);
-			
-			Company company = null;
-			if(sw.getItems().size() == 1){
-				company = sw.getItems().get(0);	
-			}
-			c.setCompany(company);
-		} catch (ServiceException e){
-			throw new DTOException(Service.SERVICE_ERROR);
+		
+		SearchWrapper<Company> sw = new SearchWrapper<Company>(Company.build().setId(dto.getCompanyId()));
+		getCompanyService().retrieve(sw);
+		
+		Company company = null;
+		if(sw.getItems().size() == 1){
+			company = sw.getItems().get(0);	
 		}
+		c.setCompany(company);
+		
 		
 		return c;		
 				
@@ -115,7 +109,13 @@ public class ComputerMapper {
 		this.companyService = companyService;
 	}
 
-
+	public static Date toDate(String date) {
+		try {
+			return new SimpleDateFormat(DATE_PATTERN).parse(date);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
 	
 	
 	

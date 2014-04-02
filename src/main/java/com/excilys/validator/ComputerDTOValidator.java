@@ -1,25 +1,29 @@
 package com.excilys.validator;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
 
-import com.excilys.dao.CompanyDAO;
+import com.excilys.dto.ComputerDTO;
 import com.excilys.dto.DTOException;
 import com.excilys.mapper.ComputerMapper;
+import com.excilys.servlet.ComputerForm;
 
-public class ComputerValidator {
+@Component
+public class ComputerDTOValidator  implements Validator {
 
 	public static final String NO_MONTH = "This month doesn't exist.";
 	public static final String NO_DAY = "This day doesn't exist.";
 	public static final String NO_DAY_IN_MONTH = "This day doesn't exist for this month.";
 	public static final String NO_DAY_IN_FEB = "Not so much days in Febuary.";
-	public static final String INVALID_FORMAT = " format is invalid";
+	public static final String INVALID_FORMAT = "Format is invalid";
 	public static final String DATE_ORDER = "Discontinued date is before the introduced date.";
 	public static final String NOT_REAL_DATE = "Not a real date.";
 
@@ -30,37 +34,21 @@ public class ComputerValidator {
 			+ "^([\\d]{4})\\-(02)\\-(0[1-9]|1[\\d]|2[0-8])$|"
 			+ "^(((18|19|20)(04|08|[2468][048]|[13579][26]))|2000)\\-(02)\\-(0[1-9]|1[\\d]|2[\\d])$");
 	
-	private static final Logger LOGGER =  LoggerFactory.getLogger(ComputerValidator.class);
+	private static final Logger LOGGER =  LoggerFactory.getLogger(ComputerDTOValidator.class);
 	
 	
 	
-	public static Date date(String date,String name) throws DTOException {
-		Date res = null;
-		if(date != null){
-			if(!date.equals("")){
-				try {	
-					res = new SimpleDateFormat(ComputerMapper.DATE_PATTERN).parse(date);
-					realDate(date);
-					
-				} catch (ParseException e) {
-					LOGGER.debug("Parse Exception throwed DTOException : INVALID_FORMAT");
-					throw new DTOException(name + INVALID_FORMAT );
-				} catch(DTOException e){
-					LOGGER.debug("DTOException throwed DTOException : {}",e.getMessage());
-					throw new DTOException(name +" : "+e.getMessage());
-				}
-			}
+	
+	
+	public static boolean realDate(String date) {
+		if(date == null){
+			return true;
 		}
-		return res ;
-	}
-	
-	public static boolean realDate(String date) throws DTOException{
+		if(date.equals("")){
+			return true;
+		}
 		Matcher m = REGEX.matcher(date);
-		if(!m.matches()){
-			throw new DTOException(NOT_REAL_DATE);
-			
-		}
-		return true;
+		return m.matches();
 		/*if(m.matches()){
 			
 		int year = Integer.valueOf(m.group(0));
@@ -90,12 +78,13 @@ public class ComputerValidator {
 		return false;*/
 	}
 
-	public static void dateOrder(Date introducedDate,Date discontinuedDate) throws DTOException {
+	public static boolean dateOrder(Date introducedDate,Date discontinuedDate) {
 		if(discontinuedDate != null && introducedDate != null){
 			if(discontinuedDate.before(introducedDate)){
-				throw new DTOException(DATE_ORDER);
+				return false;
 			}
 		}
+		return true;
 	}
 	
 	public static void name(String name) throws DTOException {
@@ -106,5 +95,35 @@ public class ComputerValidator {
 		if(name.equals("")){
 			throw new DTOException(EMPTY_NAME);
 		}
+	}
+	
+	/*
+	 * This validator validates only ComputerDTO
+	 * @see org.springframework.validation.Validator#supports(java.lang.Class)
+	 */
+	@Override
+	public boolean supports(Class clazz) {
+		return ComputerDTO.class.equals(clazz);
+		
+	}
+
+	@Override
+	public void validate(Object obj, Errors errors) {
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, ComputerForm.ATTR_NAME, "required", "Field is required.");	
+        ComputerDTO dto = (ComputerDTO) obj;
+        LOGGER.debug("Start validation");
+        if(!realDate(dto.getIntroducedDate())){
+        	errors.rejectValue(ComputerForm.ATTR_INTRO,"invalid",INVALID_FORMAT);
+        	
+        }
+
+        if(!realDate(dto.getDiscontinuedDate())){
+        	errors.rejectValue(ComputerForm.ATTR_DISC,"invalid", INVALID_FORMAT);
+        }
+        
+        if(!dateOrder(ComputerMapper.toDate(dto.getIntroducedDate()),ComputerMapper.toDate(dto.getDiscontinuedDate()))){
+        	errors.rejectValue(ComputerForm.ATTR_DISC,"order", DATE_ORDER);
+        }
+        	
 	}
 }

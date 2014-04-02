@@ -3,7 +3,7 @@ package com.excilys.servlet;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.excilys.validator.ComputerValidator;
+import com.excilys.validator.ComputerDTOValidator;
 
 public class ComputerForm {
 	
@@ -31,11 +31,11 @@ public class ComputerForm {
 	public final static String ID_EMPTY_NAME = "emptyName";
 	
 
-	public FormInput name = new FormInput(ATTR_NAME, TITLE_NAME);
-	public FormInput intro = new FormInput(ATTR_INTRO, TITLE_INTRO);
-	public FormInput disc = new FormInput(ATTR_DISC, TITLE_DISC);
-	public FormInput company = new FormInput(ATTR_COMPANY, TITLE_COMPANY);
-	public FormInput id = new FormInput(ATTR_ID, TITLE_ID);
+	public static FormInput name = new FormInput(ATTR_NAME, TITLE_NAME);
+	public static FormInput intro = new FormInput(ATTR_INTRO, TITLE_INTRO);
+	public static FormInput disc = new FormInput(ATTR_DISC, TITLE_DISC);
+	public static FormInput company = new FormInput(ATTR_COMPANY, TITLE_COMPANY);
+	public static FormInput id = new FormInput(ATTR_ID, TITLE_ID);
 	
 	private static ComputerForm INSTANCE = null;
 	
@@ -79,14 +79,14 @@ public class ComputerForm {
 	
 	public static Map<String,String> getErrors(){
 		Map<String,String> errors = new TreeMap<String,String>();
-		errors.put(ID_NO_DAY,ComputerValidator.NO_DAY);
-		errors.put(ID_NO_MONTH,ComputerValidator.NO_MONTH);
-		errors.put(ID_NO_DAY_IN_MONTH,ComputerValidator.NO_DAY_IN_MONTH);
-		errors.put(ID_NO_DAY_IN_FEB,ComputerValidator.NO_DAY_IN_FEB);
-		errors.put(ID_INVALID_FORMAT ,ComputerValidator.INVALID_FORMAT);
-		errors.put(ID_DATE_ORDER ,ComputerValidator.DATE_ORDER);
-		errors.put(ID_NULL_NAME ,ComputerValidator.NULL_NAME);
-		errors.put(ID_EMPTY_NAME ,ComputerValidator.EMPTY_NAME);
+		errors.put(ID_NO_DAY,ComputerDTOValidator.NO_DAY);
+		errors.put(ID_NO_MONTH,ComputerDTOValidator.NO_MONTH);
+		errors.put(ID_NO_DAY_IN_MONTH,ComputerDTOValidator.NO_DAY_IN_MONTH);
+		errors.put(ID_NO_DAY_IN_FEB,ComputerDTOValidator.NO_DAY_IN_FEB);
+		errors.put(ID_INVALID_FORMAT ,ComputerDTOValidator.INVALID_FORMAT);
+		errors.put(ID_DATE_ORDER ,ComputerDTOValidator.DATE_ORDER);
+		errors.put(ID_NULL_NAME ,ComputerDTOValidator.NULL_NAME);
+		errors.put(ID_EMPTY_NAME ,ComputerDTOValidator.EMPTY_NAME);
 		return errors;
 	}
 	
