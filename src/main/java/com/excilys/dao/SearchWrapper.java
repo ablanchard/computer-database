@@ -33,34 +33,16 @@ public class SearchWrapper<E> {
 	public SearchWrapper(int nbItemsPerPage,Integer page,String search,String order,String direction){
 		this.nbComputersPerPage = nbItemsPerPage;
 		items = new ArrayList<E>();
-		if(search != null){
-			if(!search.equals("")){
-				this.setQuery(search);
-			}
-		}
-		
-		if(order != null){
-			try {
-				this.setOrderCol(OrderComputerCol.valueOf(order));
-			} catch(IllegalArgumentException e){
-				
-			}
-		}
-		
-		if(direction !=null){
-			try {
-				this.setOrderDirection(OrderDirection.valueOf(direction));
-			}catch(IllegalArgumentException e){
-				
-			}
-		}
-		
-		if(page != null){
-			if(page <= 0){
-				page = 1;
-			}
-			this.setPage(page);
-		}
+		this.update(page, search, order, direction);
+	}
+	
+	public SearchWrapper(SearchWrapper<?> sw){
+		this.nbComputersPerPage = sw.nbComputersPerPage;
+		this.query = sw.query;
+		this.orderCol = sw.orderCol;
+		this.orderDirection = sw.orderDirection;
+		this.page = sw.page;
+		this.items = new ArrayList<E>();
 	}
 	
 	
@@ -170,6 +152,37 @@ public class SearchWrapper<E> {
 		if(this.getItems().size() == 0)
 			return null;
 		return this.getItems().get(0);
+	}
+	
+	public void update(Integer page,String search,String order,String direction){
+		if(search != null){
+			if(!search.equals("")){
+				this.setQuery(search);
+			}
+		}
+		
+		if(order != null){
+			try {
+				this.setOrderCol(OrderComputerCol.valueOf(order));
+			} catch(IllegalArgumentException e){
+				
+			}
+		}
+		
+		if(direction !=null){
+			try {
+				this.setOrderDirection(OrderDirection.valueOf(direction));
+			}catch(IllegalArgumentException e){
+				
+			}
+		}
+		
+		if(page != null){
+			if(page <= 0){
+				page = 1;
+			}
+			this.setPage(page);
+		}
 	}
 
 }

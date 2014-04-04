@@ -21,6 +21,8 @@
 <c:set var="query" value="${requestScope['sw'].query }"></c:set>
 <c:set var="count" value="${requestScope['sw'].count }"></c:set>
 <c:set var="placeholder"><spring:message code="filter.placeholder" text="Search name" /></c:set>
+<c:set var="computerFound" value="computers.found.plurial"/>
+<c:if test="${count <= 1 }"><c:set var="computerFound" value="computers.found.singular"/></c:if>
 
 <div class="container-fluid" id="main">
 	<div class="row">
@@ -31,7 +33,7 @@
 		<div class="alert alert-danger"><p><spring:message code="${param.error }" text="Errors" /></p></div>
 	</c:if>
 	<div class="col-md-12">
-	<h1 id="homeTitle"><c:out value="${count}"/> <spring:message code="computers.found" text="Computers found" /></h1>
+	<h1 id="homeTitle"><c:out value="${count}"/> <spring:message code="${computerFound }" text="Computers found" /></h1>
 	</div>
 	</div>
 	<div class="row" id="actions">
@@ -46,7 +48,7 @@
 		</form:form>
 		</div>
 		<div class="col-md-2">
-			<a href="initAdd" class="btn btn-success" id="add" ><spring:message code="add.computer" text="Add Computer" /></a>
+			<a href="initAdd" class="btn btn-success pull-right" id="add" ><spring:message code="add.computer" text="Add Computer" /></a>
 		</div>
 	</div>
 	<c:if test="${count != 0 }">

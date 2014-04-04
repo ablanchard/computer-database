@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -80,11 +82,15 @@ public class AddController extends ComputerController {
 			redirectAttributes.addAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
 		} catch (ServiceException e){
 			redirectAttributes.addAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
-		} catch (NotExistException e) {
 		}
 		return "redirect:return";
 	}
 
+	@ExceptionHandler(HttpSessionRequiredException.class)
+	public String init(){
+		LOGGER.debug("Handling exception");
+		return "redirect:initAdd";
+	}
 	
 	@InitBinder(ATTR_DTO)
 	public void initBinderAll(WebDataBinder binder) {

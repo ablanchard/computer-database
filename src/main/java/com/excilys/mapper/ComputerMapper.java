@@ -29,21 +29,19 @@ public class ComputerMapper {
 	@Autowired
 	private ReloadableResourceBundleMessageSource messageSource;
 
-	public Computer toComputer(ComputerDTO dto) throws ServiceException, NotExistException {
+	public Computer toComputer(ComputerDTO dto) {
 		Computer c = Computer.builder();
 		
 		c.setId(dto.getId());
 		c.setName(dto.getName());
-		
 		c.setIntroduced(toDate(dto.getIntroducedDate()));
 		c.setDiscontinued(toDate(dto.getDiscontinuedDate()));
-		
-		SearchWrapper<Company> sw = new SearchWrapper<Company>(Company.build().setId(dto.getCompanyId()));
-		getCompanyService().retrieve(sw);
-		
 		Company company = null;
-		if(sw.getItems().size() == 1){
-			company = sw.getItems().get(0);	
+		if(dto.getCompanyName() != null){
+			if(!dto.getCompanyName().equals("")){
+				company = new Company(dto.getCompanyName());
+				company.setId(dto.getCompanyId());
+			}	
 		}
 		c.setCompany(company);
 		
@@ -93,10 +91,29 @@ public class ComputerMapper {
 		}
 		return swDTO;
 	}
+	
+	public  SearchWrapper<Computer> toComputerWrapper(SearchWrapper<ComputerDTO> swDTO){
+		SearchWrapper<Computer> sw = new SearchWrapper<Computer>();
+		sw.setQuery(swDTO.getQuery());
+		sw.setOrderCol(swDTO.getOrderCol());
+		sw.setOrderDirection(swDTO.getOrderDirection());
+		sw.setPage(swDTO.getPage());
+		sw.setNbComputersPerPage(swDTO.getNbComputersPerPage());
+		sw.setCount(swDTO.getCount());
+		sw.setPageMax(swDTO.getPageMax());
+		for(ComputerDTO dto : swDTO.getItems()){
+				sw.getItems().add(toComputer(dto));
+		}
+		return sw;
+	}
 
 	public DateTime toDate(String date) {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern(messageSource.getMessage("date.pattern", null, LocaleContextHolder.getLocale()));
-		return fmt.parseDateTime(date);
+		try {
+			return fmt.parseDateTime(date);
+		} catch(IllegalArgumentException e){
+			return null;
+		}
 	}
 	
 	public String toString(DateTime date){

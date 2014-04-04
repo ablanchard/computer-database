@@ -5,13 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.HttpSessionRequiredException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
@@ -35,31 +35,33 @@ public class DashboardController extends ComputerController {
 	@RequestMapping(value ="/", 
 			//params = {"page","search","order","direction"},
 			method = RequestMethod.GET)
-    public String init(Model model,
+    public String request(Model model,
     		@RequestParam(value="page", required=false, defaultValue="1") Integer page, 
     		@RequestParam(value="search", required=false, defaultValue="") String search, 
     		@RequestParam(value="order", required=false, defaultValue="") String order, 
-    		@RequestParam(value="direction", required=false, defaultValue="") String direction) {
-		model.addAttribute(ATTR_WRAPPER,new SearchWrapper<Computer>(nbComputersPerPage, page, search, order, direction));
-		
+    		@RequestParam(value="direction", required=false, defaultValue="") String direction,
+    		@ModelAttribute(value=ATTR_WRAPPER) SearchWrapper<ComputerDTO> sw) {
+		sw.update(page,search,order,direction);
+		model.addAttribute(ATTR_WRAPPER,sw);
 		return "redirect:index";
     }
 	
 	@RequestMapping(value ="reset",
 			method = RequestMethod.GET)
 	public String reset(Model model){
-		model.addAttribute(ATTR_WRAPPER, new SearchWrapper<Computer>(nbComputersPerPage));
+		model.addAttribute(ATTR_WRAPPER, new SearchWrapper<ComputerDTO>(nbComputersPerPage));
 		return "redirect:index";
 	}
 	
 	@RequestMapping(value="index",
 			method = RequestMethod.GET)
 	public String show(Model model,
-			@ModelAttribute(value=ATTR_WRAPPER) SearchWrapper<Computer> sw){
+			@ModelAttribute(value=ATTR_WRAPPER) SearchWrapper<ComputerDTO> sw){
 		try {
-			getComputerService().retrieve(sw);
-			sw.updatePageMax();
-			model.addAttribute(ATTR_WRAPPER,getComputerMapper().toComputerDTOWrapper(sw));
+			SearchWrapper<Computer> swComputer = new SearchWrapper<Computer>(sw);
+			getComputerService().retrieve(swComputer);
+			swComputer.updatePageMax();
+			model.addAttribute(ATTR_WRAPPER,getComputerMapper().toComputerDTOWrapper(swComputer));
 		} catch (ServiceException | NotExistException e){
 			model.addAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
 		}
@@ -71,15 +73,22 @@ public class DashboardController extends ComputerController {
 	
 	@RequestMapping(value="return")
 	public String show(Model model,
-			@ModelAttribute("sw") SearchWrapper<ComputerDTO> sw,
-			@RequestParam(value="success",required=false) String success,
-			@RequestParam(value="error",required=false) String error){
+			@ModelAttribute(ATTR_DTO) SearchWrapper<ComputerDTO> sw,
+			@RequestParam(value=ATTR_SUCCESS,required=false) String success,
+			@RequestParam(value=ATTR_ERROR,required=false) String error){
 		if(success != null){
-			model.addAttribute("success", success);
+			model.addAttribute(ATTR_SUCCESS, success);
 		}
 		if(error != null){
-			model.addAttribute("error", error);
+			model.addAttribute(ATTR_ERROR, error);
 		}
 		return "redirect:index";
+	}
+	
+
+	@ExceptionHandler(HttpSessionRequiredException.class)
+	public String init(){
+		LOGGER.debug("Handling exception");
+		return "redirect:reset";
 	}
 }
