@@ -1,18 +1,15 @@
 package com.excilys.mapper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
-import com.excilys.controller.AddController;
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
@@ -97,16 +94,14 @@ public class ComputerMapper {
 		return swDTO;
 	}
 
-	public Date toDate(String date) {
-		try {
-			return new SimpleDateFormat(messageSource.getMessage("date.pattern", null, LocaleContextHolder.getLocale())).parse(date);
-		} catch (ParseException e) {
-			return null;
-		}
+	public DateTime toDate(String date) {
+		DateTimeFormatter fmt = DateTimeFormat.forPattern(messageSource.getMessage("date.pattern", null, LocaleContextHolder.getLocale()));
+		return fmt.parseDateTime(date);
 	}
 	
-	public String toString(Date date){
-		return new SimpleDateFormat(messageSource.getMessage("date.pattern", null, LocaleContextHolder.getLocale())).format(date);
+	public String toString(DateTime date){
+		DateTimeFormatter fmt = DateTimeFormat.forPattern(messageSource.getMessage("date.pattern", null, LocaleContextHolder.getLocale()));
+		return fmt.print(date);	
 	}
 	
 	public  CompanyService getCompanyService() {

@@ -1,9 +1,9 @@
 package com.excilys.validator;
 
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +41,9 @@ public class ComputerDTOValidator  implements Validator {
 		return m.matches();
 	}
 
-	public static boolean dateOrder(Date introducedDate,Date discontinuedDate) {
+	public static boolean dateOrder(DateTime introducedDate,DateTime discontinuedDate) {
 		if(discontinuedDate != null && introducedDate != null){
-			if(discontinuedDate.before(introducedDate)){
+			if(discontinuedDate.isBefore(introducedDate)){
 				return false;
 			}
 		}

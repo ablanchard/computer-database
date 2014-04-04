@@ -1,16 +1,17 @@
 package com.excilys.data;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+
 
 public class Computer {
 	private int id;
 	private String name;
-	private Date introduced;
-	private Date discontinued;
+	private DateTime introduced;
+	private DateTime discontinued;
 	private Company company;
 	
 	
-	public Computer(String name, Date introduced, Date discontinued, Company company){
+	public Computer(String name, DateTime introduced, DateTime discontinued, Company company){
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
@@ -64,23 +65,7 @@ public class Computer {
 		return this;
 	}
 
-	public Date getIntroduced() {
-		return introduced;
-	}
-
-	public Computer setIntroduced(Date introduced) {
-		this.introduced = introduced;
-		return this;
-	}
-
-	public Date getDiscontinued() {
-		return discontinued;
-	}
-
-	public Computer setDiscontinued(Date discontinued) {
-		this.discontinued = discontinued;
-		return this;
-	}
+	
 
 	public Company getCompany() {
 		return company;
@@ -88,6 +73,24 @@ public class Computer {
 
 	public Computer setCompany(Company company) {
 		this.company = company;
+		return this;
+	}
+
+	public DateTime getIntroduced() {
+		return introduced;
+	}
+
+	public Computer setIntroduced(DateTime introduced) {
+		this.introduced = introduced;
+		return this;
+	}
+
+	public DateTime getDiscontinued() {
+		return discontinued;
+	}
+
+	public Computer setDiscontinued(DateTime discontinued) {
+		this.discontinued = discontinued;
 		return this;
 	}
 	

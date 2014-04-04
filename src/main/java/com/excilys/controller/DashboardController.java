@@ -74,14 +74,6 @@ public class DashboardController extends ComputerController {
 			@ModelAttribute("sw") SearchWrapper<ComputerDTO> sw,
 			@RequestParam(value="success",required=false) String success,
 			@RequestParam(value="error",required=false) String error){
-		/*UriComponents uriComponents =
-		        UriComponentsBuilder.newInstance()
-		            .path("index")
-		            .queryParam("page", sw.getPage())
-		            .queryParam("search",sw.getQuery())
-		            .queryParam("order",sw.getOrderCol())
-		            .queryParam("direction",sw.getOrderDirection())
-		            .build();*/
 		if(success != null){
 			model.addAttribute("success", success);
 		}

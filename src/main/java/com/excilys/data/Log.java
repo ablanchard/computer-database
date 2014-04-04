@@ -1,10 +1,12 @@
 package com.excilys.data;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+
+
 
 public class Log {
 	private int id;
-	private Date executedOn;
+	private DateTime executedOn;
 	private String target;
 	private String command = "";
 	private Operation operation;
@@ -17,13 +19,6 @@ public class Log {
 	}
 	public Log setId(int id) {
 		this.id = id;
-		return this;
-	}
-	public Date getExecutedOn() {
-		return executedOn;
-	}
-	public Log setExecutedOn(Date executedOn) {
-		this.executedOn = executedOn;
 		return this;
 	}
 	public String getTarget() {
@@ -50,5 +45,11 @@ public class Log {
 	
 	public static Log build(){
 		return new Log();
+	}
+	public DateTime getExecutedOn() {
+		return executedOn;
+	}
+	public void setExecutedOn(DateTime executedOn) {
+		this.executedOn = executedOn;
 	}
 }

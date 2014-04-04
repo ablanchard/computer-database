@@ -12,6 +12,8 @@
 	<mysql.version>5.1.29</mysql.version>
 	<jstl.version>1.2</jstl.version>
 	<jstl-api.version>1.2.1</jstl-api.version>
+	<joda-time.version>2.3</joda-time.version>
+	<hibernate.version>4.2.0.Final</hibernate.version>
   </properties>
   
   <build>
@@ -45,16 +47,13 @@
   	<name>Excilys</name>
   </organization>
   <dependencies>
+  <!-- BoneCP -->
   	<dependency>
   		<groupId>com.jolbox</groupId>
   		<artifactId>bonecp</artifactId>
   		<version>${bonecp.version}</version>
   	</dependency>
-  	<dependency>
-  		<groupId>org.slf4j</groupId>
-  		<artifactId>slf4j-api</artifactId>
-  		<version>${slf4j.version}</version>
-  	</dependency>
+  	<!-- JSTL -->
   	<dependency>
   		<groupId>javax.servlet.jsp.jstl</groupId>
   		<artifactId>javax.servlet.jsp.jstl-api</artifactId>
@@ -65,10 +64,17 @@
   		<artifactId>jstl</artifactId>
   		<version>${jstl.version}</version>
   	</dependency>
+  	<!-- Spring -->
   	<dependency>
   		<groupId>org.springframework</groupId>
   		<artifactId>spring-webmvc</artifactId>
   		<version>${spring.version}</version>
+  	</dependency>
+  	<!-- Log -->
+  	<dependency>
+  		<groupId>org.slf4j</groupId>
+  		<artifactId>slf4j-api</artifactId>
+  		<version>${slf4j.version}</version>
   	</dependency>
   	<dependency>
   		<groupId>ch.qos.logback</groupId>
@@ -90,7 +96,13 @@
 	<dependency>
 		<groupId>org.hibernate</groupId>
 		<artifactId>hibernate-validator</artifactId>
-		<version>4.2.0.Final</version>
+		<version>${hibernate.version}</version>
+	</dependency>
+	<!-- Joda Time -->
+	<dependency>
+	    <groupId>joda-time</groupId>
+	    <artifactId>joda-time</artifactId>
+	    <version>${joda-time.version}</version>
 	</dependency>
   </dependencies>
 </project>

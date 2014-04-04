@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -48,7 +49,7 @@ public class ComputerDAO extends DAO<Computer> {
 			if(company !=null)
 				company.setId(rs.getInt(6));
 			
-			c = new Computer(rs.getString(ATTR_NAME),rs.getTimestamp(ATTR_INTRODUCTION),rs.getTimestamp(ATTR_DISCONTINUED),company);
+			c = new Computer(rs.getString(ATTR_NAME),new DateTime(rs.getTimestamp(ATTR_INTRODUCTION)),new DateTime(rs.getTimestamp(ATTR_DISCONTINUED)),company);
 			c.setId(rs.getInt(1));
 		
 		return c;
@@ -83,7 +84,7 @@ public class ComputerDAO extends DAO<Computer> {
 				ps.setNull(2,0);
 			}
 			else{
-				ps.setTimestamp(2, new Timestamp(c.getIntroduced().getTime()));
+				ps.setTimestamp(2, new Timestamp(c.getIntroduced().toDate().getTime()));
 			}
 			
 			if(c.getDiscontinued() == null){
@@ -91,7 +92,7 @@ public class ComputerDAO extends DAO<Computer> {
 				ps.setNull(3,0);
 			}
 			else{
-				ps.setTimestamp(3, new Timestamp(c.getDiscontinued().getTime()));
+				ps.setTimestamp(3, new Timestamp(c.getDiscontinued().toDate().getTime()));
 			}
 			
 			if(c.getCompany()==null){
@@ -212,12 +213,12 @@ public class ComputerDAO extends DAO<Computer> {
 			if(c.getIntroduced() == null)
 				ps.setTimestamp(2, new Timestamp(0));//MySQL compatibility
 			else
-				ps.setTimestamp(2, new Timestamp(c.getIntroduced().getTime()));
+				ps.setTimestamp(2, new Timestamp(c.getIntroduced().toDate().getTime()));
 			
 			if(c.getDiscontinued() == null)
 				ps.setTimestamp(3, new Timestamp(0));//MySQL compatibility
 			else
-				ps.setTimestamp(3, new Timestamp(c.getDiscontinued().getTime()));
+				ps.setTimestamp(3, new Timestamp(c.getDiscontinued().toDate().getTime()));
 			
 			if(c.getCompany()==null)
 				ps.setNull(4, 0);
@@ -231,7 +232,6 @@ public class ComputerDAO extends DAO<Computer> {
 	@Override
 	public void getUpdateResult(ResultSet rs, SearchWrapper<Computer> sw)
 			throws SQLException {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -255,7 +255,6 @@ public class ComputerDAO extends DAO<Computer> {
 	@Override
 	public void getDeleteResult(ResultSet rs, SearchWrapper<Computer> sw)
 			throws SQLException {
-		// TODO Auto-generated method stub
 		
 	}
 }
