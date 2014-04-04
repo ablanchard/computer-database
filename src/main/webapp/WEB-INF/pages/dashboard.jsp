@@ -65,7 +65,7 @@
 							<c:forEach var="tableHeader" items="${requestScope['tableHeaders']}"  >
 								<th><spring:message code="${tableHeader.name }" text="Header" />
 									<c:if test="${not empty tableHeader.orderName }">
-										<cl:orderButton   page="${page }" query="${query }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
+										<cl:orderButton  icon="${tableHeader.icon }" page="${page }" query="${query }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
 									</c:if>
 								</th>
 							</c:forEach>
