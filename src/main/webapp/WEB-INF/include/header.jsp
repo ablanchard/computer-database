@@ -2,10 +2,12 @@
 	pageEncoding="UTF-8"%>
 	
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
-<title>EPF Computer Database</title>
+<title><spring:message code="title" text="EPF Computer Database" /></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
 <link href="<c:url value="/resources/css/bootstrap.min.css" />" rel="stylesheet" media="screen">
@@ -18,11 +20,11 @@
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
       
-      <a class="navbar-brand" href="index">Application - Computer Database</a>
+      <a class="navbar-brand" href="reset"><spring:message code="computer.database" text="Application - Computer Database" /></a>
       
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="?language=fr">Français</a></li>
-        <li><a href="?language=en">English</a></li>
+        <li <c:if test="${pageContext.response.locale == 'fr'}">class="active"</c:if>><a href="?language=fr">Français</a></li>
+        <li <c:if test="${pageContext.response.locale == 'en'}">class="active"</c:if>><a href="?language=en">English</a></li>
       </ul>
     </div>
 </div>

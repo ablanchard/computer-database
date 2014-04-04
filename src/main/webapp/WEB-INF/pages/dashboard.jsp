@@ -9,6 +9,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="cl" uri="/WEB-INF/taglib/computerLib.tld" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+	
 
 <c:set var="nbElementsParPage" value="${requestScope['sw'].nbComputersPerPage }"></c:set>
 <c:set var="page" value="${requestScope['sw'].page }"></c:set>
@@ -17,32 +20,33 @@
 <c:set var="orderDirection" value="${requestScope['sw'].orderDirection }"></c:set>
 <c:set var="query" value="${requestScope['sw'].query }"></c:set>
 <c:set var="count" value="${requestScope['sw'].count }"></c:set>
-
+<c:set var="placeholder"><spring:message code="filter.placeholder" text="Search name" /></c:set>
 
 <div class="container-fluid" id="main">
 	<div class="row">
 	<c:if test="${not empty param.success }">
-		<div class="alert alert-success"><p><c:out value="${param.success }"></c:out></p></div>
+		<div class="alert alert-success"><p><spring:message code="${param.success }" text="Success" /></p></div>
 	</c:if>
 	<c:if test="${not empty param.error }">
-		<div class="alert alert-danger"><p><c:out value="${param.error }"></c:out></p></div>
+		<div class="alert alert-danger"><p><spring:message code="${param.error }" text="Errors" /></p></div>
 	</c:if>
 	<div class="col-md-12">
-	<h1 id="homeTitle"><c:out value="${count}"/> Computers found</h1>
+	<h1 id="homeTitle"><c:out value="${count}"/> <spring:message code="computers.found" text="Computers found" /></h1>
 	</div>
 	</div>
 	<div class="row" id="actions">
-		<div class="col-md-11">
-		<form role="form" class="form-inline" action="index" method="GET">
+		<div class="col-md-10">
+		<form:form method="get" action="" class="form-inline" modelAttribute="sw">
 			<div class="form-group">
-				<label class="sr-only" for="searchbox">Search</label>
-				<input type="search" id="searchbox" name="search" value="" placeholder="Search name" />
+				<form:label path="query" class="sr-only"><spring:message code="filter" text="Computer name" /></form:label>
+				<form:input type="search" class="form-control"  path="query"   value="${requestScope['sw'].query }" placeholder="${placeholder }" />
+				<form:hidden path="page" value="1"/>
 			</div>	
-			<button type="submit" id="searchsubmit"	class="btn btn-default">Filter by name</button>
-		</form>
+			<button type="submit" id="searchsubmit"	class="btn btn-default"><spring:message code="filter" text="Filter by name" /></button>
+		</form:form>
 		</div>
-		<div class="col-md-1">
-		<a href="${pageContext.request.contextPath}/create" class="btn btn-success" id="add" >Add Computer</a>
+		<div class="col-md-2">
+			<a href="initAdd" class="btn btn-success" id="add" ><spring:message code="add.computer" text="Add Computer" /></a>
 		</div>
 	</div>
 	<c:if test="${count != 0 }">
@@ -57,7 +61,7 @@
 					<thead>
 						<tr>
 							<c:forEach var="tableHeader" items="${requestScope['tableHeaders']}"  >
-								<th>${tableHeader.name }
+								<th><spring:message code="${tableHeader.name }" text="Header" />
 									<c:if test="${not empty tableHeader.orderName }">
 										<cl:orderButton   page="${page }" query="${query }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
 									</c:if>
@@ -68,16 +72,16 @@
 					<tbody>
 						<c:forEach var="computer" items="${requestScope['sw'].items}"  >
 							<tr>
-								<td><a href="edit?id=${computer.id}" onclick="">${computer.name }</a></td>
+								<td><a href="initEdit?id=${computer.id}" onclick="">${computer.name }</a></td>
 								<td>${computer.introducedDate }</td>
 								<td>${computer.discontinuedDate }</td>
 								<td>${computer.companyName}</td>
 								<td>
-									<a href="edit?id=${computer.id}" onclick="">
-										<button class="btn btn-primary">Edit</button>
+									<a href="initEdit?id=${computer.id}" onclick="">
+										<button class="btn btn-primary"><spring:message code="edit" text="Edit" /></button>
 									</a>
 									<a href="delete?id=${computer.id}" >
-										<button class="btn btn-danger">Delete</button>
+										<button class="btn btn-danger"><spring:message code="delete" text="Delete" /></button>
 									</a>
 								</td>
 							</tr>

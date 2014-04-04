@@ -7,7 +7,7 @@
 <%@ attribute name="orderDirection" type="java.lang.String" %>
 <%@ attribute name="context" type="java.lang.String" %>
 
-<c:if test="${empty value }"><c:set var="value" value="${context }/index"></c:set></c:if>
+<c:if test="${empty value }"><c:set var="value" value="${context }/"></c:set></c:if>
 <c:url value="${value }" var="variableURL">
 		<c:if test="${not empty page }"><c:param name="page" value="${page}"/></c:if>
 		<c:if test="${not empty query }"><c:param name="search" value="${query}"/></c:if>

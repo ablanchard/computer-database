@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.dao.ComputerDAO;
+import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
 
 @Component
 public class ComputerService extends Service<Computer>{
 
 
-	public static final String NOT_EXIST = "This computer doesn't exist.";
+	public static final String NOT_EXIST = "computer.not.exist";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ComputerService.class);
 	
@@ -31,5 +32,10 @@ public class ComputerService extends Service<Computer>{
 		this.dao = dao;
 	}
 
+	public Computer getById(int id) throws ServiceException, NotExistException{
+		SearchWrapper<Computer> computerWrap = new SearchWrapper<Computer>(Computer.builder().setId(id));
+		retrieve(computerWrap);
+		return computerWrap.getItem();
+	}
 	
 }

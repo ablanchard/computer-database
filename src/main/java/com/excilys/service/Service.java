@@ -18,8 +18,6 @@ import com.excilys.data.Operation;
 
 @Component
 public abstract class Service<E> {
-	
-	
 
 	Logger LOGGER ;
 	
@@ -29,17 +27,12 @@ public abstract class Service<E> {
 	@Autowired
 	private LogDAO logDAO = null;
 
-	public static final String SERVICE_ERROR = "An error has occured while connecting to the server. Contact admin.";
+	public static final String SERVICE_ERROR = "service.error";
 	
-	public void retrieve(SearchWrapper<E> sw) throws ServiceException {
-		try {
+	public void retrieve(SearchWrapper<E> sw) throws ServiceException, NotExistException {
 			operation(sw, Operation.retrieve);
-		} catch (NotExistException e) {
-			
-		}
-		
-		
 	}
+	
 	public void create(SearchWrapper<E> sw) throws ServiceException {
 		try {
 			operation(sw, Operation.create);
@@ -142,9 +135,4 @@ public abstract class Service<E> {
 	}
 	
 	protected abstract DAO<E> getDao();
-	
-	
-	
-	
-
 }

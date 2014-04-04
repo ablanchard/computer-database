@@ -15,7 +15,11 @@
 		http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 
 	
-	<context:component-scan base-package="com.excilys.controller.**" />
+	<mvc:annotation-driven  />
+	<context:component-scan base-package="com.excilys.controller" />
+	
+	<context:component-scan base-package="com.excilys.validator" />
+	
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 
 	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
@@ -23,29 +27,23 @@
 	<bean 	class="org.springframework.web.servlet.view.InternalResourceViewResolver"
 			p:prefix="/WEB-INF/pages/"
 			p:suffix=".jsp" />
-		
+			
 	<!-- Internationalisation -->
-	<bean 	id="localeResolver"
-			class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-		<property name="defaultLocale" value="en" />
+	
+	
+	
+	<mvc:interceptors>
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" p:paramName="language"/>
+	</mvc:interceptors>
+	
+	<bean class="org.springframework.web.servlet.i18n.SessionLocaleResolver" id="localeResolver"> 
+        <property name="defaultLocale" value="fr" />
 	</bean>
- 
-	<bean 	id="localeChangeInterceptor"
-			class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
-		<property name="paramName" value="language" />
-	</bean>
- 
-	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" >
-		<property name="interceptors">
-		   <list>
-			<ref bean="localeChangeInterceptor" />
-		   </list>
-		</property>
-	</bean>
- 
-	<!-- Register the welcome.properties -->
-	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basename" value="message" />
-	</bean>
+	 
+	
+	
+
+	
+	
+	
 </beans>

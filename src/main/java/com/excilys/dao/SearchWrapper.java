@@ -30,6 +30,39 @@ public class SearchWrapper<E> {
 		items = new ArrayList<E>();
 	}
 	
+	public SearchWrapper(int nbItemsPerPage,Integer page,String search,String order,String direction){
+		this.nbComputersPerPage = nbItemsPerPage;
+		items = new ArrayList<E>();
+		if(search != null){
+			if(!search.equals("")){
+				this.setQuery(search);
+			}
+		}
+		
+		if(order != null){
+			try {
+				this.setOrderCol(OrderComputerCol.valueOf(order));
+			} catch(IllegalArgumentException e){
+				
+			}
+		}
+		
+		if(direction !=null){
+			try {
+				this.setOrderDirection(OrderDirection.valueOf(direction));
+			}catch(IllegalArgumentException e){
+				
+			}
+		}
+		
+		if(page != null){
+			if(page <= 0){
+				page = 1;
+			}
+			this.setPage(page);
+		}
+	}
+	
 	
 	
 	public String toString(){
@@ -124,5 +157,19 @@ public class SearchWrapper<E> {
 		this.pageMax = pageMax;
 	}
 
+	public void updatePageMax(){
+		int pageMax = (int)Math.floor(this.getCount()/nbComputersPerPage);
+		
+		if (this.getCount()%nbComputersPerPage != 0)
+			pageMax++;
+		
+		this.setPageMax(pageMax);
+	}
+	
+	public E getItem(){
+		if(this.getItems().size() == 0)
+			return null;
+		return this.getItems().get(0);
+	}
 
 }

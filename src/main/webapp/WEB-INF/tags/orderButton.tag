@@ -8,6 +8,7 @@
 <%@ attribute name="actualOrder" type="java.lang.String" %>
 <%@ attribute name="context" type="java.lang.String" %>
 
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <c:set var="newDirection" value="asc"></c:set>
 <c:if test="${actualDirection == newDirection}">
@@ -24,5 +25,5 @@
 <cl:link page="${page }" query="${query }" orderCol="${colName }" orderDirection="${direction }"  >
 
 	<button type="button" class="btn btn-default btn-md">
-			 <span class="glyphicon glyphicon-sort"></span> Order
+			 <span class="glyphicon glyphicon-sort"></span> <spring:message code="order" text="Order" />
 	</button></cl:link>
