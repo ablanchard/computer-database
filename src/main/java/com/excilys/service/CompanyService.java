@@ -22,9 +22,6 @@ public class CompanyService extends Service<Company> {
 	@Autowired
 	private CompanyDAO dao = null;
 	
-	@Autowired
-	private ReloadableResourceBundleMessageSource messageSource;
-	
 	private CompanyService(){
 		setLogger(LOGGER);
 	}
@@ -47,18 +44,11 @@ public class CompanyService extends Service<Company> {
 		List<Company> companies = sw.getItems();
 		
 		//Ajout de la company d'id 0
-		companies.add(0, Company.build().setName(messageSource.getMessage("no.company", null, LocaleContextHolder.getLocale())).setId(0));
+		companies.add(0, Company.build().setName("--"));
 		return companies ;
 	}
 
-	public ReloadableResourceBundleMessageSource getMessageSource() {
-		return messageSource;
-	}
-
-	public void setMessageSource(ReloadableResourceBundleMessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-
+	
 	
 	
 	
