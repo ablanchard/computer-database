@@ -9,6 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.data.Company;
 
@@ -20,7 +22,7 @@ public class CompanyDAO extends DAO<Company> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
 	
-	private CompanyDAO(){
+	public CompanyDAO(){
 		setTABLE(TABLE);
 		setLogger(LOGGER);
 	}

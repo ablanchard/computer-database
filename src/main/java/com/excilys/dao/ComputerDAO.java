@@ -32,7 +32,8 @@ public class ComputerDAO extends DAO<Computer> {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 
-	private ComputerDAO(){
+	
+	public ComputerDAO(){
 		setTABLE(TABLE);
 		setLogger(LOGGER);
 	}
@@ -48,8 +49,11 @@ public class ComputerDAO extends DAO<Computer> {
 			Company company = (rs.wasNull())?null:new Company(companyName);
 			if(company !=null)
 				company.setId(rs.getInt(6));
+
+			DateTime introduced = (rs.getTimestamp(ATTR_INTRODUCTION)==null)? null : new DateTime(rs.getTimestamp(ATTR_INTRODUCTION));
+			DateTime discontinued = (rs.getTimestamp(ATTR_DISCONTINUED)==null)? null : new DateTime(rs.getTimestamp(ATTR_DISCONTINUED));
 			
-			c = new Computer(rs.getString(ATTR_NAME),new DateTime(rs.getTimestamp(ATTR_INTRODUCTION)),new DateTime(rs.getTimestamp(ATTR_DISCONTINUED)),company);
+			c = new Computer(rs.getString(ATTR_NAME),introduced,discontinued,company);
 			c.setId(rs.getInt(1));
 		
 		return c;

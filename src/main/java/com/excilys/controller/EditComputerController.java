@@ -12,6 +12,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.WebDataBinder;
@@ -54,13 +55,13 @@ public class EditComputerController extends ComputerController {
 		try {
 			dto = getComputerMapper().toComputerDTO(getComputerService().getById(id));
 			LOGGER.debug(dto.toString());
-			model.addAttribute("dto",dto);
+			model.addAttribute(ATTR_DTO,dto);
 			model.addAttribute(ATTR_COMPANIES, getCompanyService().getAll());
 			model.addAttribute(FORM_ATTRS, ComputerForm.getInstance());
 		} catch (NotExistException e) {
-			model.addAttribute(ATTR_DTO, null);
+			model.addAttribute(ATTR_ERROR,"computer.not.exist");
 		} catch (ServiceException e){
-			model.addAttribute(ATTR_COMPANIES, null);
+			model.addAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
 		}
 		return "redirect:edit";
 	
@@ -71,15 +72,15 @@ public class EditComputerController extends ComputerController {
 			@ModelAttribute(ATTR_DTO) ComputerDTO dto,
 			BindingResult results,
 			@ModelAttribute(ATTR_COMPANIES) List<Company> companies,
+			@ModelAttribute(ATTR_ERROR) String error,
     		RedirectAttributes redirectAttributes){
-		if(dto == null){
-			redirectAttributes.addAttribute(ATTR_ERROR, "computer.not.exist");
+		
+		if(!error.equals("")){
+			LOGGER.debug("There is not DTO or no companies");
+			redirectAttributes.addAttribute(ATTR_ERROR, error);
 			return "redirect:return";
-		}			
-		if(companies == null){
-			redirectAttributes.addAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
-			return "redirect:return";
-		}
+		}	
+		
 		return "editComputer";
 	}
 	

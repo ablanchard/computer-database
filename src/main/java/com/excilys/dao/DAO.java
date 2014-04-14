@@ -5,13 +5,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.data.Operation;
 
 @Component
+@Transactional(propagation = Propagation.REQUIRED)
 public abstract class DAO<E> {
 	
 	public String TABLE ;
@@ -19,7 +25,7 @@ public abstract class DAO<E> {
 	Logger LOGGER ;
 	
 	@Autowired
-	private DatabaseHandler dh ;
+	private DataSource ds ;
 
 	
 	public void create(SearchWrapper<E> sw) throws DaoException {
@@ -41,19 +47,20 @@ public abstract class DAO<E> {
 		operation(sw, Operation.delete);
 	}
 	
+
+	@Transactional(propagation = Propagation.REQUIRED)
 	private void operation(SearchWrapper<E> sw,Operation op) throws DaoException {
-		Connection cn = getDh().getConnection();
+		Connection cn = DataSourceUtils.getConnection(getDs());
 		PreparedStatement ps =null;
 		ResultSet rs = null;
-		
 		try{
-			
+			getLogger().debug("Try {} \"{}\"",op,sw);
 			ps = cn.prepareStatement(getQuery(sw,op),PreparedStatement.RETURN_GENERATED_KEYS);
 			prepareStatement(ps, sw ,op);
 			
 			rs = execute(ps,op);
 			getResult(rs,sw,op);
-			getLogger().debug("{} succeed",op);
+			getLogger().debug("{} suceed",op);
 			if(op == Operation.retrieve){
 				operation(sw,Operation.count);
 			}
@@ -69,6 +76,7 @@ public abstract class DAO<E> {
 		}
 	}
 	
+
 	private ResultSet execute(PreparedStatement ps,Operation op) throws SQLException {
 		if(op ==  Operation.retrieve || op == Operation.count){
 			return ps.executeQuery();
@@ -80,6 +88,7 @@ public abstract class DAO<E> {
 		}
 	}
 	
+
 	private String getQuery(SearchWrapper<E> sw,Operation op){
 		switch(op){
 			case create :
@@ -251,13 +260,12 @@ public abstract class DAO<E> {
 		this.LOGGER = LOGGER;
 	}
 
-	public DatabaseHandler getDh() {
-		return dh;
+	public DataSource getDs() {
+		return ds;
 	}
 
-	@Autowired
-	public void setDh(DatabaseHandler dh) {
-		this.dh = dh;
+	public void setDs(DataSource ds) {
+		this.ds = ds;
 	}
 
 	

@@ -52,16 +52,19 @@ public class ComputerMapper {
 		ComputerDTO dto = new ComputerDTO();
 		dto.setName(c.getName());
 		
-		if(c.getIntroduced() == null)
+		if(c.getIntroduced() == null){
 			dto.setIntroducedDate("");
-		else
+		}
+		else{
 			dto.setIntroducedDate(toString(c.getIntroduced()));
+		}
 		
-		if(c.getDiscontinued() == null)
+		if(c.getDiscontinued() == null){
 			dto.setDiscontinuedDate("");
-		else
+		}
+		else {
 			dto.setDiscontinuedDate(toString(c.getDiscontinued()));
-		
+		}
 		dto.setId(c.getId());
 		
 		if(c.getCompany() == null){

@@ -1,12 +1,6 @@
 package com.excilys.servlet;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.springframework.stereotype.Component;
-
-import com.excilys.validator.ComputerDTOValidator;
 
 @Component
 public class ComputerForm {

@@ -49,8 +49,9 @@ public class SearchWrapper<E> {
 	
 	public String toString(){
 		StringBuilder res = new StringBuilder();
-		if(getItems().size() == 1)
+		if(getItems().size() == 1){
 			return getItems().get(0).toString();
+		}
 		else{
 			res.append("Page " );
 			res.append(getPage());

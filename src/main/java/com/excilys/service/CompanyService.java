@@ -5,9 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.dao.CompanyDAO;
 import com.excilys.dao.SearchWrapper;
@@ -22,7 +21,7 @@ public class CompanyService extends Service<Company> {
 	@Autowired
 	private CompanyDAO dao = null;
 	
-	private CompanyService(){
+	public CompanyService(){
 		setLogger(LOGGER);
 	}
 

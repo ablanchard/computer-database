@@ -1,15 +1,13 @@
 package com.excilys.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.dao.DAO;
 import com.excilys.dao.DaoException;
-import com.excilys.dao.DatabaseHandler;
 import com.excilys.dao.LogDAO;
 import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Log;
@@ -17,13 +15,11 @@ import com.excilys.data.Operation;
 
 
 @Component
+@Transactional
 public abstract class Service<E> {
 
 	Logger LOGGER ;
-	
-	@Autowired
-	private DatabaseHandler dh = null;
-	
+		
 	@Autowired
 	private LogDAO logDAO = null;
 
@@ -47,26 +43,21 @@ public abstract class Service<E> {
 		operation(sw,Operation.delete);
 	}
 	
+
+	@Transactional(propagation = Propagation.REQUIRED)
 	private void operation(SearchWrapper<E> sw,Operation op) throws ServiceException, NotExistException {
 		Log log = Log.build().setTarget(getDao().getTABLE()).setOperation(op);
 		SearchWrapper<Log> swLog = new SearchWrapper<Log>(log);
-		Connection cn = getDh().getConnection();
 		try{
 			getLogger().debug("Start transaction");
 			daoOperation(sw, op);
 			swLog.getItems().get(0).setCommand(sw.toString());
 			logDAO.create(swLog);
-			cn.commit();
-			getLogger().debug("Transaction commited {} {}",op,sw);
-		} catch (SQLException e) { //throwed by commit
-			rollbabk(cn);
-			throw new ServiceException();
+			getLogger().debug("Transaction \"{} {}\" commited",op,sw);
 		} catch (DaoException e){
-			rollbabk(cn);
+			LOGGER.debug("DaoException during the transaction \"{} {}\"",op,sw);
 			throw new NotExistException();
-		} finally {
-			closeConnection(cn);
-		}
+		} 
 	}
 	
 	private void daoOperation(SearchWrapper<E> sw,Operation op) throws DaoException{
@@ -88,28 +79,7 @@ public abstract class Service<E> {
 		}
 	}
 	
-	public void closeConnection(Connection cn){
-		if(cn!=null){
-		try {
-			cn.close();
-			
-			dh.unset();
-		} catch (SQLException e) {
-			
-			
-			LOGGER.error(e.getMessage(), e.getCause());
-		}}
-	}
-	
-	public void rollbabk(Connection cn){
-		try {
-			cn.rollback();
-			getLogger().debug("Rollbacked !");
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e.getCause());
-		}
-	}
-	
+		
 	public Logger getLogger(){
 		return LOGGER;
 	}
@@ -117,14 +87,7 @@ public abstract class Service<E> {
 	protected void setLogger(Logger LOGGER) {
 		this.LOGGER = LOGGER;
 	}
-	public DatabaseHandler getDh() {
-		return dh;
-	}
 	
-	
-	public void setDh(DatabaseHandler dh) {
-		this.dh = dh;
-	}
 	public LogDAO getLogDAO() {
 		return logDAO;
 	}
@@ -135,4 +98,5 @@ public abstract class Service<E> {
 	}
 	
 	protected abstract DAO<E> getDao();
+
 }

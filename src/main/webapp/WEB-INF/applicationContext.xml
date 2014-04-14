@@ -2,15 +2,34 @@
 	xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:p	="http://www.springframework.org/schema/p"
+    xmlns:aop	="http://www.springframework.org/schema/aop"
     xsi:schemaLocation="
        	http://www.springframework.org/schema/beans 
       	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
       	
 		http://www.springframework.org/schema/context
-		http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+		
+		
+		
+	<!-- Annotations -->
+	<context:component-scan base-package="com.excilys.dao" />
+	<context:component-scan base-package="com.excilys.service" />
+	<context:component-scan base-package="com.excilys.mapper" />
+	
+	<context:annotation-config />
+	<aop:aspectj-autoproxy/>
 	  
-	  <bean id="boneCPDataSource"
+	<!--  DataSource -->  
+	<bean 	id="boneCPDataSource"
         	class="com.jolbox.bonecp.BoneCPDataSource" 
         	destroy-method="close">
 	       <property name="driverClass" value="com.mysql.jdbc.Driver" />
@@ -20,20 +39,24 @@
 	       <property name="minConnectionsPerPartition" value="5" />
 	       <property name="maxConnectionsPerPartition" value="10" />
 	       <property name="partitionCount" value="1" />
-
-       </bean>   
+    </bean>   
+    
 	
-	<context:component-scan base-package="com.excilys.dao" />
-	<context:component-scan base-package="com.excilys.service" />
-	<context:component-scan base-package="com.excilys.mapper" />
+	<!-- Transactions -->
+    <bean 	id="txManager"
+    		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    	<property name="dataSource" ref="boneCPDataSource" />		
+    </bean>
 	
+	<tx:annotation-driven transaction-manager="txManager" />
+			
+	<!-- MessageSource pour l'internationalisation -->
 	<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource" id="messageSource">
 	  <property name="basename" value="WEB-INF/classes/messages"/>
 	  <property name="fallbackToSystemLocale" value="false"/>
 	</bean>
 	
     <!--  Model -->
-    
     <bean id="company" class="com.excilys.data.Company" scope="prototype"></bean>
     <bean id="computer" class="com.excilys.data.Computer" scope="prototype">
     	<property name="company">
@@ -47,4 +70,6 @@
     </bean>
     <bean id="operation" class="com.excilys.data.Operation" scope="prototype"></bean>
     <bean id="sw" class="com.excilys.dao.SearchWrapper" scope="prototype"/>
+    
+    
 </beans>

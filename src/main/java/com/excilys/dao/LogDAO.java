@@ -21,7 +21,7 @@ public class LogDAO extends DAO<Log> {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LogDAO.class);
 
-	private LogDAO(){
+	public LogDAO(){
 		setTABLE(TABLE);
 		setLogger(LOGGER);
 	}
