@@ -1,11 +1,8 @@
 package com.excilys.dao;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.excilys.data.Log;
@@ -25,13 +22,7 @@ public class LogDAO extends DAO<Log> {
 		setTABLE(TABLE);
 		setLogger(LOGGER);
 	}
-	
-	
 
-
-
-
-	@Override
 	public String getCreateQuery() {
 		StringBuilder query = new StringBuilder("INSERT INTO ");
 		query.append( TABLE );
@@ -46,112 +37,47 @@ public class LogDAO extends DAO<Log> {
 	}
 
 	@Override
-	public void prepareCreateStatement(PreparedStatement ps,
-			SearchWrapper<Log> sw) throws SQLException {
+	public void create(JdbcTemplate jdbcTemplate, SearchWrapper<Log> sw)
+			 {
 		Log l = sw.getItems().get(0);
-		ps.setString(1,l.getTarget());
 		
-		ps.setInt(2,l.getOperation().toInt());
-		ps.setString(3,l.getCommand());
-	
-		
-	}
 
-	@Override
-	public void getCreateResult(ResultSet rs, SearchWrapper<Log> sw)
-			throws SQLException {
-		// TODO Auto-generated method stub
+       jdbcTemplate.update(getCreateQuery(), 
+        	new Object[] { 
+        		l.getTarget(),
+	            l.getOperation().toInt(),
+	            l.getCommand()
+        });
+       
+     
 		
 	}
 
 	@Override
-	public String getRetrieveQuery(SearchWrapper<Log> sw) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void prepareRetrieveStatement(PreparedStatement ps,
-			SearchWrapper<Log> sw) throws SQLException {
+	protected void retrieve(JdbcTemplate jbdcTemplate, SearchWrapper<Log> sw)
+			 {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void getRetrieveResult(ResultSet rs, SearchWrapper<Log> sw)
-			throws SQLException {
+	protected void count(JdbcTemplate jbdcTemplate, SearchWrapper<Log> sw)
+			 {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public String getCountQuery(SearchWrapper<Log> sw) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void prepareCountStatement(PreparedStatement ps,
-			SearchWrapper<Log> sw) throws SQLException {
+	protected void update(JdbcTemplate jbdcTemplate, SearchWrapper<Log> sw)
+			 {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void getCountResult(ResultSet rs, SearchWrapper<Log> sw)
-			throws SQLException {
+	protected void delete(JdbcTemplate jbdcTemplate, SearchWrapper<Log> sw)
+			 {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public String getUpdateQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void prepareUpdateStatement(PreparedStatement ps,
-			SearchWrapper<Log> sw) throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void getUpdateResult(ResultSet rs, SearchWrapper<Log> sw)
-			throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getDeleteQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void prepareDeleteStatement(PreparedStatement ps,
-			SearchWrapper<Log> sw) throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void getDeleteResult(ResultSet rs, SearchWrapper<Log> sw)
-			throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected Log entry(ResultSet rs) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
-
-
-	
 }

@@ -9,11 +9,13 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Operation;
 
 @Component
@@ -49,126 +51,47 @@ public abstract class DAO<E> {
 	
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	private void operation(SearchWrapper<E> sw,Operation op) throws DaoException {
-		Connection cn = DataSourceUtils.getConnection(getDs());
-		PreparedStatement ps =null;
-		ResultSet rs = null;
-		try{
-			getLogger().debug("Try {} \"{}\"",op,sw);
-			ps = cn.prepareStatement(getQuery(sw,op),PreparedStatement.RETURN_GENERATED_KEYS);
-			prepareStatement(ps, sw ,op);
-			
-			rs = execute(ps,op);
-			getResult(rs,sw,op);
-			getLogger().debug("{} suceed",op);
-			if(op == Operation.retrieve){
-				operation(sw,Operation.count);
-			}
-			
-		} 
-		catch (SQLException e){
-			getLogger().error("Exception when {} : {}",op,e.getMessage());
-			
-			getLogger().error(e.getMessage(), e.getCause());
-			throw new DaoException(op + " failed : " +e.getMessage()) ;
-		} finally{
-			closeObjects(cn,ps,null);
+	private void operation(SearchWrapper<E> sw,Operation op)  {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(getDs());
+		
+		getLogger().debug("Try {} \"{}\"",op,sw);
+		operation(jdbcTemplate,sw,op);
+		getLogger().debug("{} suceed",op);
+		if(op == Operation.retrieve){
+			operation(sw,Operation.count);
 		}
+			
+		
+		
 	}
 	
-
-	private ResultSet execute(PreparedStatement ps,Operation op) throws SQLException {
-		if(op ==  Operation.retrieve || op == Operation.count){
-			return ps.executeQuery();
-		} else{
-			if( ps.executeUpdate() == 0){
-				throw new SQLException("Failed to update");
-			}
-		    return  ps.getGeneratedKeys();
-		}
-	}
 	
-
-	private String getQuery(SearchWrapper<E> sw,Operation op){
+	private void operation(JdbcTemplate jbdcTemplate,SearchWrapper<E> sw,Operation op) {
 		switch(op){
 			case create :
-				return getCreateQuery();
-			case retrieve:
-				return getRetrieveQuery(sw);
-			case update:
-				return getUpdateQuery();
-			case delete:
-				return getDeleteQuery();
-			case count:
-				return getCountQuery(sw);
-			default:
-				return "";
-		}
-	}
-	
-	private void prepareStatement(PreparedStatement ps,SearchWrapper<E> sw,Operation op) throws SQLException {
-		switch(op){
-			case create :
-				prepareCreateStatement(ps, sw);
+				create(jbdcTemplate,sw);
 				break;
 			case retrieve:
-				prepareRetrieveStatement(ps, sw);
+				retrieve(jbdcTemplate,sw);
 				break;
 			case update:
-				prepareUpdateStatement(ps, sw);
+				update(jbdcTemplate,sw);
 				break;
 			case delete:
-				prepareDeleteStatement(ps, sw);
+				delete(jbdcTemplate,sw);
 				break;
 			case count:
-				prepareCountStatement(ps, sw);
+				count(jbdcTemplate,sw);
 				break;
 		}
 	}
 	
-	private void getResult(ResultSet rs,SearchWrapper<E> sw,Operation op)throws SQLException {
-		switch(op){
-			case create :
-				getCreateResult(rs,sw);
-				break;
-			case retrieve:
-				getRetrieveResult(rs,sw);
-				break;
-			case update:
-				getUpdateResult(rs,sw);
-				break;
-			case delete:
-				getDeleteResult(rs,sw);
-				break;
-			case count:
-				getCountResult(rs,sw);
-				break;
-		}
-	}
 	
-	protected abstract E entry(ResultSet rs)  throws SQLException;
-	
-	protected abstract String getCreateQuery();
-	protected abstract void prepareCreateStatement(PreparedStatement ps,SearchWrapper<E> sw) throws SQLException;
-	protected abstract void getCreateResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
-	
-	protected abstract String getRetrieveQuery(SearchWrapper<E> sw);
-	protected abstract void prepareRetrieveStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
-	protected abstract void getRetrieveResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
-	
-	protected abstract String getCountQuery(SearchWrapper<E> sw);
-	protected abstract void prepareCountStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
-	protected abstract void getCountResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
-	
-
-	protected abstract String getUpdateQuery();
-	protected abstract void prepareUpdateStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
-	protected abstract void getUpdateResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
-	
-
-	protected abstract String getDeleteQuery();
-	protected abstract void prepareDeleteStatement(PreparedStatement ps, SearchWrapper<E> sw) throws SQLException;
-	protected abstract void getDeleteResult(ResultSet rs,SearchWrapper<E> sw)throws SQLException;
+	protected abstract void create(JdbcTemplate jbdcTemplate,SearchWrapper<E> sw);
+	protected abstract void retrieve(JdbcTemplate jbdcTemplate,SearchWrapper<E> sw);
+	protected abstract void count(JdbcTemplate jbdcTemplate,SearchWrapper<E> sw);
+	protected abstract void update(JdbcTemplate jbdcTemplate,SearchWrapper<E> sw);
+	protected abstract void delete(JdbcTemplate jbdcTemplate,SearchWrapper<E> sw);
 	
 		
 	protected String getOrderClause(SearchWrapper<E> sw){
@@ -215,33 +138,6 @@ public abstract class DAO<E> {
 			limitClause.append(offset);
 		}
 		return limitClause.toString();
-	}
-
-	private void closeObjects(Connection cn,PreparedStatement ps, ResultSet rs) throws DaoException{
-		if(cn != null){
-			try {
-				if(cn.getAutoCommit()){
-					cn.close();
-				}
-			} catch (SQLException e) {
-				getLogger().error(e.getMessage(), e.getCause());
-				throw new DaoException("Impossible to close connection:"+ e.getMessage());
-			}
-		}
-		if(ps!=null){
-			try {
-				ps.close();
-			} catch (SQLException e) {
-				getLogger().error(e.getMessage(), e.getCause());
-				throw new DaoException("Impossible to close preparedStatement:"+ e.getMessage());
-		}}
-		if(rs!=null){
-			try {
-				rs.close();
-			} catch (SQLException e) {
-				getLogger().error(e.getMessage(), e.getCause());
-				throw new DaoException("Impossible to close resultSet:"+ e.getMessage());
-		}}
 	}
 
 	public String getTABLE() {

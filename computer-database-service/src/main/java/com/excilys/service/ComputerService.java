@@ -45,4 +45,13 @@ public class ComputerService extends Service<Computer>{
 		}
 	}
 	
+	public void delete(Integer id) throws ServiceException, NotExistException{
+		if(id == null){
+			throw new NotExistException();
+		}
+		SearchWrapper<Computer> computerToDelete = new SearchWrapper<Computer>(Computer.builder().setId(id));
+		getById(id);
+		delete(computerToDelete);
+	}
+	
 }

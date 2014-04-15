@@ -31,11 +31,7 @@ public class DeleteComputerController extends ComputerController {
     		@RequestParam(value="id", required=true) Integer id,
     		RedirectAttributes redirectAttributes){
 		try{
-			if(id == null){
-				throw new NotExistException();
-			}
-			SearchWrapper<Computer> computerToDelete = new SearchWrapper<Computer>(Computer.builder().setId(id));
-			getComputerService().delete(computerToDelete);
+			getComputerService().delete(id);
 			redirectAttributes.addAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
 		} catch (NotExistException | NumberFormatException e){
 			redirectAttributes.addAttribute(ATTR_ERROR, ComputerService.NOT_EXIST);

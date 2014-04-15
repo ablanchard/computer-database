@@ -1,18 +1,18 @@
 package com.excilys.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import com.excilys.data.Company;
 import com.excilys.data.Computer;
 
 @Component
@@ -32,35 +32,11 @@ public class ComputerDAO extends DAO<Computer> {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 
-	
 	public ComputerDAO(){
 		setTABLE(TABLE);
 		setLogger(LOGGER);
-	}
-	
-	
-	
+	}	
 		
-	protected Computer entry(ResultSet rs)  throws SQLException  {
-		Computer c = null;
-		//Map<Integer,Company> companies = CompanyDAO.getInstance().getAll();
-		
-			String companyName = rs.getString(7);
-			Company company = (rs.wasNull())?null:new Company(companyName);
-			if(company !=null)
-				company.setId(rs.getInt(6));
-
-			DateTime introduced = (rs.getTimestamp(ATTR_INTRODUCTION)==null)? null : new DateTime(rs.getTimestamp(ATTR_INTRODUCTION));
-			DateTime discontinued = (rs.getTimestamp(ATTR_DISCONTINUED)==null)? null : new DateTime(rs.getTimestamp(ATTR_DISCONTINUED));
-			
-			c = new Computer(rs.getString(ATTR_NAME),introduced,discontinued,company);
-			c.setId(rs.getInt(1));
-		
-		return c;
-	}
-	
-
-	@Override
 	public String getCreateQuery() {
 		StringBuilder query = new StringBuilder("INSERT INTO ");
 		query.append( TABLE );
@@ -78,48 +54,50 @@ public class ComputerDAO extends DAO<Computer> {
 	}
 
 	@Override
-	public void prepareCreateStatement(PreparedStatement ps, SearchWrapper<Computer> sw)throws SQLException {
-		Computer c = sw.getItems().get(0);
-		
-			ps.setString(1,c.getName());
-			
-			if(c.getIntroduced() == null){
-				//ps.setTimestamp(2, new Timestamp(0));//MySQL compatibility
-				ps.setNull(2,0);
-			}
-			else{
-				ps.setTimestamp(2, new Timestamp(c.getIntroduced().toDate().getTime()));
-			}
-			
-			if(c.getDiscontinued() == null){
-				//ps.setTimestamp(3, new Timestamp(0));//MySQL compatibility
-				ps.setNull(3,0);
-			}
-			else{
-				ps.setTimestamp(3, new Timestamp(c.getDiscontinued().toDate().getTime()));
-			}
-			
-			if(c.getCompany()==null){
-				ps.setNull(4, 0);
-			}
-			else{
-				ps.setInt(4, c.getCompany().getId());
-			}
-	
-		
+	public void create(JdbcTemplate jdbcTemplate,SearchWrapper<Computer> sw)  {
+		final Computer c = sw.getItems().get(0);
+		Integer companyId = null;
+		if(c.getCompany() != null){
+			companyId = c.getCompany().getId();
+		}
+		//Timestamp introduced = (c.getIntroduced() == null)? null : new Timestamp(c.getIntroduced().toDate().getTime());
+		//Timestamp discontinued = (c.getDiscontinued() == null)? null : new Timestamp(c.getDiscontinued().toDate().getTime());
+		     	
+       	PreparedStatementCreator psc = new PreparedStatementCreator() {
+    		public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+    			PreparedStatement ps = con.prepareStatement(getCreateQuery(),PreparedStatement.RETURN_GENERATED_KEYS);
+    			ps.setString(1, c.getName());
+    			if(c.getIntroduced() == null){
+    				ps.setNull(2,0);
+				}
+				else{
+					ps.setTimestamp(2, new Timestamp(c.getIntroduced().toDate().getTime()));
+				}
+
+				if(c.getDiscontinued() == null){
+					ps.setNull(3,0);
+				}
+				else{
+					ps.setTimestamp(3, new Timestamp(c.getDiscontinued().toDate().getTime()));
+				}
+
+				if(c.getCompany()==null){
+					ps.setNull(4, 0);
+				}
+				else{
+					ps.setInt(4, c.getCompany().getId());
+				}
+    			return ps;
+    		}
+    	};
+
+    	KeyHolder keyHolder = new GeneratedKeyHolder();
+
+    	jdbcTemplate.update(psc, keyHolder);
+    	
+    	sw.getItems().get(0).setId(keyHolder.getKey().intValue());
 	}
 
-	@Override
-	public void getCreateResult(ResultSet gk,SearchWrapper<Computer> sw) throws SQLException {
-		 if (gk.next()) {
-	            sw.getItems().get(0).setId(gk.getInt(1));
-	            LOGGER.debug("Generated id {}",gk.getInt(1));
-	        } else {
-	            throw new SQLException("Creating user failed, no generated key obtained.");
-	        }
-	}
-
-	@Override
 	public String getRetrieveQuery(SearchWrapper<Computer> sw) {
 		StringBuilder query = new StringBuilder(SELECT_QUERY);
 		
@@ -138,32 +116,27 @@ public class ComputerDAO extends DAO<Computer> {
 	}
 
 	@Override
-	public void prepareRetrieveStatement(PreparedStatement ps,
-			SearchWrapper<Computer> sw) throws SQLException {
-		if(sw.getItems().size() == 1){
-			ps.setInt(1,sw.getItems().get(0).getId());
+	public void retrieve(JdbcTemplate jdbcTemplate, SearchWrapper<Computer> sw) {
+				
+		if(sw.getItems().size() == 1){//Retrieve by id
+			sw.setItems(jdbcTemplate.query(getRetrieveQuery(sw), new ComputerRowMapper(), new Object[]{
+				sw.getItems().get(0).getId()
+			}));
 		}
-		else{
-		
-			if(sw.getQuery() != null){
-				ps.setString(1,"%"+sw.getQuery()+"%");
-				ps.setString(2,"%"+sw.getQuery()+"%");
-			}
-		
+		else if(sw.getQuery() != null){//Retrieve by search
+			sw.setItems(jdbcTemplate.query(getRetrieveQuery(sw), new ComputerRowMapper(), new Object[]{
+				"%"+sw.getQuery()+"%","%"+sw.getQuery()+"%"
+			}));
 		}
-		
+		else{//Retrieve All
+			sw.setItems(jdbcTemplate.query(getRetrieveQuery(sw), new ComputerRowMapper()));
+		}
 	}
 
-	@Override
-	public void getRetrieveResult(ResultSet rs, SearchWrapper<Computer> sw)throws SQLException {
-		List<Computer> computers = new ArrayList<Computer>();
-		while(rs.next())
-			computers.add(entry(rs));
-
-		sw.setItems(computers);
-	}
 	
-	@Override
+	
+	
+	
 	public String getCountQuery(SearchWrapper<Computer> sw) {
 		StringBuilder query = new StringBuilder(COUNT_QUERY);
 		
@@ -172,25 +145,16 @@ public class ComputerDAO extends DAO<Computer> {
 		return query.toString();
 	}
 
+
 	@Override
-	public void prepareCountStatement(PreparedStatement ps,
-			SearchWrapper<Computer> sw) throws SQLException {
-		if(sw.getQuery() != null){
-				ps.setString(1,"%"+sw.getQuery()+"%");
-				ps.setString(2,"%"+sw.getQuery()+"%");
-			}
+	public void count(JdbcTemplate jdbcTemplate, SearchWrapper<Computer> sw)
+			 {
+		
+		sw.setCount(jdbcTemplate.queryForInt(getCountQuery(sw)));
 		
 	}
 
-	@Override
-	public void getCountResult(ResultSet rs, SearchWrapper<Computer> sw)
-			throws SQLException {
-		if(rs.next()){
-				sw.setCount(rs.getInt(1));
-		}
-	}
-
-	@Override
+	
 	public String getUpdateQuery() {
 		StringBuilder query = new StringBuilder("UPDATE ");
 		query.append( TABLE);
@@ -208,38 +172,28 @@ public class ComputerDAO extends DAO<Computer> {
 		return query.toString();
 	}
 
+
 	@Override
-	public void prepareUpdateStatement(PreparedStatement ps,
-			SearchWrapper<Computer> sw) throws SQLException {
+	public void update(JdbcTemplate jdbcTemplate, SearchWrapper<Computer> sw)
+			 {
 		Computer c = sw.getItems().get(0);
-		ps.setString(1,c.getName());
-			
-			if(c.getIntroduced() == null)
-				ps.setTimestamp(2, new Timestamp(0));//MySQL compatibility
-			else
-				ps.setTimestamp(2, new Timestamp(c.getIntroduced().toDate().getTime()));
-			
-			if(c.getDiscontinued() == null)
-				ps.setTimestamp(3, new Timestamp(0));//MySQL compatibility
-			else
-				ps.setTimestamp(3, new Timestamp(c.getDiscontinued().toDate().getTime()));
-			
-			if(c.getCompany()==null)
-				ps.setNull(4, 0);
-			else
-				ps.setInt(4, c.getCompany().getId());
-			
-			ps.setInt(5, c.getId());
-		
+		Integer companyId = null;
+		if(c.getCompany() != null){
+			companyId = c.getCompany().getId();
+		}
+		Timestamp introduced = (c.getIntroduced() == null)? null : new Timestamp(c.getIntroduced().toDate().getTime());
+		Timestamp discontinued = (c.getDiscontinued() == null)? null : new Timestamp(c.getDiscontinued().toDate().getTime());
+       	jdbcTemplate.update(getUpdateQuery(), 
+        	new Object[] { 
+        		c.getName(),
+	            introduced,
+	            discontinued,
+	            companyId,
+	            c.getId()
+        });
 	}
 
-	@Override
-	public void getUpdateResult(ResultSet rs, SearchWrapper<Computer> sw)
-			throws SQLException {
-		
-	}
-
-	@Override
+	
 	public String getDeleteQuery() {
 		StringBuilder query = new StringBuilder("DELETE FROM ");
 		query.append(TABLE );
@@ -250,15 +204,15 @@ public class ComputerDAO extends DAO<Computer> {
 	}
 
 	@Override
-	public void prepareDeleteStatement(PreparedStatement ps,
-			SearchWrapper<Computer> sw) throws SQLException {
-		ps.setInt(1,sw.getItems().get(0).getId());
-		
+	public void delete(JdbcTemplate jdbcTemplate, SearchWrapper<Computer> sw)
+			 {
+		Computer c = sw.getItems().get(0);
+
+       jdbcTemplate.update(getDeleteQuery(), 
+        	new Object[] {
+	            c.getId()
+        });
 	}
 
-	@Override
-	public void getDeleteResult(ResultSet rs, SearchWrapper<Computer> sw)
-			throws SQLException {
-		
-	}
+
 }

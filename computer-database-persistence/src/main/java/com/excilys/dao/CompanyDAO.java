@@ -1,16 +1,9 @@
 package com.excilys.dao;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.data.Company;
 
@@ -36,43 +29,8 @@ public class CompanyDAO extends DAO<Company> {
 	//Modification
 	
 	//Selection
+
 	
-	
-	protected Company entry(ResultSet rs)throws SQLException{
-		Company c = null;
-		try {
-			c = new Company(rs.getString(ATTR_NAME));
-			c.setId(rs.getInt(ATTR_ID));
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e.getCause());
-			throw new SQLException("Error while converting entries : " + e.getMessage());
-		}
-		
-		return c;
-	}
-
-
-	@Override
-	public String getCreateQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void prepareCreateStatement(PreparedStatement ps,
-			SearchWrapper<Company> sw) throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void getCreateResult(ResultSet rs, SearchWrapper<Company> sw)
-			throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public String getRetrieveQuery(SearchWrapper<Company> sw) {
 		StringBuilder query = new StringBuilder("SELECT * FROM ");
 		query.append(TABLE) ;
@@ -84,85 +42,57 @@ public class CompanyDAO extends DAO<Company> {
 		return query.toString() ;
 	}
 
+	
 	@Override
-	public void prepareRetrieveStatement(PreparedStatement ps,
-			SearchWrapper<Company> sw) throws SQLException {
-		if(sw.getItems().size() == 1)// get by id
-			ps.setInt(1, sw.getItems().get(0).getId());
+	public void retrieve(JdbcTemplate jdbcTemplate, SearchWrapper<Company> sw)
+			 {
 		
-	}
-
-	@Override
-	public void getRetrieveResult(ResultSet rs, SearchWrapper<Company> sw)
-			throws SQLException {
-		List<Company> companies = new ArrayList<Company>();
-		while(rs.next()){
-			companies.add(entry(rs));
+		if(sw.getItems().size() == 1){//by id
+			sw.setItems(jdbcTemplate.query(getRetrieveQuery(sw), new CompanyRowMapper(), new Object[]{
+				sw.getItems().get(0).getId()
+			}));
 		}
-		sw.setItems(companies);
+		else{
+			sw.setItems(jdbcTemplate.query(getRetrieveQuery(sw), new CompanyRowMapper()));
+		}
 		
 	}
 
-	@Override
-	public String getCountQuery(SearchWrapper<Company> sw) {
-		// TODO Auto-generated method stub
-		return "SELECT COUNT(*) FROM " + TABLE ;
-	}
+
 
 	@Override
-	public void prepareCountStatement(PreparedStatement ps,
-			SearchWrapper<Company> sw) throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void getCountResult(ResultSet rs, SearchWrapper<Company> sw)
-			throws SQLException {
+	protected void create(JdbcTemplate jbdcTemplate, SearchWrapper<Company> sw)
+			 {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public String getUpdateQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	@Override
-	public void prepareUpdateStatement(PreparedStatement ps,
-			SearchWrapper<Company> sw) throws SQLException {
+	protected void count(JdbcTemplate jbdcTemplate, SearchWrapper<Company> sw)
+			 {
 		// TODO Auto-generated method stub
 		
 	}
 
+
+
 	@Override
-	public void getUpdateResult(ResultSet rs, SearchWrapper<Company> sw)
-			throws SQLException {
+	protected void update(JdbcTemplate jbdcTemplate, SearchWrapper<Company> sw)
+			 {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public String getDeleteQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	@Override
-	public void prepareDeleteStatement(PreparedStatement ps,
-			SearchWrapper<Company> sw) throws SQLException {
+	protected void delete(JdbcTemplate jbdcTemplate, SearchWrapper<Company> sw)
+			 {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void getDeleteResult(ResultSet rs, SearchWrapper<Company> sw)
-			throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 	
 
