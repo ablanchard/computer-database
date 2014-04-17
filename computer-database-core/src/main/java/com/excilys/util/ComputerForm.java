@@ -1,8 +1,8 @@
-package com.excilys.data;
+package com.excilys.util;
 
-import org.springframework.stereotype.Component;
 
-@Component
+
+
 public class ComputerForm {
 	public static final String ATTR_NAME = "name";
 	public static final String ATTR_INTRO = "introducedDate";

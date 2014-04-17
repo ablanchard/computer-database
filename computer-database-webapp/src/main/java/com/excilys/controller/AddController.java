@@ -19,13 +19,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
+import com.excilys.util.SearchWrapper;
 import com.excilys.dto.ComputerDTO;
-import com.excilys.service.NotExistException;
 import com.excilys.service.Service;
 import com.excilys.service.ServiceException;
-import com.excilys.data.ComputerForm;
+import com.excilys.util.ComputerForm;
 import com.excilys.validator.ComputerDTOValidator;
 
 @Component
@@ -76,6 +75,7 @@ public class AddController extends ComputerController {
 			return doGet(model, dto, results, redirectAttributes);
 		}
 		try{
+			LOGGER.debug("Will add {}",dto);
 			c = getComputerMapper().toComputer(dto);
 			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(c);
 			getComputerService().create(sw);

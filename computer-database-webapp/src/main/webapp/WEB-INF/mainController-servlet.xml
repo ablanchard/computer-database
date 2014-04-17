@@ -18,7 +18,6 @@
 	<mvc:annotation-driven  />
 	<context:component-scan base-package="com.excilys.controller" />
 	
-	<context:component-scan base-package="com.excilys.validator" />
 	
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 

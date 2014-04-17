@@ -1,14 +1,37 @@
 package com.excilys.data;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.excilys.util.Operation;
 
 
+@Entity
+@Table(name="log")
 public class Log {
+
+	@Id
+	@GeneratedValue
+	@Column(name="id",nullable=false)
 	private int id;
+
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	@Column(name="executed_on")
 	private DateTime executedOn;
+	
+	@Column(name="target")
 	private String target;
+
+	@Column(name="command")
 	private String command = "";
+	
+	@Column(name="operation")
 	private Operation operation;
 	
 	public String toString(){

@@ -1,4 +1,4 @@
-package com.excilys.data;
+package com.excilys.util;
 
 public enum Operation {
 	create,

@@ -55,7 +55,7 @@ public class ComputerDTO {
 	}
 	
 	public String toString(){
-		return getId() + " " + getName() + " " + getCompanyName();
+		return getId() + " " + getName() + " " +  getCompanyId() + " " + getCompanyName();
 	}
 	
 

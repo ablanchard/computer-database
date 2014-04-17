@@ -1,6 +1,5 @@
-package com.excilys.data;
+package com.excilys.util;
 
-import javax.servlet.http.HttpServletRequest;
 
 public class FormInput {
 	private String title;
@@ -24,9 +23,6 @@ public class FormInput {
 		this.name = name;
 	}
 	
-	public String getValue(HttpServletRequest request){
-		return request.getParameter(getName());
-	}
 	
 
 }

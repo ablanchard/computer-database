@@ -16,7 +16,7 @@ import org.springframework.validation.Validator;
 
 import com.excilys.dto.ComputerDTO;
 import com.excilys.mapper.ComputerMapper;
-import com.excilys.data.ComputerForm;
+import com.excilys.util.ComputerForm;
 
 @Component
 public class ComputerDTOValidator  implements Validator {

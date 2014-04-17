@@ -9,9 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.excilys.dao.DAO;
 import com.excilys.dao.DaoException;
 import com.excilys.dao.LogDAO;
-import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Log;
-import com.excilys.data.Operation;
+import com.excilys.util.Operation;
+import com.excilys.util.SearchWrapper;
 
 
 @Component

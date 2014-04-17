@@ -1,13 +1,50 @@
 package com.excilys.data;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 
-public class Computer {
+@Entity
+@Table(name="computer")
+public class Computer implements Serializable {
+	
+	@Id
+	@GeneratedValue
+	@Column(name="id",nullable=false)
 	private int id;
+	
+	@Column(name="name",nullable=false)
 	private String name;
+	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	@Column(name="introduced",columnDefinition="TIMESTAMP NULL")
 	private DateTime introduced;
+	
+	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	@Column(name="discontinued")
 	private DateTime discontinued;
+	
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="company_id",nullable=true)
+    @Fetch(FetchMode.JOIN)
 	private Company company;
 	
 	
@@ -20,6 +57,10 @@ public class Computer {
 	
 	private Computer(){
 		
+	}
+	
+	public Computer(int id){
+		this.id = id;
 	}
 	
 	public String toString(){
@@ -51,18 +92,16 @@ public class Computer {
 		return id;
 	}
 
-	public Computer setId(int id) {
+	public void setId(int id) {
 		this.id = id;
-		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public Computer setName(String name) {
+	public void setName(String name) {
 		this.name = name;
-		return this;
 	}
 
 	
@@ -71,27 +110,24 @@ public class Computer {
 		return company;
 	}
 
-	public Computer setCompany(Company company) {
+	public void setCompany(Company company) {
 		this.company = company;
-		return this;
 	}
 
 	public DateTime getIntroduced() {
 		return introduced;
 	}
 
-	public Computer setIntroduced(DateTime introduced) {
+	public void setIntroduced(DateTime introduced) {
 		this.introduced = introduced;
-		return this;
 	}
 
 	public DateTime getDiscontinued() {
 		return discontinued;
 	}
 
-	public Computer setDiscontinued(DateTime discontinued) {
+	public void setDiscontinued(DateTime discontinued) {
 		this.discontinued = discontinued;
-		return this;
 	}
 	
 }

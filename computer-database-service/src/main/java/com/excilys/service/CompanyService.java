@@ -5,14 +5,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Component;
 
 import com.excilys.dao.CompanyDAO;
-import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
+import com.excilys.util.SearchWrapper;
 
-@Controller
+@Component
 public class CompanyService extends Service<Company> {
 	
 	
@@ -47,6 +46,17 @@ public class CompanyService extends Service<Company> {
 		return companies ;
 	}
 
+	public Company retrieveById(int id) throws ServiceException, NotExistException{
+		SearchWrapper<Company> companyWrap = new SearchWrapper<Company>(new Company(id));
+		retrieve(companyWrap);
+		if(companyWrap.getItem() == null){
+			LOGGER.debug("NotExistException !");
+			throw new NotExistException();
+		}
+		else {
+			return companyWrap.getItem();
+		}
+	}
 	
 	
 	

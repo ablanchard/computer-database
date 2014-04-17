@@ -4,11 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.dao.ComputerDAO;
-import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
+import com.excilys.util.SearchWrapper;
 
 @Component
 public class ComputerService extends Service<Computer>{
@@ -34,7 +33,7 @@ public class ComputerService extends Service<Computer>{
 	}
 
 	public Computer getById(int id) throws ServiceException, NotExistException{
-		SearchWrapper<Computer> computerWrap = new SearchWrapper<Computer>(Computer.builder().setId(id));
+		SearchWrapper<Computer> computerWrap = new SearchWrapper<Computer>(new Computer(id));
 		retrieve(computerWrap);
 		if(computerWrap.getItem() == null){
 			LOGGER.debug("NotExistException !");
@@ -49,7 +48,7 @@ public class ComputerService extends Service<Computer>{
 		if(id == null){
 			throw new NotExistException();
 		}
-		SearchWrapper<Computer> computerToDelete = new SearchWrapper<Computer>(Computer.builder().setId(id));
+		SearchWrapper<Computer> computerToDelete = new SearchWrapper<Computer>(new Computer(id));
 		getById(id);
 		delete(computerToDelete);
 	}

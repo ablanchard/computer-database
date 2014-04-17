@@ -2,12 +2,12 @@ package com.excilys.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.data.Company;
+import com.excilys.util.SearchWrapper;
 
-@Component
+@Repository
 public class CompanyDAO extends DAO<Company> {
 	public static final String TABLE = "company";
 	public static final String ATTR_NAME = "name";
@@ -30,69 +30,23 @@ public class CompanyDAO extends DAO<Company> {
 	
 	//Selection
 
-	
-	public String getRetrieveQuery(SearchWrapper<Company> sw) {
-		StringBuilder query = new StringBuilder("SELECT * FROM ");
-		query.append(TABLE) ;
-		if(sw.getItems().size() == 1) {// get by id
-			query.append(" WHERE ");
-			query.append(ATTR_ID);
-			query.append("=? ;");
-		}
-		return query.toString() ;
-	}
 
 	
 	@Override
-	public void retrieve(JdbcTemplate jdbcTemplate, SearchWrapper<Company> sw)
+	public void retrieve(SearchWrapper<Company> sw)
 			 {
 		
-		if(sw.getItems().size() == 1){//by id
-			sw.setItems(jdbcTemplate.query(getRetrieveQuery(sw), new CompanyRowMapper(), new Object[]{
-				sw.getItems().get(0).getId()
-			}));
+		if(sw.getItems().size() == 1){//Retrieve by id
+			sw.setItem((Company) getSessionFactory().getCurrentSession().get(Company.class, sw.getItems().get(0).getId()));
 		}
-		else{
-			sw.setItems(jdbcTemplate.query(getRetrieveQuery(sw), new CompanyRowMapper()));
+		else{//Retrieve All
+			sw.setItems(getSessionFactory().getCurrentSession().createQuery("from Company").list());
 		}
 		
 	}
 
 
 
-	@Override
-	protected void create(JdbcTemplate jbdcTemplate, SearchWrapper<Company> sw)
-			 {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-	@Override
-	protected void count(JdbcTemplate jbdcTemplate, SearchWrapper<Company> sw)
-			 {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-	@Override
-	protected void update(JdbcTemplate jbdcTemplate, SearchWrapper<Company> sw)
-			 {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-	@Override
-	protected void delete(JdbcTemplate jbdcTemplate, SearchWrapper<Company> sw)
-			 {
-		// TODO Auto-generated method stub
-		
-	}
 
 	
 

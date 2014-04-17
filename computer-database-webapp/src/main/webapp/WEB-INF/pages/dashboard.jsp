@@ -4,7 +4,7 @@
 <%@page import="com.excilys.data.Computer"%>
 <%@page import="com.excilys.dto.ComputerDTO"%>
 <%@page import="com.excilys.data.Company"%>
-<%@page import="com.excilys.data.Header"%>
+<%@page import="com.excilys.util.Header"%>
 <%@page import="com.excilys.dao.ComputerDAO"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

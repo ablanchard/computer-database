@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Computer;
+import com.excilys.util.SearchWrapper;
 import com.excilys.dto.ComputerDTO;
 import com.excilys.service.NotExistException;
 import com.excilys.service.Service;
 import com.excilys.service.ServiceException;
-import com.excilys.data.Header;
+import com.excilys.util.Header;
 
 @Component
 @Controller

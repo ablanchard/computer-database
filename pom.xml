@@ -8,14 +8,10 @@
   <artifactId>computer-database</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  
-  
   <name>Computer Database</name>
   <organization>
   	<name>Excilys</name>
   </organization>
-  
-  
   <properties>
 	<slf4j.version>1.7.6</slf4j.version>
 	<logback.version>1.1.1</logback.version>
@@ -25,15 +21,19 @@
 	<jstl.version>1.2</jstl.version>
 	<jstl-api.version>1.2.1</jstl-api.version>
 	<joda-time.version>2.3</joda-time.version>
-	<hibernate.version>4.2.0.Final</hibernate.version>
+	<hibernate-validator.version>5.1.0.Final</hibernate-validator.version>
+	<hibernate-jpa.version>4.3.4.Final</hibernate-jpa.version>
+	<joda-time-hibernate.version>2.0.1</joda-time-hibernate.version>
+	<jadira-core.version>3.1.0.GA</jadira-core.version>
+	<javax-servlet.version>3.1.0</javax-servlet.version>
   </properties>
   
   <modules>
-  	<module>core</module>
-  	<module>persistence</module>
-  	<module>service</module>
-  	<module>binding</module>
-  	<module>webapp</module>
+  	<module>computer-database-core</module>
+  	<module>computer-database-persistence</module>
+  	<module>computer-database-service</module>
+  	<module>computer-database-binding</module>
+  	<module>computer-database-webapp</module>
   </modules>
   
   <build>
@@ -47,93 +47,109 @@
           <target>1.7</target>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <warSourceDirectory>/src/main/webapp</warSourceDirectory>
-          <failOnMissingWebXml>true</failOnMissingWebXml>
-        </configuration>
-      </plugin>
-      <plugin>
-      	<groupId>org.apache.tomcat.maven</groupId>
-      	<artifactId>tomcat7-maven-plugin</artifactId>
-      	<version>2.0</version>
-      </plugin>
     </plugins>
   </build>
-  <dependencies>
-  <!-- BoneCP -->
-  	<dependency>
-  		<groupId>com.jolbox</groupId>
-  		<artifactId>bonecp</artifactId>
-  		<version>${bonecp.version}</version>
-  	</dependency>
-  	<!-- JSTL -->
-  	<dependency>
-  		<groupId>javax.servlet.jsp.jstl</groupId>
-  		<artifactId>javax.servlet.jsp.jstl-api</artifactId>
-  		<version>${jstl-api.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>javax.servlet</groupId>
-  		<artifactId>jstl</artifactId>
-  		<version>${jstl.version}</version>
-  	</dependency>
-  	<!-- Spring -->
-  	<dependency>
-  		<groupId>org.springframework</groupId>
-  		<artifactId>spring-webmvc</artifactId>
-  		<version>${spring.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework</groupId>
-  		<artifactId>spring-tx</artifactId>
-  		<version>${spring.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework</groupId>
-  		<artifactId>spring-jdbc</artifactId>
-  		<version>${spring.version}</version>
-  	</dependency>
-  	<dependency>
-		<groupId>org.aspectj</groupId>
-		<artifactId>aspectjtools</artifactId>
-		<version>1.6.2</version>
-	</dependency>
-  	<!-- Log -->
-  	<dependency>
-  		<groupId>org.slf4j</groupId>
-  		<artifactId>slf4j-api</artifactId>
-  		<version>${slf4j.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>ch.qos.logback</groupId>
-		<artifactId>logback-classic</artifactId>
-		<version>${logback.version}</version>
-		<scope>runtime</scope>
-  	</dependency>
-	<dependency>
-	    <groupId>ch.qos.logback</groupId>
-	    <artifactId>logback-access</artifactId>
-	    <version>${logback.version}</version>
-	</dependency>
-	<dependency>
-	    <groupId>org.slf4j</groupId>
-	    <artifactId>jcl-over-slf4j</artifactId>
-	    <version>${slf4j.version}</version>
-	</dependency>
-  	<!-- Hibernate Validator -->
-	<dependency>
-		<groupId>org.hibernate</groupId>
-		<artifactId>hibernate-validator</artifactId>
-		<version>${hibernate.version}</version>
-	</dependency>
-	<!-- Joda Time -->
-	<dependency>
-	    <groupId>joda-time</groupId>
-	    <artifactId>joda-time</artifactId>
-	    <version>${joda-time.version}</version>
-	</dependency>
-  </dependencies>
+  <dependencyManagement>
+	  <dependencies>
+	  <!-- BoneCP -->
+	  	<dependency>
+	  		<groupId>com.jolbox</groupId>
+	  		<artifactId>bonecp</artifactId>
+	  		<version>${bonecp.version}</version>
+	  	</dependency>
+	  	<!-- JSTL -->
+	  	<dependency>
+	  		<groupId>javax.servlet.jsp.jstl</groupId>
+	  		<artifactId>javax.servlet.jsp.jstl-api</artifactId>
+	  		<version>${jstl-api.version}</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>javax.servlet</groupId>
+	  		<artifactId>jstl</artifactId>
+	  		<version>${jstl.version}</version>
+	  	</dependency>
+	  	<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>${javax-servlet.version}</version>
+		    <scope>provided</scope>
+		</dependency>
+	  	<!-- Spring -->
+	  	<dependency>
+	  		<groupId>org.springframework</groupId>
+	  		<artifactId>spring-webmvc</artifactId>
+	  		<version>${spring.version}</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>org.springframework</groupId>
+	  		<artifactId>spring-tx</artifactId>
+	  		<version>${spring.version}</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>org.springframework</groupId>
+	  		<artifactId>spring-jdbc</artifactId>
+	  		<version>${spring.version}</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>org.springframework</groupId>
+	  		<artifactId>spring-orm</artifactId>
+	  		<version>${spring.version}</version>
+	  	</dependency>
+	  	<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjtools</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+	  	<!-- Log -->
+	  	<dependency>
+	  		<groupId>org.slf4j</groupId>
+	  		<artifactId>slf4j-api</artifactId>
+	  		<version>${slf4j.version}</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>runtime</scope>
+	  	</dependency>
+		<dependency>
+		    <groupId>ch.qos.logback</groupId>
+		    <artifactId>logback-access</artifactId>
+		    <version>${logback.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>jcl-over-slf4j</artifactId>
+		    <version>${slf4j.version}</version>
+		</dependency>
+	  	<!-- Hibernate Validator -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
+		</dependency>
+		<!-- Hibernate JPA -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate-jpa.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jadira.usertype</groupId>
+			<artifactId>usertype.core</artifactId>
+			<version>${jadira-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jadira.usertype</groupId>
+			<artifactId>usertype.jodatime</artifactId>
+			<version>${joda-time-hibernate.version}</version>
+		</dependency>
+		<!-- Joda Time -->
+		<dependency>
+		    <groupId>joda-time</groupId>
+		    <artifactId>joda-time</artifactId>
+		    <version>${joda-time.version}</version>
+		</dependency>
+	  </dependencies>
+  </dependencyManagement>
 </project>

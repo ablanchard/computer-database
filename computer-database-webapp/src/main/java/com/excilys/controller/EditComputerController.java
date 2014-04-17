@@ -7,12 +7,9 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.WebDataBinder;
@@ -25,16 +22,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.excilys.controller.ComputerController;
-import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
+import com.excilys.util.ComputerForm;
+import com.excilys.util.SearchWrapper;
 import com.excilys.dto.ComputerDTO;
 import com.excilys.service.ComputerService;
 import com.excilys.service.NotExistException;
 import com.excilys.service.Service;
 import com.excilys.service.ServiceException;
-import com.excilys.data.ComputerForm;
 import com.excilys.validator.ComputerDTOValidator;
 
 @Component

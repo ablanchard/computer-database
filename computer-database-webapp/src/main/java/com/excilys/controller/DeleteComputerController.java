@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.excilys.dao.SearchWrapper;
-import com.excilys.data.Computer;
 import com.excilys.service.ComputerService;
 import com.excilys.service.NotExistException;
 import com.excilys.service.Service;
@@ -25,7 +23,6 @@ public class DeleteComputerController extends ComputerController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DeleteComputerController.class);
 
-	
 	@RequestMapping(value = "delete", method = RequestMethod.GET)
 	public String edit(Model model,
     		@RequestParam(value="id", required=true) Integer id,
@@ -40,5 +37,4 @@ public class DeleteComputerController extends ComputerController {
 		}
 		return "redirect:return";
 	}
-	
 }

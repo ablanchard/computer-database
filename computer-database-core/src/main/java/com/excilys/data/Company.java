@@ -1,11 +1,36 @@
 package com.excilys.data;
 
-public class Company {
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+
+@Entity
+@Table(name="company")
+public class Company implements Serializable {
+
+	@Id
+	@GeneratedValue
+	@Column(name="id",nullable=false)
 	private int id;
+	
+	@Column(name="name",nullable=false)
 	private String name;
+
 	
 	public Company(String name){
 		this.name = name;
+	}
+	
+	public Company(int id){
+		this.id = id;
 	}
 	
 	private Company(){
@@ -40,6 +65,7 @@ public class Company {
 		res.append(getName());
 		return res.toString();
 	}
+
 	
 
 }

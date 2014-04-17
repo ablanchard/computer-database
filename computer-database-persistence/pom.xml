@@ -10,7 +10,8 @@
 	  <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>computer-database-persistence</artifactId>
-  <packaging>war</packaging>
+  <version>4.0.0</version>
+  <packaging>jar</packaging>
   
   
   <name>Computer Database Persistence</name>
@@ -18,87 +19,59 @@
   	<name>Excilys</name>
   </organization>
   
-  <build>
+ 
+   <build>
     <sourceDirectory>src</sourceDirectory>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <warSourceDirectory>/src/main/webapp</warSourceDirectory>
-          <failOnMissingWebXml>true</failOnMissingWebXml>
-        </configuration>
-      </plugin>
-      <plugin>
-      	<groupId>org.apache.tomcat.maven</groupId>
-      	<artifactId>tomcat7-maven-plugin</artifactId>
-      	<version>2.0</version>
-      </plugin>
-    </plugins>
-  </build>
+    </build>
+    
   <dependencies>
+  <dependency>
+  	<groupId>computer-database</groupId>
+  	<artifactId>computer-database-core</artifactId>
+  	<version>4.0.0</version>
+  </dependency>
   <!-- BoneCP -->
   	<dependency>
   		<groupId>com.jolbox</groupId>
   		<artifactId>bonecp</artifactId>
-  		<version>${bonecp.version}</version>
   	</dependency>
   	<!-- Spring -->
   	<dependency>
   		<groupId>org.springframework</groupId>
   		<artifactId>spring-webmvc</artifactId>
-  		<version>${spring.version}</version>
   	</dependency>
-  	<dependency>
-  		<groupId>org.springframework</groupId>
-  		<artifactId>spring-tx</artifactId>
-  		<version>${spring.version}</version>
-  	</dependency>
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-tx</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-orm</artifactId>
+      </dependency>
   	<dependency>
   		<groupId>org.springframework</groupId>
   		<artifactId>spring-jdbc</artifactId>
-  		<version>${spring.version}</version>
   	</dependency>
   	<dependency>
 		<groupId>org.aspectj</groupId>
 		<artifactId>aspectjtools</artifactId>
-		<version>1.6.2</version>
 	</dependency>
   	<!-- Log -->
   	<dependency>
   		<groupId>org.slf4j</groupId>
   		<artifactId>slf4j-api</artifactId>
-  		<version>${slf4j.version}</version>
   	</dependency>
   	<dependency>
   		<groupId>ch.qos.logback</groupId>
 		<artifactId>logback-classic</artifactId>
-		<version>${logback.version}</version>
-		<scope>runtime</scope>
   	</dependency>
 	<dependency>
 	    <groupId>ch.qos.logback</groupId>
 	    <artifactId>logback-access</artifactId>
-	    <version>${logback.version}</version>
 	</dependency>
 	<dependency>
 	    <groupId>org.slf4j</groupId>
 	    <artifactId>jcl-over-slf4j</artifactId>
-	    <version>${slf4j.version}</version>
-	</dependency>
-	<!-- Joda Time -->
-	<dependency>
-	    <groupId>joda-time</groupId>
-	    <artifactId>joda-time</artifactId>
-	    <version>${joda-time.version}</version>
 	</dependency>
   </dependencies>
 </project>

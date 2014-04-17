@@ -2,12 +2,12 @@ package com.excilys.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.data.Log;
+import com.excilys.util.SearchWrapper;
 
-@Component
+@Repository
 public class LogDAO extends DAO<Log> {
 	private static final String TABLE = "log";
 	private static final String ATTR_EXECUTED = "executed_on";
@@ -37,47 +37,12 @@ public class LogDAO extends DAO<Log> {
 	}
 
 	@Override
-	public void create(JdbcTemplate jdbcTemplate, SearchWrapper<Log> sw)
+	public void create(SearchWrapper<Log> sw)
 			 {
-		Log l = sw.getItems().get(0);
+		getSessionFactory().getCurrentSession().save(sw.getItems().get(0));
 		
-
-       jdbcTemplate.update(getCreateQuery(), 
-        	new Object[] { 
-        		l.getTarget(),
-	            l.getOperation().toInt(),
-	            l.getCommand()
-        });
-       
      
 		
 	}
 
-	@Override
-	protected void retrieve(JdbcTemplate jbdcTemplate, SearchWrapper<Log> sw)
-			 {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void count(JdbcTemplate jbdcTemplate, SearchWrapper<Log> sw)
-			 {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void update(JdbcTemplate jbdcTemplate, SearchWrapper<Log> sw)
-			 {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void delete(JdbcTemplate jbdcTemplate, SearchWrapper<Log> sw)
-			 {
-		// TODO Auto-generated method stub
-		
-	}
 }

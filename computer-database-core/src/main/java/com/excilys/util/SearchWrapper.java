@@ -1,9 +1,8 @@
-package com.excilys.dao;
+package com.excilys.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class SearchWrapper<E> {
 	private String query;
@@ -153,6 +152,11 @@ public class SearchWrapper<E> {
 		if(this.getItems().size() == 0)
 			return null;
 		return this.getItems().get(0);
+	}
+	
+	public void setItem(E e){
+		items.removeAll(getItems());
+		items.add(0,e);
 	}
 	
 	public void update(Integer page,String search,String order,String direction){

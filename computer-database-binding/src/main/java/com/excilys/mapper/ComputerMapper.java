@@ -10,9 +10,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
-import com.excilys.dao.SearchWrapper;
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
+import com.excilys.util.SearchWrapper;
 import com.excilys.dto.ComputerDTO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.NotExistException;
@@ -37,11 +37,11 @@ public class ComputerMapper {
 		c.setIntroduced(toDate(dto.getIntroducedDate()));
 		c.setDiscontinued(toDate(dto.getDiscontinuedDate()));
 		Company company = null;
-		if(dto.getCompanyName() != null){
-			if(!dto.getCompanyName().equals("")){
-				company = new Company(dto.getCompanyName());
-				company.setId(dto.getCompanyId());
-			}	
+		if(dto.getCompanyId() != 0){
+			try {
+				company = getCompanyService().retrieveById(dto.getCompanyId());
+			} catch (ServiceException | NotExistException e) {
+			}
 		}
 		c.setCompany(company);
 		

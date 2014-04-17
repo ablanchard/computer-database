@@ -1,4 +1,4 @@
-package com.excilys.dao;
+package com.excilys.util;
 
 public enum OrderComputerCol {
 	name,

@@ -1,9 +1,7 @@
-package com.excilys.data;
+package com.excilys.util;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.excilys.dao.OrderComputerCol;
 
 public class Header {
 	
