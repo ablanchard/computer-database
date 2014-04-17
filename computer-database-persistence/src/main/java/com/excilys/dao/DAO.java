@@ -59,38 +59,6 @@ public abstract class DAO<E>  {
 		
 	}
 	
-		
-	protected String getOrderClause(SearchWrapper<E> sw){
-		StringBuilder orderClause = new StringBuilder(" ");
-		
-		if(sw.getOrderCol() != null){
-			orderClause.append("order by ") ;
-			switch(sw.getOrderCol()){
-				case intro:
-					orderClause.append("c.introduced");
-					break;
-				case disc:
-					orderClause.append("c.discontinued");
-					break;
-				case company:
-					orderClause.append("com.name");
-					break;
-				default://case "name"
-					orderClause.append("c.name");
-					break;
-			}
-						
-			if(sw.getOrderDirection() !=  null){
-				if(sw.getOrderDirection() == OrderDirection.desc)
-					orderClause.append(" desc");
-			}
-		
-		}
-		return orderClause.toString();
-		
-	}
-	
-
 	public String getTABLE() {
 		return TABLE;
 	}

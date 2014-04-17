@@ -1,11 +1,15 @@
 package com.excilys.dao;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.data.Company;
 import com.excilys.util.SearchWrapper;
+
+import java.util.List;
 
 @Repository
 public class CompanyDAO extends DAO<Company> {
@@ -19,9 +23,6 @@ public class CompanyDAO extends DAO<Company> {
 		setTABLE(TABLE);
 		setLogger(LOGGER);
 	}
-	
-	
-	
 	//Insertion
 	
 	//Suppresion
@@ -29,27 +30,15 @@ public class CompanyDAO extends DAO<Company> {
 	//Modification
 	
 	//Selection
-
-
-	
 	@Override
-	public void retrieve(SearchWrapper<Company> sw)
-			 {
-		
+	public void retrieve(SearchWrapper<Company> sw) {
+        Criteria criteria = getSessionFactory().getCurrentSession().createCriteria(Company.class);
 		if(sw.getItems().size() == 1){//Retrieve by id
-			sw.setItem((Company) getSessionFactory().getCurrentSession().get(Company.class, sw.getItems().get(0).getId()));
+            criteria.add(Restrictions.eq("id",sw.getItem().getId()));
+			sw.setItem((Company) criteria.uniqueResult());
 		}
 		else{//Retrieve All
-			sw.setItems(getSessionFactory().getCurrentSession().createQuery("from Company").list());
+			sw.setItems((List<Company>)criteria.list());
 		}
-		
 	}
-
-
-
-
-	
-
-
-	
 }
