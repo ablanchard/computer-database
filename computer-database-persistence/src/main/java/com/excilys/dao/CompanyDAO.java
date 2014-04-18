@@ -1,5 +1,8 @@
 package com.excilys.dao;
 
+import com.excilys.data.QCompany;
+import com.mysema.query.jpa.JPQLQuery;
+import com.mysema.query.jpa.hibernate.HibernateQuery;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -13,14 +16,10 @@ import java.util.List;
 
 @Repository
 public class CompanyDAO extends DAO<Company> {
-	public static final String TABLE = "company";
-	public static final String ATTR_NAME = "name";
-	public static final String ATTR_ID = "id";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
 	
 	public CompanyDAO(){
-		setTABLE(TABLE);
 		setLogger(LOGGER);
 	}
 	//Insertion
@@ -32,13 +31,14 @@ public class CompanyDAO extends DAO<Company> {
 	//Selection
 	@Override
 	public void retrieve(SearchWrapper<Company> sw) {
-        Criteria criteria = getSessionFactory().getCurrentSession().createCriteria(Company.class);
+        QCompany company = QCompany.company;
+        JPQLQuery query = new HibernateQuery(getSessionFactory().getCurrentSession());
+        query.from(company);
 		if(sw.getItems().size() == 1){//Retrieve by id
-            criteria.add(Restrictions.eq("id",sw.getItem().getId()));
-			sw.setItem((Company) criteria.uniqueResult());
+			sw.setItem(query.where(company.id.eq(sw.getItem().getId())).uniqueResult(company));
 		}
 		else{//Retrieve All
-			sw.setItems((List<Company>)criteria.list());
+			sw.setItems(query.list(company));
 		}
 	}
 }

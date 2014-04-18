@@ -10,7 +10,7 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
-<!--  DataSource -->  
+    <!--  DataSource -->
 	<bean 	id="boneCPDataSource"
         	class="com.jolbox.bonecp.BoneCPDataSource" 
         	destroy-method="close">
@@ -34,11 +34,11 @@
             </props>
         </property>
 	    <property name="annotatedClasses">
-		<list>
-			<value>com.excilys.data.Computer</value>
-			<value>com.excilys.data.Company</value>
-			<value>com.excilys.data.Log</value>
-		</list>
+            <list>
+                <value>com.excilys.data.Computer</value>
+                <value>com.excilys.data.Company</value>
+                <value>com.excilys.data.Log</value>
+            </list>
 	    </property>
     </bean>
 

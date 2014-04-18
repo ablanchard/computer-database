@@ -20,7 +20,14 @@
   </organization>
   
    <build>
-    <sourceDirectory>src</sourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
+       <plugins>
+           <!-- QueryDSL plugin -->
+           <plugin>
+               <groupId>com.mysema.maven</groupId>
+               <artifactId>apt-maven-plugin</artifactId>
+           </plugin>
+       </plugins>
     </build>
   
   <dependencies>
@@ -43,5 +50,15 @@
 	    <groupId>joda-time</groupId>
 	    <artifactId>joda-time</artifactId>
 	</dependency>
+
+      <dependency>
+          <groupId> com.mysema.querydsl</groupId>
+          <artifactId>querydsl-jpa</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>com.mysema.querydsl</groupId>
+          <artifactId>querydsl-apt</artifactId>
+      </dependency>
+
   </dependencies>
 </project>
