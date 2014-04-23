@@ -16,9 +16,11 @@
 
     <authentication-manager>
         <authentication-provider>
-            <user-service>
-                <user name="admin" password="password" authorities="ROLE_USER" />
-            </user-service>
+            <jdbc-user-service data-source-ref="boneCPDataSource"
+                               users-by-username-query=
+                                       "select username,password, enabled from users where username=?"
+                               authorities-by-username-query=
+                                       "select username, role from user_roles where username =?  " />
         </authentication-provider>
     </authentication-manager>
 
