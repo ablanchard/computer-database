@@ -4,8 +4,8 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@page import="com.excilys.util.ComputerForm"%>
-<%@page import="com.excilys.util.FormInput"%>
+<%@page import="com.excilys.validator.ComputerForm"%>
+<%@page import="com.excilys.validator.FormInput"%>
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <c:set var="companyId" value="${dto.companyId }"></c:set>

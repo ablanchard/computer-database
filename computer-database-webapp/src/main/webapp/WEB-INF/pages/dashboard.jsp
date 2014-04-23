@@ -5,21 +5,21 @@
 <%@page import="com.excilys.dto.ComputerDTO"%>
 <%@page import="com.excilys.data.Company"%>
 <%@page import="com.excilys.util.Header"%>
-<%@page import="com.excilys.dao.ComputerDAO"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="cl" uri="/WEB-INF/taglib/computerLib.tld" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-	
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="nbElementsParPage" value="${requestScope['sw'].nbComputersPerPage }"></c:set>
-<c:set var="page" value="${requestScope['sw'].page }"></c:set>
-<c:set var="pageMax" value="${requestScope['sw'].pageMax }"></c:set>
-<c:set var="orderCol" value="${requestScope['sw'].orderCol }"></c:set>
-<c:set var="orderDirection" value="${requestScope['sw'].orderDirection }"></c:set>
-<c:set var="query" value="${requestScope['sw'].query }"></c:set>
-<c:set var="count" value="${requestScope['sw'].count }"></c:set>
+
+<c:set var="nbElementsParPage" value="${computerPage.page.size }"></c:set>
+<c:set var="page" value="${computerPage.page.number }"></c:set>
+<c:set var="pageMax" value="${computerPage.page.totalPages }"></c:set>
+<c:set var="sort" value="${computerPage.page.sort }"></c:set>
+<c:set var="count" value="${computerPage.page.totalElements }"></c:set>
+<c:set var="orderCol" value="${fn:substringBefore(sort,':')}"></c:set>
+<c:set var="orderDirection" value="${fn:substringAfter(sort,': ' )}"></c:set>
 <c:set var="placeholder"><spring:message code="filter.placeholder" text="Search name" /></c:set>
 <c:set var="computerFound" value="computers.found.plurial"/>
 <c:if test="${count <= 1 }"><c:set var="computerFound" value="computers.found.singular"/></c:if>
@@ -38,12 +38,10 @@
 	</div>
 	<div class="row" id="actions">
 		<div class="col-md-10">
-		<form:form method="get" action="" class="form-inline" modelAttribute="sw">
+		<form:form method="get" action="" class="form-inline" modelAttribute="computerPage">
 			<div class="form-group">
-				<form:label path="query" class="sr-only"><spring:message code="filter" text="Computer name" /></form:label>
-				<form:input type="search" class="form-control"  path="query"   value="${requestScope['sw'].query }" placeholder="${placeholder }" />
-				<form:hidden path="page" value="1"/>
-			</div>	
+                <form:input type="search" class="form-control"  path="search"   value="${computerPage.search}" placeholder="${placeholder }" />
+			</div>
 			<button type="submit" id="searchsubmit"	class="btn btn-default"><spring:message code="filter" text="Filter by name" /></button>
 		</form:form>
 		</div>
@@ -54,7 +52,7 @@
 	<c:if test="${count != 0 }">
 		<div class="row">
 			<div class="col-md-12">
-				<cl:pagination  page="${page }" pageMax="${pageMax }" query="${query}" orderCol="${orderCol }" orderDirection="${ orderDirection }"></cl:pagination>
+				<cl:pagination  page="${page }" pageMax="${pageMax }" query="${computerPage.search}" orderCol="${orderCol }" orderDirection="${ orderDirection }"></cl:pagination>
 			</div>
 		</div>
 		<div class="row">
@@ -65,14 +63,14 @@
 							<c:forEach var="tableHeader" items="${requestScope['tableHeaders']}"  >
 								<th><spring:message code="${tableHeader.name }" text="Header" />
 									<c:if test="${not empty tableHeader.orderName }">
-										<cl:orderButton  icon="${tableHeader.icon }" page="${page }" query="${query }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
+										<cl:orderButton  icon="${tableHeader.icon }" page="${page }" query="${computerPage.search }" actualOrder="${orderCol }" actualDirection="${orderDirection }" colName="${tableHeader.orderName }"  ></cl:orderButton>
 									</c:if>
 								</th>
 							</c:forEach>
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach var="computer" items="${requestScope['sw'].items}"  >
+						<c:forEach var="computer" items="${computerPage.page.content}"  >
 							<tr>
 								<td><a href="initEdit?id=${computer.id}" onclick="">${computer.name }</a></td>
 								<td>${computer.introducedDate }</td>

@@ -12,7 +12,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.excilys.service.ComputerService;
 import com.excilys.service.NotExistException;
-import com.excilys.service.Service;
 import com.excilys.service.ServiceException;
 
 @Component
@@ -25,15 +24,13 @@ public class DeleteComputerController extends ComputerController {
 
 	@RequestMapping(value = "delete", method = RequestMethod.GET)
 	public String edit(Model model,
-    		@RequestParam(value="id", required=true) Integer id,
+    		@RequestParam(value="id", required=true) Long id,
     		RedirectAttributes redirectAttributes){
 		try{
 			getComputerService().delete(id);
 			redirectAttributes.addAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
 		} catch (NotExistException | NumberFormatException e){
 			redirectAttributes.addAttribute(ATTR_ERROR, ComputerService.NOT_EXIST);
-		} catch (ServiceException e){
-			redirectAttributes.addAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
 		}
 		return "redirect:return";
 	}

@@ -11,7 +11,7 @@
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<c:set var="newDirection" value="asc"></c:set>
+<c:set var="newDirection" value="ASC"></c:set>
 <c:set var="cssClass" value="btn btn-default btn-md" />
 <c:set var="buttonAlpha" value="glyphicon-sort-by-alphabet"/>
 <c:set var="buttonNum" value="glyphicon-sort-by-order"/>
@@ -21,7 +21,7 @@
 </c:if>
 
 <c:if test="${actualDirection == newDirection}">
-	<c:set var="newDirection" value="desc"/>
+	<c:set var="newDirection" value="DESC"/>
 	<c:if test="${colName == actualOrder}">
 		<c:set var="buttonIcon" value="${buttonIcon }-alt"/>
 	</c:if>
@@ -32,7 +32,7 @@
 		<c:set var="cssClass" value="${cssClass } active" />
 	</c:when>
 	<c:when test="${colName != actualOrder}">
-		<c:set var="direction" value="asc"/>
+		<c:set var="direction" value="ASC"/>
 	</c:when>
 </c:choose>
 <cl:link page="${page }" query="${query }" orderCol="${colName }" orderDirection="${direction }"  >

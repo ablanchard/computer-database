@@ -1,5 +1,6 @@
 package com.excilys.mapper;
 
+import com.excilys.service.PageWrapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -8,15 +9,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
-import com.excilys.util.SearchWrapper;
 import com.excilys.dto.ComputerDTO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.NotExistException;
 import com.excilys.service.ServiceException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ComputerMapper {
@@ -32,14 +38,14 @@ public class ComputerMapper {
 	public Computer toComputer(ComputerDTO dto) {
 		Computer c = Computer.builder();
 		
-		c.setId(dto.getId());
+		c.setId(new Long(dto.getId()));
 		c.setName(dto.getName());
 		c.setIntroduced(toDate(dto.getIntroducedDate()));
 		c.setDiscontinued(toDate(dto.getDiscontinuedDate()));
 		Company company = null;
 		if(dto.getCompanyId() != 0){
 			try {
-				company = getCompanyService().retrieveById(dto.getCompanyId());
+				company = getCompanyService().retrieveById(new Long(dto.getCompanyId()));
 			} catch (ServiceException | NotExistException e) {
 			}
 		}
@@ -65,49 +71,54 @@ public class ComputerMapper {
 		else {
 			dto.setDiscontinuedDate(toString(c.getDiscontinued()));
 		}
-		dto.setId(c.getId());
+		dto.setId(c.getId().intValue());
 		
 		if(c.getCompany() == null){
 			dto.setCompanyId(0);
 		}
 		else{
-			dto.setCompanyId(c.getCompany().getId());
+			dto.setCompanyId(c.getCompany().getId().intValue());
 			dto.setCompanyName(c.getCompany().getName());
 		}
 		
 		return dto;
 	}
-	
-	
 
-	public  SearchWrapper<ComputerDTO> toComputerDTOWrapper(SearchWrapper<Computer> sw){
-		SearchWrapper<ComputerDTO> swDTO = new SearchWrapper<ComputerDTO>();
-		swDTO.setQuery(sw.getQuery());
-		swDTO.setOrderCol(sw.getOrderCol());
-		swDTO.setOrderDirection(sw.getOrderDirection());
-		swDTO.setPage(sw.getPage());
-		swDTO.setNbComputersPerPage(sw.getNbComputersPerPage());
-		swDTO.setCount(sw.getCount());
-		swDTO.setPageMax(sw.getPageMax());
-		for(Computer c : sw.getItems()){
-			swDTO.getItems().add(this.toComputerDTO(c));
-		}
-		return swDTO;
+    public List<Computer> toComputer(List<ComputerDTO> dtos){
+        List<Computer> computers = new ArrayList<Computer>();
+        for(ComputerDTO dto : dtos){
+            computers.add(toComputer(dto));
+        }
+        return computers;
+    }
+    public List<ComputerDTO> toComputerDTO(List<Computer> computers){
+        List<ComputerDTO> dtos = new ArrayList<ComputerDTO>();
+        for(Computer computer : computers){
+            dtos.add(toComputerDTO(computer));
+        }
+        return dtos;
+    }
+
+
+
+    public PageWrapper<ComputerDTO> toComputerDTO(PageWrapper<Computer> page){
+        Page<Computer> pageComputer = page.getPage();
+		return new PageWrapper<>(new PageImpl<ComputerDTO>(
+                toComputerDTO(pageComputer.getContent()),
+                new PageRequest(pageComputer.getNumber(),
+                                pageComputer.getSize(),
+                                pageComputer.getSort()),
+                pageComputer.getTotalElements()),page.getSearch());
 	}
 	
-	public  SearchWrapper<Computer> toComputerWrapper(SearchWrapper<ComputerDTO> swDTO){
-		SearchWrapper<Computer> sw = new SearchWrapper<Computer>();
-		sw.setQuery(swDTO.getQuery());
-		sw.setOrderCol(swDTO.getOrderCol());
-		sw.setOrderDirection(swDTO.getOrderDirection());
-		sw.setPage(swDTO.getPage());
-		sw.setNbComputersPerPage(swDTO.getNbComputersPerPage());
-		sw.setCount(swDTO.getCount());
-		sw.setPageMax(swDTO.getPageMax());
-		for(ComputerDTO dto : swDTO.getItems()){
-				sw.getItems().add(toComputer(dto));
-		}
-		return sw;
+	public  PageWrapper<Computer> toComputer(PageWrapper<ComputerDTO> pageDTO){
+        Page<ComputerDTO> page = pageDTO.getPage();
+        return new PageWrapper<>(new PageImpl<Computer>(
+                toComputer(page.getContent()),
+                new PageRequest(page.getNumber(),
+                        page.getSize(),
+                        page.getSort()),
+                page.getTotalElements()),pageDTO.getSearch());
 	}
 
 	public DateTime toDate(String date) {

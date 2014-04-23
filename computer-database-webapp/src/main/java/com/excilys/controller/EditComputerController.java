@@ -24,12 +24,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.excilys.data.Company;
 import com.excilys.data.Computer;
-import com.excilys.util.ComputerForm;
-import com.excilys.util.SearchWrapper;
+import com.excilys.validator.ComputerForm;
 import com.excilys.dto.ComputerDTO;
 import com.excilys.service.ComputerService;
 import com.excilys.service.NotExistException;
-import com.excilys.service.Service;
 import com.excilys.service.ServiceException;
 import com.excilys.validator.ComputerDTOValidator;
 
@@ -47,7 +45,7 @@ public class EditComputerController extends ComputerController {
 	
 	@RequestMapping(value="initEdit", method = RequestMethod.GET)
 	public String init(Model model,
-			@RequestParam(value="id", required=true) Integer id) {
+			@RequestParam(value="id", required=true) Long id) {
 		ComputerDTO dto = null;
 		try {
 			dto = getComputerMapper().toComputerDTO(getComputerService().getById(id));
@@ -58,7 +56,7 @@ public class EditComputerController extends ComputerController {
 		} catch (NotExistException e) {
 			model.addAttribute(ATTR_ERROR,"computer.not.exist");
 		} catch (ServiceException e){
-			model.addAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
+			model.addAttribute(ATTR_ERROR, SERVICE_ERROR);
 		}
 		return "redirect:edit";
 	
@@ -92,12 +90,8 @@ public class EditComputerController extends ComputerController {
 			return "editComputer";
 		}
 		try{
-			c = getComputerMapper().toComputer(dto);
-			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(c);
-			getComputerService().update(sw);
+			getComputerService().update(getComputerMapper().toComputer(dto));
 			redirectAttributes.addAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
-		} catch (ServiceException e){
-			redirectAttributes.addAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
 		} catch(NotExistException e){
 			redirectAttributes.addAttribute(ATTR_ERROR, ComputerService.NOT_EXIST);
 		}

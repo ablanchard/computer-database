@@ -22,6 +22,7 @@ public abstract class ComputerController {
 	public static final String FORM_ERRORS = "form_errors";
 
 	public static final String NO_COMPANY_DEFAULT_NAME = "No company";
+    public static final String SERVICE_ERROR = "service.error";
 	
 	@Autowired
 	private ComputerService computerService ;

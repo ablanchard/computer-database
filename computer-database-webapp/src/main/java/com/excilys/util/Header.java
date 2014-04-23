@@ -44,10 +44,10 @@ public class Header {
 	
 	public static List<Header> getArray(){
 		List<Header> headers = new ArrayList<Header>();
-		headers.add(new Header(TABLE_HEADER_NAME,OrderComputerCol.name.toString()).setIcon("alpha"));
-		headers.add(Header.build().setName(TABLE_HEADER_INTRO).setOrderName(OrderComputerCol.intro.toString()).setIcon("num"));
-		headers.add(Header.build().setName(TABLE_HEADER_DISC).setOrderName(OrderComputerCol.disc.toString()).setIcon("num"));
-		headers.add(Header.build().setName(TABLE_HEADER_COMPANY).setOrderName(OrderComputerCol.company.toString()).setIcon("alpha"));
+		headers.add(new Header(TABLE_HEADER_NAME,OrderComputerCol.name.toProperty()).setIcon("alpha"));
+		headers.add(Header.build().setName(TABLE_HEADER_INTRO).setOrderName(OrderComputerCol.intro.toProperty()).setIcon("num"));
+		headers.add(Header.build().setName(TABLE_HEADER_DISC).setOrderName(OrderComputerCol.disc.toProperty()).setIcon("num"));
+		headers.add(Header.build().setName(TABLE_HEADER_COMPANY).setOrderName(OrderComputerCol.company.toProperty()).setIcon("alpha"));
 		headers.add(Header.build().setName(TABLE_HEADER_ACTIONS));
 		return headers ;
 	}

@@ -16,39 +16,41 @@ import javax.persistence.Table;
 @Table(name="company")
 public class Company implements Serializable {
 
-	@Id
+    @Id
 	@GeneratedValue
 	@Column(name="id",nullable=false)
-	private int id;
-	
+	private Long id;
+
 	@Column(name="name",nullable=false)
 	private String name;
 
-	
 	public Company(String name){
 		this.name = name;
 	}
-	
-	public Company(int id){
+
+
+	public Company(Long id){
 		this.id = id;
 	}
-	
+
 	private Company(){
-		
+
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public Company setId(int id) {
-		this.id = id;
-		return this;
-	}
+    public Long getId() {
+        return id;
+    }
 
 	public String getName() {
 		return name;
 	}
+
+
+
+    public Company setId(Long id) {
+        this.id = id;
+        return this;
+    }
 
 	public Company setName(String name) {
 		this.name = name;
@@ -60,7 +62,7 @@ public class Company implements Serializable {
 	}
 	
 	public String toString(){
-		StringBuilder res = new StringBuilder(getId());
+		StringBuilder res = new StringBuilder(getId().toString());
 		res.append(" ");
 		res.append(getName());
 		return res.toString();

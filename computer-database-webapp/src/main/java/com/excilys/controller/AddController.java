@@ -20,11 +20,9 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.excilys.data.Computer;
-import com.excilys.util.SearchWrapper;
 import com.excilys.dto.ComputerDTO;
-import com.excilys.service.Service;
 import com.excilys.service.ServiceException;
-import com.excilys.util.ComputerForm;
+import com.excilys.validator.ComputerForm;
 import com.excilys.validator.ComputerDTOValidator;
 
 @Component
@@ -32,6 +30,7 @@ import com.excilys.validator.ComputerDTOValidator;
 @SessionAttributes("dto")
 public class AddController extends ComputerController {
 	public static final String SUCCESS_MESSAGE = "computer.success.add" ;
+
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AddController.class);
 
@@ -57,7 +56,7 @@ public class AddController extends ComputerController {
 			return "addComputer";
 			
 		} catch (ServiceException e){
-			redirectAttributes.addAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
+			redirectAttributes.addAttribute(ATTR_ERROR, SERVICE_ERROR);
 		}
 		return "redirect:return";
 	}
@@ -74,16 +73,10 @@ public class AddController extends ComputerController {
 
 			return doGet(model, dto, results, redirectAttributes);
 		}
-		try{
-			LOGGER.debug("Will add {}",dto);
-			c = getComputerMapper().toComputer(dto);
-			SearchWrapper<Computer> sw = new SearchWrapper<Computer>(c);
-			getComputerService().create(sw);
-			redirectAttributes.addAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
-		} catch (ServiceException e){
-			redirectAttributes.addAttribute(ATTR_ERROR, Service.SERVICE_ERROR);
-		}
-		return "redirect:return";
+        LOGGER.debug("Will add {}",dto);
+        getComputerService().create(getComputerMapper().toComputer(dto));
+        redirectAttributes.addAttribute(ATTR_SUCCESS, SUCCESS_MESSAGE);
+        return "redirect:return";
 	}
 
 	@ExceptionHandler(HttpSessionRequiredException.class)

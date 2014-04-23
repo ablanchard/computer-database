@@ -40,13 +40,10 @@
   		<groupId>org.springframework</groupId>
   		<artifactId>spring-webmvc</artifactId>
   	</dependency>
+
       <dependency>
           <groupId>org.springframework</groupId>
-          <artifactId>spring-tx</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-orm</artifactId>
+          <artifactId>spring-aop</artifactId>
       </dependency>
   	<dependency>
   		<groupId>org.springframework</groupId>
@@ -73,5 +70,15 @@
 	    <groupId>org.slf4j</groupId>
 	    <artifactId>jcl-over-slf4j</artifactId>
 	</dependency>
+
+      <!-- Spring Data JPA -->
+      <dependency>
+          <groupId>org.springframework.data</groupId>
+          <artifactId>spring-data-jpa</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>cglib</groupId>
+          <artifactId>cglib</artifactId>
+      </dependency>
   </dependencies>
 </project>
