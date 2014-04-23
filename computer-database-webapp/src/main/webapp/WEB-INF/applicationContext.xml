@@ -21,6 +21,7 @@
   
     <import resource="classpath:service-context.xml"/>
     <import resource="classpath:binding-context.xml"/>
+    <import resource="classpath:spring-security.xml"/>
     
 	
 			
@@ -28,6 +29,7 @@
 	<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource" id="messageSource"
           p:basename="WEB-INF/classes/messages">
         <property name="fallbackToSystemLocale" value="false"/>
+        <property name="defaultEncoding" value="UTF-8"/>
 	</bean>
 	
     

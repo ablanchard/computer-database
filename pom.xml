@@ -143,6 +143,17 @@
                 <artifactId>cglib</artifactId>
                 <version>${cglib.version}</version>
             </dependency>
+            <!-- Spring Security-->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-web</artifactId>
+                <version>${spring-security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-config</artifactId>
+                <version>${spring-security.version}</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
@@ -167,8 +178,9 @@
 	<javax-servlet.version>3.1.0</javax-servlet.version>
     <querydsl-jpa.version>3.3.2</querydsl-jpa.version>
     <spring-data.version>1.5.1.RELEASE</spring-data.version>
-      <spring-data-commons.version>1.7.1.RELEASE</spring-data-commons.version>
-      <cglib.version>3.1</cglib.version>
+    <spring-data-commons.version>1.7.1.RELEASE</spring-data-commons.version>
+    <cglib.version>3.1</cglib.version>
+    <spring-security.version>3.2.3.RELEASE</spring-security.version>
   </properties>
 
   <modules>
@@ -178,7 +190,8 @@
   	<module>computer-database-binding</module>
   	<module>computer-database-webapp</module>
   </modules>
-    <build>
+
+  <build>
     <sourceDirectory>src</sourceDirectory>
     <pluginManagement>
         <plugins>
@@ -190,7 +203,7 @@
               <target>1.7</target>
             </configuration>
           </plugin>
-        <plugin>
+          <plugin>
             <groupId>com.mysema.maven</groupId>
             <artifactId>apt-maven-plugin</artifactId>
             <version>1.1.1</version>
@@ -205,8 +218,8 @@
                     </configuration>
                 </execution>
             </executions>
-        </plugin>
-        <plugin>
+          </plugin>
+          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
             <configuration>

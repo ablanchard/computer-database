@@ -1,11 +1,8 @@
 package com.excilys.controller;
 
 import com.excilys.service.PageWrapper;
-import com.excilys.util.OrderComputerCol;
-import com.excilys.util.OrderDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
